@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "900488587335",
+    "project_id": "footrack-f4b6e",
+    "storage_bucket": "footrack-f4b6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900488587335:android:2f1a025574a9018357a962",
+        "android_client_info": {
+          "package_name": "com.krynit.footrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "900488587335-4nr2betas05dhib31s0s014vvi8fli0a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbr0vUVRoT9EOJITr6hwrRltF_RD3uEM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "900488587335-4nr2betas05dhib31s0s014vvi8fli0a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "900488587335-tt25gv91p4422an9ob1v9qh6k2chgk7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.krynit.footrackFront"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

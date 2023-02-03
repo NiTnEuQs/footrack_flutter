@@ -1,0 +1,62 @@
+name: footrack_front
+description: Footrack is an application to help football managers managing their seasons
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.4
+
+  # --- State management
+
+  flutter_riverpod: ^1.0.4
+  freezed_annotation: ^2.2.0
+
+  # --- Firebase
+
+  google_sign_in: ^5.3.2
+  firebase_core: ^2.1.1
+  firebase_analytics: ^10.0.3
+  firebase_auth: ^4.1.0
+  firebase_messaging: ^14.0.3
+  cloud_firestore: ^4.0.3
+#  flamingo: ^2.18.0
+#  flamingo_annotation: ^0.5.0
+
+  # --- Misc
+
+  wakelock: ^0.6.2
+  json_annotation: ^4.7.0
+  shared_preferences: ^2.0.15
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.1
+
+  # --- API
+
+  build_runner: ^2.3.2
+  json_serializable: ^6.5.4
+  #  retrofit_generator: ^4.0.1
+  cloud_firestore_odm_generator: ^1.0.0-dev.38
+#  flamingo_generator: ^0.13.0
+
+  # --- Misc
+
+  freezed: ^2.0.3+1
+  #  lint: ^1.8.2
+
+flutter:
+  uses-material-design: true
+
+
+
+
