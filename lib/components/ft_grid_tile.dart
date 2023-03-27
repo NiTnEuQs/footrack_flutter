@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 
-class FootrackGridTile extends StatelessWidget {
-  const FootrackGridTile({
+class FTGridTile extends StatelessWidget {
+  const FTGridTile({
     Key? key,
     required this.icon,
     required this.title,
     this.enabled = true,
+    this.color,
+    this.titleSize,
+    this.iconSize,
+    this.titleWeight,
     this.onTap,
     this.onLongPress,
     this.redirection,
@@ -14,6 +19,10 @@ class FootrackGridTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final bool enabled;
+  final Color? color;
+  final double? titleSize;
+  final double? iconSize;
+  final FontWeight? titleWeight;
   final Widget? redirection;
   final Function()? onTap;
   final Function()? onLongPress;
@@ -22,7 +31,7 @@ class FootrackGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: Card(
-        color: enabled ? Colors.blue : Colors.grey,
+        color: enabled ? color ?? Colors.blue : Colors.grey,
         child: InkWell(
           onTap: enabled
               ? () {
@@ -33,18 +42,14 @@ class FootrackGridTile extends StatelessWidget {
                         builder: (_) => redirection!,
                       ),
                     );
-                  } else if (onTap != null) {
-                    onTap!();
+                  } else {
+                    onTap?.let((it) {
+                      it();
+                    });
                   }
                 }
               : null,
-          onLongPress: enabled
-              ? () {
-                  if (onLongPress != null) {
-                    onLongPress!();
-                  }
-                }
-              : null,
+          onLongPress: enabled ? onLongPress : null,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -54,11 +59,15 @@ class FootrackGridTile extends StatelessWidget {
                   Icon(
                     icon,
                     color: Colors.white,
+                    size: iconSize,
                   ),
+                  const SizedBox(height: 16),
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      fontWeight: titleWeight,
+                      fontSize: titleSize,
                       color: Colors.white,
                     ),
                   ),

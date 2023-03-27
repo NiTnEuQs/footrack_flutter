@@ -1,34 +1,41 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:footrack_front/converters/player_role_converter.dart';
-// import 'package:footrack_front/enums/player_roles_enum.dart';
-// import 'package:freezed_annotation/freezed_annotation.dart';
-//
-// part 'player.g.dart';
-//
-// @JsonSerializable(explicitToJson: true)
-// @StringConverter()
-// class Player {
-//   @JsonKey(ignore: true)
-//   String id = "";
-//   @JsonKey(name: "name")
-//   String name;
-//   @JsonKey(name: "role")
-//   PlayerRoleEnum? role;
-//
-//   Player({
-//     required this.name,
-//     this.role,
-//   });
-//
-//   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
-//
-//   Map<String, dynamic> toJson() => _$PlayerToJson(this);
-//
-//   factory Player.fromSnapshot(
-//     QueryDocumentSnapshot queryDocumentSnapshot,
-//   ) =>
-//       _$PlayerFromJson(queryDocumentSnapshot.data() as dynamic)..id = queryDocumentSnapshot.id;
-//
-//   @override
-//   String toString() => 'Player<$name>';
-// }
+import 'package:flamingo/flamingo.dart';
+import 'package:flamingo_annotation/flamingo_annotation.dart';
+import 'package:footrack_front/converters/player_role_converter.dart';
+import 'package:footrack_front/converters/player_status_converter.dart';
+import 'package:footrack_front/enums/player_roles_enum.dart';
+import 'package:footrack_front/enums/player_status_enum.dart';
+
+part 'player.flamingo.dart';
+
+class Player extends Document<Player> {
+  Player({
+    String? id,
+    DocumentSnapshot<Map<String, dynamic>>? snapshot,
+    Map<String, dynamic>? values,
+    CollectionReference<Map<String, dynamic>>? collectionRef,
+  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef);
+
+  @Field()
+  String? name;
+
+  String getName({String defaultValue = "-"}) => name ?? defaultValue;
+
+  @Field()
+  Timestamp? birthdate;
+
+  @Field()
+  String? role;
+
+  PlayerRoleEnum getRole() => const PlayerRoleConverter().fromJson(role);
+
+  @Field()
+  String? status;
+
+  PlayerStatusEnum getStatus() => const PlayerStatusConverter().fromJson(status);
+
+  @override
+  Map<String, dynamic> toData() => _$toData(this);
+
+  @override
+  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+}

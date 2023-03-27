@@ -1,14 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
+import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/seasons_store.dart';
+import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/models/match.dart';
+import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/pickers.dart';
+import 'package:footrack_front/utils/tuples.dart';
 
 class AlertMatch extends StatefulWidget {
-  AlertMatch({
+  const AlertMatch({
     Key? key,
     required this.ref,
     this.match,
@@ -24,18 +27,18 @@ class AlertMatch extends StatefulWidget {
 class _AlertMatchState extends State<AlertMatch> {
   final TextEditingController _matchDateStartController = TextEditingController();
 
+  MatchTypeEnum? _matchType = MatchTypeEnum.championship;
   int? _scoreOpponent = 0;
-
   String? _opponentRefPath;
-
   DateTime? _dateStartPicked;
 
   @override
   void initState() {
     super.initState();
     if (widget.match != null) {
-      _dateStartPicked = widget.match!.date;
-      _opponentRefPath = widget.match!.opponentRef?.path;
+      _matchType = widget.match!.getType();
+      _dateStartPicked = widget.match!.date.toDateTime();
+      _opponentRefPath = widget.match!.opponent?.path;
       _scoreOpponent = widget.match!.scoreOpponent;
 
       _matchDateStartController.text = _dateStartPicked.formatWithTime();
@@ -44,14 +47,39 @@ class _AlertMatchState extends State<AlertMatch> {
 
   @override
   Widget build(BuildContext context) {
+    var opponents = widget.ref.read(seasonChoseProvider)?.opponents;
+
     return AlertDialog(
       title: Text(widget.match != null ? "Modifier le match" : "Créer un match"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Row(
+          //   children: [
+          //     const Icon(Icons.military_tech, color: Colors.amber),
+          //     const SizedBox(width: 8),
+          //     Expanded(
+          //       child: DropdownButton(
+          //         isExpanded: true,
+          //         value: _matchType,
+          //         items: List<MatchTypeEnum>.from(MatchTypeEnum.values).map<DropdownMenuItem<MatchTypeEnum>>((MatchTypeEnum value) {
+          //           return DropdownMenuItem<MatchTypeEnum>(
+          //             value: value,
+          //             child: Text(value.format()),
+          //           );
+          //         }).toList(),
+          //         onChanged: (MatchTypeEnum? value) {
+          //           setState(() {
+          //             _matchType = value;
+          //           });
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Row(
             children: [
-              const Icon(Icons.calendar_month),
+              const Icon(Icons.calendar_month, color: Colors.blue),
               const SizedBox(width: 8),
               Expanded(
                 child: TextFormField(
@@ -74,47 +102,50 @@ class _AlertMatchState extends State<AlertMatch> {
           ),
           Row(
             children: [
-              const Icon(Icons.groups),
+              const Icon(Icons.groups, color: Colors.lightGreen),
               const SizedBox(width: 8),
               Expanded(
-                child: FirestoreBuilder(
-                    ref: seasonsRef.doc(widget.ref.read(seasonChoseProvider)?.id).opponents,
-                    builder: (context, AsyncSnapshot<OpponentQuerySnapshot> snapshot, child) {
-                      if (snapshot.hasError) {
-                        return const Center(child: Text("Erreur"));
-                      }
-
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text("Loading ..."));
-                      }
-
-                      if (widget.match == null) {
-                        _opponentRefPath ??= snapshot.requireData.docs.first.reference.path;
-                      }
-
-                      var opponentsList = List<OpponentQueryDocumentSnapshot>.from(snapshot.requireData.docs)
-                        ..sort((a, b) {
-                          return a.data.name.compareTo(b.data.name);
-                        });
-
-                      return DropdownButton(
-                        isExpanded: true,
-                        value: _opponentRefPath,
-                        items: opponentsList.map<DropdownMenuItem<String>>((OpponentQueryDocumentSnapshot value) {
-                          return DropdownMenuItem<String>(
-                            value: value.reference.path,
-                            child: Text(value.data.name),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              _opponentRefPath = value;
-                            });
+                child: opponents == null
+                    ? const Text("Une erreur est survenue")
+                    : FutureBuilder(
+                        future: firestoreInstance.collection(opponents.path).get(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Center(child: Text("Erreur"));
                           }
-                        },
-                      );
-                    }),
+
+                          if (!snapshot.hasData) {
+                            return const Center(child: Text("Loading ..."));
+                          }
+
+                          if (widget.match == null) {
+                            _opponentRefPath ??= snapshot.requireData.docs.first.reference.path;
+                          }
+
+                          List<Pair<String, String>>? opponentsList = snapshot.data?.docs
+                              .map((e) => Opponent(snapshot: e))
+                              .map((e) => Pair(e.reference.path, e.name))
+                              .toList()
+                            ?..sort(comparePairSecond);
+
+                          return DropdownButton(
+                            isExpanded: true,
+                            value: _opponentRefPath,
+                            items: opponentsList?.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                              return DropdownMenuItem<String>(
+                                value: value.first,
+                                child: Text(value.second ?? ""),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                setState(() {
+                                  _opponentRefPath = value;
+                                });
+                              }
+                            },
+                          );
+                        }),
               ),
             ],
           ),
@@ -131,7 +162,7 @@ class _AlertMatchState extends State<AlertMatch> {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text("Êtes-vous sûr de vouloir supprimer le match ?"),
-                    content: Text(widget.match!.date.format()),
+                    content: Text(widget.match!.date.toDateTime().format()),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -140,7 +171,7 @@ class _AlertMatchState extends State<AlertMatch> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref.watch(seasonsProvider).removeMatch(widget.ref.read(seasonChoseProvider)?.id, widget.match!.id);
+                          widget.ref.read(dbProvider).removeMatch(widget.ref.read(seasonChoseProvider)?.id, widget.match!.id);
 
                           Navigator.pop(context);
                         },
@@ -169,22 +200,22 @@ class _AlertMatchState extends State<AlertMatch> {
           ),
         ElevatedButton(
           onPressed: () {
-            Match match = Match(
-              opponentRef: _opponentRefPath != null ? FirebaseFirestore.instance.doc(_opponentRefPath!) : null,
-              date: _dateStartPicked,
-              scoreOpponent: _scoreOpponent,
-            );
+            var value = Match()
+              ..type = _matchType?.name
+              ..opponent = _opponentRefPath != null ? FirebaseFirestore.instance.doc(_opponentRefPath!) : null
+              ..date = _dateStartPicked.toTimestamp()
+              ..scoreOpponent = _scoreOpponent;
 
             if (widget.match != null) {
-              widget.ref.read(seasonsProvider).editMatch(
+              widget.ref.read(dbProvider).editMatch(
                     widget.ref.read(seasonChoseProvider)?.id,
                     widget.match!.id,
-                    match,
+                    value,
                   );
             } else {
-              widget.ref.read(seasonsProvider).addNewMatch(
+              widget.ref.read(dbProvider).addNewMatch(
                     widget.ref.read(seasonChoseProvider)?.id,
-                    match,
+                    value,
                   );
             }
 

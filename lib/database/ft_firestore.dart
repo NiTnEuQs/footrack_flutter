@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/models/goal.dart';
+import 'package:footrack_front/models/match.dart';
+import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/models/substitute.dart';
 
-// Creating a simple Riverpod provider that provides an instance of our Database class so that it can be used from our UI(by calling Database class methods)
-final seasonsProvider = Provider((_) => SeasonsStore());
-final seasonChoseProvider = StateProvider<Season?>((_) => null);
-final matchChoseProvider = StateProvider<Match?>((_) => null);
-
-class SeasonsStore {
+class DatabaseFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Create an instance of Firebase Firestore.
 
   // Add a Season
@@ -15,7 +14,7 @@ class SeasonsStore {
     try {
       await _firestore.collection('seasons').add({
         'name': m.name,
-        'team_name': m.teamName,
+        'teamName': m.teamName,
         'from': m.from,
         'to': m.to,
       });
@@ -32,9 +31,10 @@ class SeasonsStore {
     var opponents = _firestore.collection('seasons').doc(seasonId).collection("matchs");
     try {
       await opponents.add({
-        'opponent': m.opponentRef,
+        'type': m.type,
+        'opponent': m.opponent,
         'date': m.date,
-        'score_opponent': m.scoreOpponent,
+        'scoreOpponent': m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -49,8 +49,8 @@ class SeasonsStore {
     var goals = _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("goals");
     try {
       await goals.add({
-        'scorer': m.scorerRef,
-        'passer': m.passerRef,
+        'scorer': m.scorer,
+        'passer': m.passer,
         'time': m.time,
       });
       return true;
@@ -66,8 +66,8 @@ class SeasonsStore {
     var goals = _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("substitutes");
     try {
       await goals.add({
-        'player_in': m.playerInRef,
-        'player_out': m.playerOutRef,
+        'playerIn': m.playerIn,
+        'playerOut': m.playerOut,
         'time': m.time,
       });
       return true;
@@ -99,7 +99,9 @@ class SeasonsStore {
     try {
       await players.add({
         'name': m.name,
-        'role': m.role?.name,
+        'role': m.role,
+        'status': m.status,
+        'birthdate': m.birthdate,
       });
       return true;
     } catch (e) {
@@ -155,19 +157,6 @@ class SeasonsStore {
     }
   }
 
-  // Remove an Opponent Goal
-  Future<bool> updateOpponentGoal(String? seasonId, String? matchId, int? newOpponentGoal) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
-
-    try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'score_opponent': newOpponentGoal});
-      return true;
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
-
   // Remove an Opponent
   Future<bool> removeOpponent(String? seasonId, String opponentId) async {
     if (seasonId == null) return false;
@@ -197,7 +186,7 @@ class SeasonsStore {
     try {
       await _firestore.collection('seasons').doc(seasonId).update({
         'name': m.name,
-        'team_name': m.teamName,
+        'teamName': m.teamName,
         'from': m.from,
         'to': m.to,
       });
@@ -213,9 +202,10 @@ class SeasonsStore {
 
     try {
       await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({
-        'opponent': m.opponentRef,
+        'type': m.type,
+        'opponent': m.opponent,
         'date': m.date,
-        'score_opponent': m.scoreOpponent,
+        'scoreOpponent': m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -230,8 +220,8 @@ class SeasonsStore {
 
     try {
       await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("goals").doc(goalId).update({
-        'scorer': m.scorerRef,
-        'passer': m.passerRef,
+        'scorer': m.scorer,
+        'passer': m.passer,
         'time': m.time,
       });
       return true;
@@ -247,8 +237,8 @@ class SeasonsStore {
 
     try {
       await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("substitutes").doc(substituteId).update({
-        'player_in': m.playerInRef,
-        'player_out': m.playerOutRef,
+        'playerIn': m.playerIn,
+        'playerOut': m.playerOut,
         'time': m.time,
       });
       return true;
@@ -278,8 +268,23 @@ class SeasonsStore {
     try {
       await _firestore.collection('seasons').doc(seasonId).collection("players").doc(playerId).update({
         'name': m.name,
-        'role': m.role?.name,
+        'role': m.role,
+        'status': m.status,
+        'birthdate': m.birthdate,
       });
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Update an Opponent Goal
+  Future<bool> updateOpponentGoal(String? seasonId, String? matchId, int? newOpponentGoal) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'scoreOpponent': newOpponentGoal});
       return true;
     } catch (e) {
       return Future.error(e);

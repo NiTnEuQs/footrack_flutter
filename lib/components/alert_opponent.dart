@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/seasons_store.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/models/opponent.dart';
 
 class AlertOpponent extends StatelessWidget {
   AlertOpponent({
@@ -17,7 +17,7 @@ class AlertOpponent extends StatelessWidget {
 
   _initState() {
     if (opponent != null) {
-      _opponentNameController.text = opponent!.name;
+      _opponentNameController.text = opponent!.getName();
     }
   }
 
@@ -57,7 +57,7 @@ class AlertOpponent extends StatelessWidget {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text("Êtes-vous sûr de vouloir supprimer l'adversaire ?"),
-                    content: Text(opponent!.name),
+                    content: Text(opponent!.getName()),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -66,7 +66,7 @@ class AlertOpponent extends StatelessWidget {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          ref.watch(seasonsProvider).removeOpponent(
+                          ref.read(dbProvider).removeOpponent(
                                 ref.read(seasonChoseProvider)?.id,
                                 opponent!.id,
                               );
@@ -98,21 +98,12 @@ class AlertOpponent extends StatelessWidget {
           ),
         ElevatedButton(
           onPressed: () {
+            var value = Opponent()..name = _opponentNameController.value.text;
+
             if (opponent != null) {
-              ref.read(seasonsProvider).editOpponent(
-                    ref.read(seasonChoseProvider)?.id,
-                    opponent!.id,
-                    Opponent(
-                      name: _opponentNameController.value.text,
-                    ),
-                  );
+              ref.read(dbProvider).editOpponent(ref.read(seasonChoseProvider)?.id, opponent!.id, value);
             } else {
-              ref.read(seasonsProvider).addNewOpponent(
-                    ref.read(seasonChoseProvider)?.id,
-                    Opponent(
-                      name: _opponentNameController.value.text,
-                    ),
-                  );
+              ref.read(dbProvider).addNewOpponent(ref.read(seasonChoseProvider)?.id, value);
             }
 
             Navigator.pop(context);

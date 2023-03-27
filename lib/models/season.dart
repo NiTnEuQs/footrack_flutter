@@ -1,243 +1,208 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
-import 'package:flutter/material.dart';
-import 'package:footrack_front/converters/date_time_converter.dart';
-import 'package:footrack_front/converters/document_reference_converter.dart';
-import 'package:footrack_front/converters/player_role_converter.dart';
-import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:collection/collection.dart";
+import 'package:flamingo/flamingo.dart';
+import 'package:flamingo_annotation/flamingo_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/extensions/snapshot_extensions.dart';
+import 'package:footrack_front/models/goal.dart';
+import 'package:footrack_front/models/match.dart';
+import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/models/player.dart';
 
-part 'season.g.dart';
+part 'season.flamingo.dart';
 
-@Collection<Season>('seasons', name: "seasons")
-@Collection<Player>('seasons/*/players', name: "players")
-@Collection<Opponent>('seasons/*/opponents', name: "opponents")
-@Collection<Match>('seasons/*/matchs', name: "matchs")
-@Collection<Goal>('seasons/*/matchs/*/goals', name: "goals")
-@Collection<Substitute>('seasons/*/matchs/*/substitutes', name: "substitutes")
-final seasonsRef = SeasonCollectionReference();
-
-extension QueryDocumentSnapshotToModel on FirestoreQueryDocumentSnapshot {
-  T toModel<T>() {
-    return data..id = id;
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-@DateTimeConverter()
-class Season {
-  @JsonKey(ignore: true)
-  String id = "";
-  @JsonKey(name: "name")
-  String name;
-  @JsonKey(name: "team_name")
-  String? teamName;
-  @JsonKey(name: "from")
-  DateTime? from;
-  @JsonKey(name: "to")
-  DateTime? to;
-
+class Season extends Document<Season> {
   Season({
-    required this.name,
-    this.teamName,
-    this.from,
-    this.to,
-  });
+    String? id,
+    DocumentSnapshot<Map<String, dynamic>>? snapshot,
+    Map<String, dynamic>? values,
+    CollectionReference<Map<String, dynamic>>? collectionRef,
+    WidgetRef? ref,
+  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
+    matchs = Collection(this, SeasonKey.matchs.value);
+    opponents = Collection(this, SeasonKey.opponents.value);
+    players = Collection(this, SeasonKey.players.value);
 
-  factory Season.fromJson(Map<String, dynamic> json) => _$SeasonFromJson(json);
-
-  Map<String, dynamic> toJson() => _$SeasonToJson(this);
-
-  factory Season.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$SeasonFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
+    init(ref);
   }
+
+  void init(WidgetRef? ref) {
+    firestoreInstance.collection(matchs.ref.path).snapshots().listen((snap) {
+      ref
+          ?.read(matchsProvider.notifier)
+          .state = snap.map((e) => Match(snapshot: e, ref: ref));
+    });
+
+    firestoreInstance.collection(opponents.ref.path).snapshots().listen((snap) {
+      ref
+          ?.read(opponentsProvider.notifier)
+          .state = snap.map((e) => Opponent(snapshot: e));
+    });
+
+    firestoreInstance.collection(players.ref.path).snapshots().listen((snap) {
+      ref
+          ?.read(playersProvider.notifier)
+          .state = snap.map((e) => Player(snapshot: e));
+    });
+  }
+
+  @Field()
+  String? name;
+
+  String getName({String defaultValue = "-"}) => name ?? defaultValue;
+
+  @Field()
+  String? teamName;
+
+  @Field()
+  Timestamp? from;
+
+  @Field()
+  Timestamp? to;
+
+  @SubCollection()
+  late Collection<Match> matchs;
+  final matchsProvider = StateProvider<List<Match>>((_) => []);
+
+  @SubCollection()
+  late Collection<Opponent> opponents;
+  final opponentsProvider = StateProvider<List<Opponent>>((_) => []);
+
+  @SubCollection()
+  late Collection<Player> players;
+  final playersProvider = StateProvider<List<Player>>((_) => []);
 
   @override
-  String toString() => 'Season<$name>';
-}
-
-@JsonSerializable(explicitToJson: true)
-@DateTimeConverter()
-class Match {
-  @JsonKey(ignore: true)
-  String id = "";
-
-  @JsonKey(name: "opponent")
-  @DocumentReferenceConverter()
-  DocumentReference? opponentRef;
-  @JsonKey(name: "date")
-  DateTime? date;
-  @JsonKey(name: "score_opponent")
-  int? scoreOpponent;
-  @JsonKey(ignore: true)
-  int scoreTeam = 0;
-
-  Match({
-    required this.opponentRef,
-    this.date,
-    this.scoreOpponent = 0,
-  });
-
-  factory Match.fromJson(Map<String, dynamic> json) => _$MatchFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MatchToJson(this);
-
-  factory Match.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$MatchFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
-  }
-
-  String resultString() {
-    if (scoreOpponent == null) return "Erreur";
-
-    if (scoreTeam.compareTo(scoreOpponent!).isEven == true) {
-      return "Egalité";
-    } else if (scoreTeam.compareTo(scoreOpponent!).isNegative == true) {
-      return "Défaite";
-    } else {
-      return "Victoire";
-    }
-  }
-
-  Color resultColor() {
-    if (scoreOpponent == null) return Colors.black;
-
-    if (scoreTeam.compareTo(scoreOpponent!).isEven == true) {
-      return Colors.black.withAlpha(150);
-    } else if (scoreTeam.compareTo(scoreOpponent!).isNegative == true) {
-      return Colors.red.withAlpha(150);
-    } else {
-      return Colors.green.withAlpha(150);
-    }
-  }
+  Map<String, dynamic> toData() => _$toData(this);
 
   @override
-  String toString() => 'Match<$date>';
-}
+  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 
-@JsonSerializable(explicitToJson: true)
-@PlayerRoleConverter()
-@DateTimeConverter()
-class Player {
-  @JsonKey(ignore: true)
-  String id = "";
-  @JsonKey(name: "name")
-  String name;
-  @JsonKey(name: "birthdate")
-  DateTime? birthdate;
-  @JsonKey(name: "role")
-  PlayerRoleEnum? role;
+  List<Match> allMatches(WidgetRef ref) => ref.watch(matchsProvider);
 
-  Player({
-    required this.name,
-    this.birthdate,
-    this.role,
-  });
+  List<Match> playedMatchs(WidgetRef ref) => allMatches(ref).where((e) => e.date.hasPassed()).toList();
 
-  factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
+  List<Match> notPlayedMatchs(WidgetRef ref) => allMatches(ref).where((e) => !e.date.hasPassed()).toList();
 
-  Map<String, dynamic> toJson() => _$PlayerToJson(this);
+  List<Goal> allGoalsFor(WidgetRef ref) {
+    return playedMatchs(ref).let((it) {
+      if (it.isEmpty) return <Goal>[];
 
-  factory Player.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$PlayerFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
+      return it.map((e) => ref.watch(e.goalsProvider)).reduce((prev, curr) => [...prev, ...curr]).toList();
+    });
   }
 
-  @override
-  String toString() => 'Player<$name>';
-}
+  int nbMatches(WidgetRef ref) => allMatches(ref).length;
 
-@JsonSerializable(explicitToJson: true)
-class Goal {
-  @JsonKey(ignore: true)
-  String id = "";
-  @JsonKey(name: "scorer")
-  @DocumentReferenceConverter()
-  DocumentReference? scorerRef;
-  @JsonKey(name: "passer")
-  @DocumentReferenceConverter()
-  DocumentReference? passerRef;
-  @JsonKey(name: "time")
-  int? time;
+  int nbNotPlayedMatchs(WidgetRef ref) => notPlayedMatchs(ref).length;
 
-  Goal({
-    required this.scorerRef,
-    required this.passerRef,
-    required this.time,
-  });
+  int nbPlayedMatchs(WidgetRef ref) => playedMatchs(ref).length;
 
-  factory Goal.fromJson(Map<String, dynamic> json) => _$GoalFromJson(json);
+  int nbWins(WidgetRef ref) =>
+      playedMatchs(ref)
+          .where((e) => e.isWon(ref))
+          .length;
 
-  Map<String, dynamic> toJson() => _$GoalToJson(this);
+  int nbLosses(WidgetRef ref) =>
+      playedMatchs(ref)
+          .where((e) => e.isLoss(ref))
+          .length;
 
-  factory Goal.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$GoalFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
+  int nbEvens(WidgetRef ref) =>
+      playedMatchs(ref)
+          .where((e) => e.isEven(ref))
+          .length;
+
+  int nbPoints(WidgetRef ref) => nbWins(ref) * 3 + nbEvens(ref);
+
+  int nbMaxPoints(WidgetRef ref) => nbPlayedMatchs(ref) * 3;
+
+  int nbGoalsFor(WidgetRef ref) => allGoalsFor(ref).length;
+
+  int nbGoalsAgainst(WidgetRef ref) {
+    return playedMatchs(ref).let((it) {
+      if (it.isEmpty) return 0;
+
+      return it.map((e) => e.getScoreOpponent()).reduce((prev, curr) => prev + curr);
+    });
   }
 
-  @override
-  String toString() => 'Goal<${passerRef?.id} -> ${scorerRef?.id}>';
-}
+  double goalsForRatio(WidgetRef ref) => nbGoalsFor(ref) / nbPlayedMatchs(ref);
 
-@JsonSerializable(explicitToJson: true)
-class Substitute {
-  @JsonKey(ignore: true)
-  String id = "";
-  @JsonKey(name: "player_in")
-  @DocumentReferenceConverter()
-  DocumentReference? playerInRef;
-  @JsonKey(name: "player_out")
-  @DocumentReferenceConverter()
-  DocumentReference? playerOutRef;
-  @JsonKey(name: "time")
-  int? time;
+  double goalsAgainstRatio(WidgetRef ref) => nbGoalsAgainst(ref) / nbPlayedMatchs(ref);
 
-  Substitute({
-    required this.playerInRef,
-    required this.playerOutRef,
-    required this.time,
-  });
+  double winsPercent(WidgetRef ref) => nbWins(ref) / nbPlayedMatchs(ref) * 100;
 
-  factory Substitute.fromJson(Map<String, dynamic> json) => _$SubstituteFromJson(json);
+  double pointsPercent(WidgetRef ref) => nbPoints(ref) / nbMaxPoints(ref) * 100;
 
-  Map<String, dynamic> toJson() => _$SubstituteToJson(this);
+  MapEntry<DocumentReference?, int>? bestScorer(WidgetRef ref) {
+    var playedMatchsMapped = playedMatchs(ref).map((e) => ref.watch(e.goalsProvider));
+    if (playedMatchsMapped.isEmpty) return null;
 
-  factory Substitute.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$SubstituteFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
+    var goals = playedMatchsMapped.reduce((prev, curr) {
+      return [...prev, ...curr];
+    });
+    if (goals.isEmpty) return null;
+
+    var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))
+      ..removeWhere((key, value) => key == null);
+    if (scorers.isEmpty) return null;
+
+    var scorersSorted = Map.fromEntries(
+      scorers.entries.toList()
+        ..sort((e1, e2) => e2.value.compareTo(e1.value)),
+    );
+
+    return scorersSorted.entries.first;
   }
 
-  @override
-  String toString() => 'Substitute<${playerOutRef?.id} -> ${playerInRef?.id}>';
-}
+  MapEntry<DocumentReference?, int>? bestPasser(WidgetRef ref) {
+    var playedMatchsMapped = playedMatchs(ref).map((e) => ref.watch(e.goalsProvider));
+    if (playedMatchsMapped.isEmpty) return null;
 
-@JsonSerializable(explicitToJson: true)
-class Opponent {
-  @JsonKey(ignore: true)
-  String id = "";
-  @JsonKey(name: "name")
-  String name;
+    var goals = playedMatchsMapped.reduce((prev, curr) {
+      return [...prev, ...curr];
+    })
+      ..removeWhere((e) => e.passer == null || e.scorer == null);
+    if (goals.isEmpty) return null;
 
-  Opponent({
-    required this.name,
-  });
+    var passers = goals.groupListsBy((e) => e.passer).map((key, value) {
+      return MapEntry(key, value.length);
+    });
+    if (passers.isEmpty) return null;
+    
+    var passersSorted = Map.fromEntries(
+      passers.entries.toList()
+        ..sort((e1, e2) {
+          return e2.value.compareTo(e1.value);
+        }),
+    );
 
-  factory Opponent.fromJson(Map<String, dynamic> json) => _$OpponentFromJson(json);
-
-  Map<String, dynamic> toJson() => _$OpponentToJson(this);
-
-  factory Opponent.fromSnapshot(DocumentSnapshot documentSnapshot) {
-    return _$OpponentFromJson(
-      documentSnapshot.data() as dynamic,
-    )..id = documentSnapshot.id;
+    return passersSorted.entries.first;
   }
 
-  @override
-  String toString() => 'Opponent<$name>';
+  List<Match> lastPlayedMatches(WidgetRef ref, {int take = 1}) {
+    var matchs = List.of(allMatches(ref))
+      ..removeWhere((e) => !e.date.hasPassed())
+      ..sort((e1, e2) {
+        if (e1.date == null || e2.date == null) return 0;
+
+        return e2.date!.compareTo(e1.date!);
+      });
+
+    return matchs.take(take).toList();
+  }
+
+  List<Match>? nextMatches(WidgetRef ref, {int take = 1}) {
+    var matchs = List.of(allMatches(ref))
+      ..removeWhere((e) => e.date.hasPassed(add: const Duration(hours: -2)))
+      ..sort((e1, e2) {
+        if (e1.date == null || e2.date == null) return 0;
+
+        return e1.date!.compareTo(e2.date!);
+      });
+
+    return matchs.isNotEmpty ? matchs.take(take).toList() : null;
+  }
 }

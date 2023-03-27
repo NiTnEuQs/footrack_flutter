@@ -1,10 +1,11 @@
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_player.dart';
-import 'package:footrack_front/database/seasons_store.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/enums/player_status_enum.dart';
+import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/models/player.dart';
 
 class PlayersListPage extends ConsumerStatefulWidget {
   const PlayersListPage({Key? key}) : super(key: key);
@@ -40,127 +41,110 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
 
   @override
   Widget build(BuildContext context) {
-    var players = seasonsRef.doc(ref.read(seasonChoseProvider)?.id).players;
+    var season = ref.watch(seasonChoseProvider);
+    var players = season != null ? ref.watch(season.playersProvider) : <Player>[]
+      ..sort((e1, e2) {
+        switch (_sortIndex) {
+          case 0:
+            {
+              return (_sortAscending ? e2.getName().compareTo(e1.getName()) : e1.getName().compareTo(e2.getName()));
+            }
+          case 1:
+            {
+              var birthday1 = e1.birthdate?.toDateTime() ?? DateTime(1970);
+              var birthday2 = e2.birthdate?.toDateTime() ?? DateTime(1970);
+              return (_sortAscending ? birthday2.compareTo(birthday1) : birthday1.compareTo(birthday2));
+            }
+          case 2:
+            {
+              return (_sortAscending ? e2.getStatus().format().compareTo(e1.getStatus().format()) : e1.getStatus().format().compareTo(e2.getStatus().format()));
+            }
+          case 3:
+            {
+              return (_sortAscending ? e2.getRole().format().compareTo(e1.getRole().format()) : e1.getRole().format().compareTo(e2.getRole().format()));
+            }
+          default:
+            return e1.getName().compareTo(e2.getName());
+        }
+      });
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Joueurs"),
+        title: const Text("Vos joueurs"),
       ),
-      body: FirestoreBuilder(
-        ref: players,
-        builder: (context, AsyncSnapshot<PlayerQuerySnapshot> playerQuerySnapshot, Widget? child) {
-          if (playerQuerySnapshot.hasError) {
-            debugPrint(playerQuerySnapshot.error.toString());
-            return const Center(child: Text('Erreur'));
-          }
-
-          if (!playerQuerySnapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          var docs = playerQuerySnapshot.requireData.docs
-            ..sort((a, b) {
-              String nameA = a.data.name;
-              String nameB = b.data.name;
-
-              switch (_sortIndex) {
-                case 0:
-                  {
-                    return _sortAscending ? nameB.compareTo(nameA) : nameA.compareTo(nameB);
-                  }
-                default:
-                  return nameB.compareTo(nameA);
-              }
-            });
-
-          return docs.isEmpty
-              ? const Center(child: Text("Aucun joueur"))
-              : SingleChildScrollView(
-                  child: DataTable(
-                    sortAscending: _sortAscending,
-                    sortColumnIndex: _sortIndex,
-                    headingRowHeight: 35,
-                    headingTextStyle: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    columnSpacing: 16,
-                    columns: [
-                      DataColumn(
-                        label: const Text("Joueur"),
-                        onSort: (index, sorted) {
-                          setState(() {
-                            _sortAscending = _sortIndex == 0 ? !_sortAscending : false;
-                            _sortIndex = 0;
-                          });
-                        },
-                      ),
-                      const DataColumn(
-                        label: Text("A"),
-                        numeric: true,
-                        // onSort: (index, sorted) {
-                        //   setState(() {
-                        //     _sortAscending = _sortIndex == 1 ? !_sortAscending : false;
-                        //     _sortIndex = 1;
-                        //   });
-                        // },
-                      ),
-                      const DataColumn(
-                        label: Text("B"),
-                        numeric: true,
-                        // onSort: (index, sorted) {
-                        //   setState(() {
-                        //     _sortAscending = _sortIndex == 2 ? !_sortAscending : false;
-                        //     _sortIndex = 2;
-                        //   });
-                        // },
-                      ),
-                      const DataColumn(
-                        label: Text("P"),
-                        numeric: true,
-                        // onSort: (index, sorted) {
-                        //   setState(() {
-                        //     _sortAscending = _sortIndex == 3 ? !_sortAscending : false;
-                        //     _sortIndex = 3;
-                        //   });
-                        // },
-                      ),
-                    ],
-                    rows: List.of(docs).map((PlayerQueryDocumentSnapshot e) {
-                      Player player = e.toModel();
-
-                      return DataRow(
-                        cells: [
-                          DataCell(
-                            Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(player.name),
-                                Text(
-                                  player.role.format(),
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          DataCell(Text(player.name.length.toString())),
-                          DataCell(Text((player.name.length - 1).toString())),
-                          DataCell(Text((player.name.length - 2).toString())),
-                        ],
-                        onLongPress: () {
-                          _editPlayer(player);
-                        },
-                      );
-                    }).toList(),
+      body: players.isEmpty
+          ? const Center(child: Text("Aucun joueur"))
+          : SingleChildScrollView(
+              child: DataTable(
+                showCheckboxColumn: false,
+                sortAscending: _sortAscending,
+                sortColumnIndex: _sortIndex,
+                headingRowHeight: 35,
+                headingTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                columnSpacing: 16,
+                columns: [
+                  DataColumn(
+                    label: Text("Joueur (${players.length})"),
+                    onSort: (index, sorted) {
+                      int columnIndex = 0;
+                      setState(() {
+                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
+                        _sortIndex = columnIndex;
+                      });
+                    },
                   ),
-                );
-        },
-      ),
+                  DataColumn(
+                    label: const Text("Naissance"),
+                    numeric: true,
+                    onSort: (index, sorted) {
+                      int columnIndex = 1;
+                      setState(() {
+                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
+                        _sortIndex = columnIndex;
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("Status"),
+                    numeric: true,
+                    onSort: (index, sorted) {
+                      int columnIndex = 2;
+                      setState(() {
+                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
+                        _sortIndex = columnIndex;
+                      });
+                    },
+                  ),
+                  DataColumn(
+                    label: const Text("Rôle"),
+                    numeric: true,
+                    onSort: (index, sorted) {
+                      int columnIndex = 3;
+                      setState(() {
+                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
+                        _sortIndex = columnIndex;
+                      });
+                    },
+                  ),
+                ],
+                rows: List.of(players).map((player) {
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(player.getName())),
+                      DataCell(Text(player.birthdate.toDateTime().format())),
+                      DataCell(player.getStatus().icon()),
+                      DataCell(player.getRole().icon()),
+                    ],
+                    onLongPress: () {
+                      _editPlayer(player);
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addPlayer,
         tooltip: 'Ajouter un joueur',
