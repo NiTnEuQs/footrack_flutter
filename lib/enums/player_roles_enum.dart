@@ -1,32 +1,31 @@
+import 'package:flutter/material.dart';
+
 enum PlayerRoleEnum {
   none,
   delegate,
-  goalkeeper,
-  defender,
-  midfield,
-  attacker,
-  polyvalent;
+  player,
 }
 
 extension PlayerRoleEnumExtension on PlayerRoleEnum? {
   String format() {
     switch (this) {
-      case PlayerRoleEnum.none:
-        return "Pas de rôle";
       case PlayerRoleEnum.delegate:
         return "Délégué";
-      case PlayerRoleEnum.goalkeeper:
-        return "Gardien";
-      case PlayerRoleEnum.defender:
-        return "Défenseur";
-      case PlayerRoleEnum.midfield:
-        return "Milieu";
-      case PlayerRoleEnum.attacker:
-        return "Attaquant";
-      case PlayerRoleEnum.polyvalent:
-        return "Polyvalent";
+      case PlayerRoleEnum.player:
+        return "Joueur";
       default:
-        return "Inconnu";
+        return "Pas de rôle";
+    }
+  }
+
+  Icon icon() {
+    switch (this) {
+      case PlayerRoleEnum.delegate:
+        return const Icon(Icons.shield, color: Colors.amber);
+      case PlayerRoleEnum.player:
+        return const Icon(Icons.sports_soccer, color: Colors.lightGreen);
+      default:
+        return const Icon(Icons.question_mark, color: Colors.red);
     }
   }
 }

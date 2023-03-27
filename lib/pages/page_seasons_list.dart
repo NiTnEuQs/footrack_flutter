@@ -1,10 +1,12 @@
-import 'package:async/async.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
+import 'dart:async';
+
+import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_season.dart';
-import 'package:footrack_front/database/seasons_store.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/managers/package_manager.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/pages/page_season_dashboard.dart';
 
@@ -16,6 +18,8 @@ class SeasonsListPage extends ConsumerStatefulWidget {
 }
 
 class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
+  late StreamSubscription disposeSeasons;
+
   void _addSeason() {
     showDialog(
       context: context,
@@ -49,136 +53,105 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    disposeSeasons = firestoreInstance.collection("seasons").snapshots().listen((snap) {
+      ref.read(seasonsProvider.notifier).state = snap.docs.map((e) => Season(snapshot: e, ref: ref)).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    disposeSeasons.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var version = PackageManager.packageInfo.version;
+    var seasons = ref.watch(seasonsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Saisons"),
+        title: const Text("Vos saisons"),
       ),
-      body: FirestoreBuilder(
-        ref: seasonsRef.orderByFrom(descending: true),
-        builder: (context, AsyncSnapshot<SeasonQuerySnapshot> seasonQuerySnapshot, Widget? child) {
-          if (seasonQuerySnapshot.hasError) {
-            debugPrint(seasonQuerySnapshot.error.toString());
-            return const Center(child: Text('Erreur'));
-          }
-
-          if (!seasonQuerySnapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          var docs = seasonQuerySnapshot.requireData.docs;
-
-          return docs.isEmpty
-              ? const Center(child: Text("Aucune saison"))
-              : SingleChildScrollView(
-                  child: DataTable(
-                      showCheckboxColumn: false,
-                      headingRowHeight: 35,
-                      headingTextStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      columns: const [
-                        DataColumn(label: Text("Saison")),
-                        DataColumn(label: Text("Buts"), numeric: true),
-                      ],
-                      rows: List.of(docs).map((SeasonQueryDocumentSnapshot e) {
-                        Season season = e.toModel();
-                        var matchsRef = seasonsRef.doc(season.id).matchs;
-
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(season.name),
-                                  Text(
-                                    "${season.from.format()}${season.to != null ? " - " : ""}${season.to.format()}",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            DataCell(
-                              FirestoreBuilder(
-                                ref: matchsRef,
-                                builder: (context, AsyncSnapshot<MatchQuerySnapshot> matchQuerySnapshot, Widget? child) {
-                                  if (matchQuerySnapshot.hasError) {
-                                    debugPrint(matchQuerySnapshot.error.toString());
-                                    return const Center(child: Text("Erreur"));
-                                  }
-
-                                  if (!matchQuerySnapshot.hasData) {
-                                    return const Center(
-                                      child: SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    );
-                                  }
-
-                                  var matchDocs = matchQuerySnapshot.requireData.docs;
-
-                                  if (matchDocs.isEmpty) return const Text("0");
-
-                                  var goalsStream = StreamZip(matchDocs.map(
-                                    (e) => e.reference.goals.snapshots(),
-                                  ));
-
-                                  return StreamBuilder(
-                                    stream: goalsStream,
-                                    builder: (context, AsyncSnapshot<List<GoalQuerySnapshot>> goalsQuerySnapshot) {
-                                      if (goalsQuerySnapshot.hasError) {
-                                        debugPrint(goalsQuerySnapshot.error.toString());
-                                        return const Center(child: Text("Erreur"));
-                                      }
-
-                                      if (!goalsQuerySnapshot.hasData) {
-                                        return const Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        );
-                                      }
-
-                                      int goals = 0;
-
-                                      for (var goalQuerySnapshot in goalsQuerySnapshot.requireData) {
-                                        goals += goalQuerySnapshot.docs.length;
-                                      }
-
-                                      return Text(goals.toString());
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
+      body: Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: seasons.isEmpty
+                  ? const Center(child: Text("Aucune saison"))
+                  : SingleChildScrollView(
+                      child: DataTable(
+                          showCheckboxColumn: false,
+                          headingRowHeight: 35,
+                          headingTextStyle: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          columnSpacing: 16,
+                          columns: [
+                            DataColumn(label: Text("Saison (${seasons.length})")),
+                            const DataColumn(label: Text("Matchs"), numeric: true),
+                            const DataColumn(label: Text("BP"), numeric: true),
+                            const DataColumn(label: Text("BC"), numeric: true),
                           ],
-                          onSelectChanged: (selected) {
-                            _openSeason(season);
-                          },
-                          onLongPress: () {
-                            _editSeason(season);
-                          },
-                        );
-                      }).toList()),
-                );
-        },
+                          rows: List.of(seasons).map((season) {
+                            return DataRow(
+                              cells: [
+                                DataCell(seasonColumn(season)),
+                                DataCell(Text("${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}")),
+                                DataCell(Text(season.nbGoalsFor(ref).toString())),
+                                DataCell(Text(season.nbGoalsAgainst(ref).toString())),
+                              ],
+                              onSelectChanged: (selected) {
+                                _openSeason(season);
+                              },
+                              onLongPress: () {
+                                _editSeason(season);
+                              },
+                            );
+                          }).toList()),
+                    ),
+            ),
+            Text(
+              "Version $version",
+              style: const TextStyle(color: Colors.black45),
+            )
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addSeason,
         tooltip: 'Créer une saison',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Column seasonColumn(Season season) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          season.getName(),
+          style: const TextStyle(
+            overflow: TextOverflow.clip,
+          ),
+        ),
+        Text(
+          "${season.from.toDateTime().format()}${season.to != null ? " - " : ""}${season.to.toDateTime().format()}",
+          style: const TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }

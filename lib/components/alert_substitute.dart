@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
+import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/seasons_store.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/models/substitute.dart';
+import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
 
-class AddSubstituteAlert extends StatefulWidget {
-  AddSubstituteAlert({
+class AlertSubstitute extends StatefulWidget {
+  const AlertSubstitute({
     Key? key,
     required this.ref,
     this.substitute,
@@ -17,10 +18,10 @@ class AddSubstituteAlert extends StatefulWidget {
   final Substitute? substitute;
 
   @override
-  State<AddSubstituteAlert> createState() => _AddSubstituteAlertState();
+  State<AlertSubstitute> createState() => _AlertSubstituteState();
 }
 
-class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
+class _AlertSubstituteState extends State<AlertSubstitute> {
   final TextEditingController _substituteTimeController = TextEditingController();
 
   String? _playerInRefPath;
@@ -31,8 +32,8 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
   void initState() {
     super.initState();
     if (widget.substitute != null) {
-      _playerInRefPath = widget.substitute!.playerInRef?.path;
-      _playerOutRefPath = widget.substitute!.playerOutRef?.path;
+      _playerInRefPath = widget.substitute!.playerIn?.path;
+      _playerOutRefPath = widget.substitute!.playerOut?.path;
       _timeSubstitution = widget.substitute!.time;
 
       _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
@@ -41,6 +42,8 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
 
   @override
   Widget build(BuildContext context) {
+    var players = widget.ref.read(seasonChoseProvider)?.players;
+
     return AlertDialog(
       title: Text(widget.substitute != null ? "Modifier le remplacement" : "Ajouter un remplacement"),
       content: Column(
@@ -69,44 +72,44 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
               const Icon(Icons.arrow_forward, color: Colors.green),
               const SizedBox(width: 8),
               Expanded(
-                child: FirestoreBuilder(
-                    ref: seasonsRef.doc(widget.ref.read(seasonChoseProvider)?.id).players,
-                    builder: (context, AsyncSnapshot<PlayerQuerySnapshot> snapshot, child) {
-                      if (snapshot.hasError) {
-                        return const Center(child: Text("Erreur"));
-                      }
-
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text("Loading ..."));
-                      }
-
-                      List<Pair<String, String>> playersInList = List<PlayerQueryDocumentSnapshot>.from(snapshot.requireData.docs)
-                          .map((e) => Pair(e.reference.path, e.data.name))
-                          .toList()
-                        ..sort((a, b) => a.second?.compareTo(b.second ?? "") ?? 0);
-
-                      if (widget.substitute == null && playersInList.isNotEmpty) {
-                        _playerInRefPath ??= playersInList.first.first;
-                      }
-
-                      return DropdownButton(
-                        isExpanded: true,
-                        value: _playerInRefPath,
-                        items: playersInList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                          return DropdownMenuItem<String>(
-                            value: value.first,
-                            child: Text(value.second ?? ""),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              _playerInRefPath = value;
-                            });
+                child: players == null
+                    ? const Text("Une erreur est survenue")
+                    : FutureBuilder(
+                        future: firestoreInstance.collection(players.path).get(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Center(child: Text("Erreur"));
                           }
-                        },
-                      );
-                    }),
+
+                          if (!snapshot.hasData) {
+                            return const Center(child: Text("Loading ..."));
+                          }
+
+                          List<Pair<String, String>>? playersInList =
+                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()?..sort(comparePairSecond);
+
+                          if (widget.substitute == null) {
+                            _playerInRefPath ??= playersInList?.first.first;
+                          }
+
+                          return DropdownButton(
+                            isExpanded: true,
+                            value: _playerInRefPath,
+                            items: playersInList?.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                              return DropdownMenuItem<String>(
+                                value: value.first,
+                                child: Text(value.second ?? ""),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                setState(() {
+                                  _playerInRefPath = value;
+                                });
+                              }
+                            },
+                          );
+                        }),
               ),
             ],
           ),
@@ -115,44 +118,44 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
               const Icon(Icons.arrow_back, color: Colors.red),
               const SizedBox(width: 8),
               Expanded(
-                child: FirestoreBuilder(
-                    ref: seasonsRef.doc(widget.ref.read(seasonChoseProvider)?.id).players,
-                    builder: (context, AsyncSnapshot<PlayerQuerySnapshot> snapshot, child) {
-                      if (snapshot.hasError) {
-                        return const Center(child: Text("Erreur"));
-                      }
-
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text("Loading ..."));
-                      }
-
-                      List<Pair<String, String>> playersOutList = List<PlayerQueryDocumentSnapshot>.from(snapshot.requireData.docs)
-                          .map((e) => Pair(e.reference.path, e.data.name))
-                          .toList()
-                        ..sort((a, b) => a.second?.compareTo(b.second ?? "") ?? 0);
-
-                      if (widget.substitute == null && playersOutList.length >= 2) {
-                        _playerOutRefPath ??= playersOutList[1].first;
-                      }
-
-                      return DropdownButton(
-                        isExpanded: true,
-                        value: _playerOutRefPath,
-                        items: playersOutList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                          return DropdownMenuItem<String>(
-                            value: value.first,
-                            child: Text(value.second ?? ""),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              _playerOutRefPath = value;
-                            });
+                child: players == null
+                    ? const Text("Une erreur est survenue")
+                    : FutureBuilder(
+                        future: firestoreInstance.collection(players.path).get(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Center(child: Text("Erreur"));
                           }
-                        },
-                      );
-                    }),
+
+                          if (!snapshot.hasData) {
+                            return const Center(child: Text("Loading ..."));
+                          }
+
+                          List<Pair<String, String>>? playersOutList =
+                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()?..sort(comparePairSecond);
+
+                          if (widget.substitute == null) {
+                            _playerOutRefPath ??= playersOutList?.first.first;
+                          }
+
+                          return DropdownButton(
+                            isExpanded: true,
+                            value: _playerOutRefPath,
+                            items: playersOutList?.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                              return DropdownMenuItem<String>(
+                                value: value.first,
+                                child: Text(value.second ?? ""),
+                              );
+                            }).toList(),
+                            onChanged: (String? value) {
+                              if (value != null) {
+                                setState(() {
+                                  _playerOutRefPath = value;
+                                });
+                              }
+                            },
+                          );
+                        }),
               ),
             ],
           ),
@@ -178,7 +181,7 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
                       ElevatedButton(
                         onPressed: () {
                           widget.ref
-                              .watch(seasonsProvider)
+                              .read(dbProvider)
                               .removeSubstitute(widget.ref.read(seasonChoseProvider)?.id, widget.ref.read(matchChoseProvider)?.id, widget.substitute!.id);
 
                           Navigator.pop(context);
@@ -208,21 +211,20 @@ class _AddSubstituteAlertState extends State<AddSubstituteAlert> {
           ),
         ElevatedButton(
           onPressed: () {
-            Substitute substitute = Substitute(
-              playerInRef: _playerInRefPath != null ? FirebaseFirestore.instance.doc(_playerInRefPath!) : null,
-              playerOutRef: _playerOutRefPath != null ? FirebaseFirestore.instance.doc(_playerOutRefPath!) : null,
-              time: _timeSubstitution,
-            );
+            var substitute = Substitute()
+              ..playerIn = _playerInRefPath != null ? FirebaseFirestore.instance.doc(_playerInRefPath!) : null
+              ..playerOut = _playerOutRefPath != null ? FirebaseFirestore.instance.doc(_playerOutRefPath!) : null
+              ..time = _timeSubstitution;
 
             if (widget.substitute != null) {
-              widget.ref.read(seasonsProvider).editSubstitute(
+              widget.ref.read(dbProvider).editSubstitute(
                     widget.ref.read(seasonChoseProvider)?.id,
                     widget.ref.read(matchChoseProvider)?.id,
                     widget.substitute!.id,
                     substitute,
                   );
             } else {
-              widget.ref.read(seasonsProvider).addNewSubstitute(
+              widget.ref.read(dbProvider).addNewSubstitute(
                     widget.ref.read(seasonChoseProvider)?.id,
                     widget.ref.read(matchChoseProvider)?.id,
                     substitute,

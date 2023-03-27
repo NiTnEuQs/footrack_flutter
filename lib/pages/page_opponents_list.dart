@@ -1,9 +1,8 @@
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_opponent.dart';
-import 'package:footrack_front/database/seasons_store.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/models/opponent.dart';
 
 class OpponentsListPage extends ConsumerStatefulWidget {
   const OpponentsListPage({Key? key}) : super(key: key);
@@ -13,6 +12,9 @@ class OpponentsListPage extends ConsumerStatefulWidget {
 }
 
 class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
+  bool _sortAscending = false;
+  int _sortIndex = 0;
+
   void _addOpponent() {
     showDialog(
       context: context,
@@ -36,59 +38,57 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    var opponents = seasonsRef.doc(ref.read(seasonChoseProvider)?.id).opponents;
+    var season = ref.watch(seasonChoseProvider);
+    var opponents = season != null ? ref.watch(season.opponentsProvider) : <Opponent>[]
+      ..sort((e1, e2) {
+        switch (_sortIndex) {
+          case 0:
+            {
+              return (_sortAscending ? e2.getName().compareTo(e1.getName()) : e1.getName().compareTo(e2.getName()));
+            }
+          default:
+            return e1.getName().compareTo(e2.getName());
+        }
+      });
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Adversaires"),
+        title: const Text("Vos adversaires"),
       ),
-      body: FirestoreBuilder(
-        ref: opponents,
-        builder: (context, AsyncSnapshot<OpponentQuerySnapshot> opponentQuerySnapshot, Widget? child) {
-          if (opponentQuerySnapshot.hasError) {
-            debugPrint(opponentQuerySnapshot.error.toString());
-            return const Center(child: Text('Erreur'));
-          }
-
-          if (!opponentQuerySnapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          var docs = opponentQuerySnapshot.requireData.docs
-            ..sort((a, b) {
-              String nameA = a.data.name;
-              String nameB = b.data.name;
-              return nameA.compareTo(nameB);
-            });
-
-          return docs.isEmpty
-              ? const Center(child: Text("Aucun adversaire"))
-              : SingleChildScrollView(
-                  child: DataTable(
-                      showCheckboxColumn: false,
-                      headingRowHeight: 35,
-                      headingTextStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      columns: const [
-                        DataColumn(label: Text("Adversaire")),
+      body: opponents.isEmpty
+          ? const Center(child: Text("Aucun adversaire"))
+          : SingleChildScrollView(
+              child: DataTable(
+                  sortAscending: _sortAscending,
+                  sortColumnIndex: _sortIndex,
+                  headingRowHeight: 35,
+                  headingTextStyle: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  columnSpacing: 16,
+                  columns: [
+                    DataColumn(
+                      label: Text("Adversaire (${opponents.length})"),
+                      onSort: (index, sorted) {
+                        setState(() {
+                          _sortAscending = _sortIndex == 0 ? !_sortAscending : false;
+                          _sortIndex = 0;
+                        });
+                      },
+                    ),
+                  ],
+                  rows: List.of(opponents).map((opponent) {
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(opponent.getName())),
                       ],
-                      rows: List.of(docs).map((OpponentQueryDocumentSnapshot e) {
-                        Opponent opponent = e.toModel();
-
-                        return DataRow(
-                          cells: [
-                            DataCell(Text(opponent.name)),
-                          ],
-                          onLongPress: () {
-                            _editOpponent(opponent);
-                          },
-                        );
-                      }).toList()),
-                );
-        },
-      ),
+                      onLongPress: () {
+                        _editOpponent(opponent);
+                      },
+                    );
+                  }).toList()),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addOpponent,
         tooltip: 'Ajouter un adversaire',

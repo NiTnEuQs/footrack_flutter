@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/seasons_store.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/enums/player_status_enum.dart';
+import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/utils/pickers.dart';
 
 class AlertPlayer extends StatefulWidget {
-  AlertPlayer({
+  const AlertPlayer({
     Key? key,
     required this.ref,
     this.player,
@@ -20,15 +23,22 @@ class AlertPlayer extends StatefulWidget {
 
 class _AlertPlayerState extends State<AlertPlayer> {
   final TextEditingController _playerNameController = TextEditingController();
+  final TextEditingController _playerBirthdateController = TextEditingController();
 
   PlayerRoleEnum? _playerRole = PlayerRoleEnum.none;
+  PlayerStatusEnum? _playerStatus = PlayerStatusEnum.none;
+  DateTime? _birthdatePicked;
 
   @override
   void initState() {
     super.initState();
     if (widget.player != null) {
-      _playerNameController.text = widget.player!.name;
-      _playerRole = widget.player!.role!;
+      _birthdatePicked = widget.player!.birthdate.toDateTime();
+
+      _playerNameController.text = widget.player!.getName();
+      _playerBirthdateController.text = _birthdatePicked.format();
+      _playerRole = widget.player!.getRole();
+      _playerStatus = widget.player!.getStatus();
     }
   }
 
@@ -55,7 +65,30 @@ class _AlertPlayerState extends State<AlertPlayer> {
           ),
           Row(
             children: [
-              const Icon(Icons.label_important),
+              const Icon(Icons.calendar_month),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  controller: _playerBirthdateController,
+                  decoration: const InputDecoration(
+                    hintText: "Date de naissance",
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    datePicker(context).then((value) {
+                      if (value != null) {
+                        _birthdatePicked = value;
+                        _playerBirthdateController.text = value.format();
+                      }
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(Icons.label_important, color: Colors.amber),
               const SizedBox(width: 8),
               Expanded(
                 child: DropdownButton(
@@ -76,6 +109,29 @@ class _AlertPlayerState extends State<AlertPlayer> {
               ),
             ],
           ),
+          Row(
+            children: [
+              const Icon(Icons.add_circle, color: Colors.lightGreen),
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButton(
+                  isExpanded: true,
+                  value: _playerStatus,
+                  items: List<PlayerStatusEnum>.from(PlayerStatusEnum.values).map<DropdownMenuItem<PlayerStatusEnum>>((PlayerStatusEnum value) {
+                    return DropdownMenuItem<PlayerStatusEnum>(
+                      value: value,
+                      child: Text(value.format()),
+                    );
+                  }).toList(),
+                  onChanged: (PlayerStatusEnum? value) {
+                    setState(() {
+                      _playerStatus = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
       ),
       actions: [
@@ -89,7 +145,7 @@ class _AlertPlayerState extends State<AlertPlayer> {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text("Êtes-vous sûr de vouloir supprimer le joueur ?"),
-                    content: Text(widget.player!.name),
+                    content: Text(widget.player!.getName()),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -98,7 +154,7 @@ class _AlertPlayerState extends State<AlertPlayer> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref.watch(seasonsProvider).removePlayer(
+                          widget.ref.read(dbProvider).removePlayer(
                                 widget.ref.read(seasonChoseProvider)?.id,
                                 widget.player!.id,
                               );
@@ -130,23 +186,16 @@ class _AlertPlayerState extends State<AlertPlayer> {
           ),
         ElevatedButton(
           onPressed: () {
+            var value = Player()
+              ..name = _playerNameController.value.text
+              ..birthdate = _birthdatePicked.toTimestamp()
+              ..role = _playerRole?.name
+              ..status = _playerStatus?.name;
+
             if (widget.player != null) {
-              widget.ref.read(seasonsProvider).editPlayer(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    widget.player!.id,
-                    Player(
-                      name: _playerNameController.value.text,
-                      role: _playerRole,
-                    ),
-                  );
+              widget.ref.read(dbProvider).editPlayer(widget.ref.read(seasonChoseProvider)?.id, widget.player!.id, value);
             } else {
-              widget.ref.read(seasonsProvider).addNewPlayer(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    Player(
-                      name: _playerNameController.value.text,
-                      role: _playerRole,
-                    ),
-                  );
+              widget.ref.read(dbProvider).addNewPlayer(widget.ref.read(seasonChoseProvider)?.id, value);
             }
 
             Navigator.pop(context);

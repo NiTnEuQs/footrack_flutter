@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/seasons_store.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/utils/pickers.dart';
 
-class AlertSeason extends StatelessWidget {
-  AlertSeason({
+class AlertSeason extends StatefulWidget {
+  const AlertSeason({
     Key? key,
     required this.ref,
     this.season,
@@ -15,23 +15,28 @@ class AlertSeason extends StatelessWidget {
   final WidgetRef ref;
   final Season? season;
 
+  @override
+  State<AlertSeason> createState() => _AlertSeasonState();
+}
+
+class _AlertSeasonState extends State<AlertSeason> {
   final TextEditingController _seasonNameController = TextEditingController();
   final TextEditingController _seasonTeamNameController = TextEditingController();
   final TextEditingController _seasonDateStartController = TextEditingController();
   final TextEditingController _seasonDateEndController = TextEditingController();
 
-  DateTime? dateStartPicked;
-  DateTime? dateEndPicked;
+  DateTime? _dateStartPicked;
+  DateTime? _dateEndPicked;
 
   _initState() {
-    if (season != null) {
-      _seasonNameController.text = season!.name;
-      _seasonTeamNameController.text = season!.teamName ?? "";
-      _seasonDateStartController.text = season!.from.format();
-      _seasonDateEndController.text = season!.to.format();
+    if (widget.season != null) {
+      _seasonNameController.text = widget.season!.getName();
+      _seasonTeamNameController.text = widget.season!.teamName ?? "";
+      _seasonDateStartController.text = widget.season!.from.toDateTime().format();
+      _seasonDateEndController.text = widget.season!.to.toDateTime().format();
 
-      dateStartPicked = season!.from;
-      dateEndPicked = season!.to;
+      _dateStartPicked = widget.season!.from.toDateTime();
+      _dateEndPicked = widget.season!.to.toDateTime();
     }
   }
 
@@ -40,7 +45,7 @@ class AlertSeason extends StatelessWidget {
     _initState();
 
     return AlertDialog(
-      title: Text(season != null ? "Modifier votre saison" : "Créer votre saison"),
+      title: Text(widget.season != null ? "Modifier votre saison" : "Créer votre saison"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -67,7 +72,7 @@ class AlertSeason extends StatelessWidget {
                 (value) => {
                   if (value != null)
                     {
-                      dateStartPicked = value,
+                      _dateStartPicked = value,
                       _seasonDateStartController.text = value.format(),
                     }
                 },
@@ -85,7 +90,7 @@ class AlertSeason extends StatelessWidget {
                 (value) => {
                   if (value != null)
                     {
-                      dateEndPicked = value,
+                      _dateEndPicked = value,
                       _seasonDateEndController.text = value.format(),
                     }
                 },
@@ -95,7 +100,7 @@ class AlertSeason extends StatelessWidget {
         ],
       ),
       actions: [
-        if (season != null)
+        if (widget.season != null)
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -105,7 +110,7 @@ class AlertSeason extends StatelessWidget {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text("Êtes-vous sûr de vouloir supprimer la saison ?"),
-                    content: Text(season!.name),
+                    content: Text(widget.season!.getName()),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -114,7 +119,7 @@ class AlertSeason extends StatelessWidget {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          ref.watch(seasonsProvider).removeSeason(season!.id);
+                          widget.ref.read(dbProvider).removeSeason(widget.season!.id);
 
                           Navigator.pop(context);
                         },
@@ -143,30 +148,24 @@ class AlertSeason extends StatelessWidget {
           ),
         ElevatedButton(
           onPressed: () {
-            if (season != null) {
-              ref.read(seasonsProvider).editSeason(
-                    Season(
-                      name: _seasonNameController.value.text,
-                      teamName: _seasonTeamNameController.value.text,
-                      from: dateStartPicked,
-                      to: dateEndPicked,
-                    ),
-                    season!.id,
+            var value = Season()
+              ..name = _seasonNameController.value.text
+              ..teamName = _seasonTeamNameController.value.text
+              ..from = _dateStartPicked.toTimestamp()
+              ..to = _dateEndPicked.toTimestamp();
+
+            if (widget.season != null) {
+              widget.ref.read(dbProvider).editSeason(
+                    value,
+                    widget.season!.id,
                   );
             } else {
-              ref.read(seasonsProvider).addNewSeason(
-                    Season(
-                      name: _seasonNameController.value.text,
-                      teamName: _seasonTeamNameController.value.text,
-                      from: dateStartPicked,
-                      to: dateEndPicked,
-                    ),
-                  );
+              widget.ref.read(dbProvider).addNewSeason(value);
             }
 
             Navigator.pop(context);
           },
-          child: Text(season != null ? "Modifier" : "Créer"),
+          child: Text(widget.season != null ? "Modifier" : "Créer"),
         ),
       ],
     );

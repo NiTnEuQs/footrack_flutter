@@ -45,7 +45,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.krynit.footrack"
         minSdkVersion localProperties.getProperty("flutter.minSdkVersion").toInteger()
         targetSdkVersion localProperties.getProperty("flutter.targetSdkVersion").toInteger()
@@ -55,10 +54,33 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
+    }
+
+    signingConfigs {
+        release {
+            storeFile rootProject.file("app/android.keystore")
+            storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("APPCENTER_KEY_ALIAS")
+            keyPassword System.getenv("APPCENTER_KEY_PASSWORD")
+        }
+    }
+
+    flavorDimensions "distribute"
+    productFlavors {
+        appCenter {
+            dimension "distribute"
+        }
+
+        googlePlay {
+            dimension "distribute"
+        }
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+//        checkReleaseBuilds false
     }
 }
 

@@ -1,9 +1,9 @@
-gradle-wrapper.jar
+#gradle-wrapper.jar # Removed for AppCenter distribution
 /.gradle
 /captures/
-/gradlew
-/gradlew.bat
-/local.properties
+#/gradlew # Removed for AppCenter distribution
+#/gradlew.bat # Removed for AppCenter distribution
+#/local.properties # Removed for AppCenter distribution
 GeneratedPluginRegistrant.java
 
 # Remember to never publicly share your keystore.

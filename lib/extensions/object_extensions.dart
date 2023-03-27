@@ -1,3 +1,7 @@
+extension ObjectExtension<T> on T {
+  R let<R>(R Function(T it) op) => op(this);
+}
+
 extension ObjectFormatting on Comparable? {
   int compare(Comparable? o, {bool nullIsFirst = false}) {
     if (this == null) {
