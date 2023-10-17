@@ -67,16 +67,17 @@ android {
         }
     }
 
-    flavorDimensions "distribute"
-    productFlavors {
-        appCenter {
-            dimension "distribute"
-        }
-
-        googlePlay {
-            dimension "distribute"
-        }
-    }
+    // TODO For appcenter
+//    flavorDimensions "distribute"
+//    productFlavors {
+//        appCenter {
+//            dimension "distribute"
+//        }
+//
+//        googlePlay {
+//            dimension "distribute"
+//        }
+//    }
 
     lintOptions {
         disable 'InvalidPackage'

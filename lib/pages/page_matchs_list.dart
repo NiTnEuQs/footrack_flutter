@@ -16,7 +16,7 @@ class MatchsListPage extends ConsumerStatefulWidget {
 
 class _MatchsListPageState extends ConsumerState<MatchsListPage> {
   bool _sortAscending = true;
-  int _sortIndex = 1;
+  int _sortIndex = 0;
 
   void _addMatch() {
     showDialog(
@@ -56,14 +56,14 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
     var matchs = season != null ? ref.watch(season.matchsProvider) : <Match>[]
       ..sort((e1, e2) {
         switch (_sortIndex) {
-          case 2:
+          case 1:
             {
               int? scoreA = e1.getTotalScoreTeam(ref);
               int? scoreB = e2.getTotalScoreTeam(ref);
 
               return _sortAscending ? scoreB.compare(scoreA) : scoreA.compare(scoreB);
             }
-          case 3:
+          case 2:
             {
               int? scoreA = e1.getScoreOpponent();
               int? scoreB = e2.getScoreOpponent();
@@ -109,7 +109,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                   DataColumn(
                     label: const Text("Adversaire"),
                     onSort: (index, sorted) {
-                      int columnIndex = 1;
+                      int columnIndex = 0;
                       setState(() {
                         _sortAscending = _sortIndex == columnIndex ? !_sortAscending : true;
                         _sortIndex = columnIndex;
@@ -120,7 +120,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     label: const Text("BP"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 2;
+                      int columnIndex = 1;
                       setState(() {
                         _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
                         _sortIndex = columnIndex;
@@ -131,7 +131,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     label: const Text("BC"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 3;
+                      int columnIndex = 2;
                       setState(() {
                         _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
                         _sortIndex = columnIndex;

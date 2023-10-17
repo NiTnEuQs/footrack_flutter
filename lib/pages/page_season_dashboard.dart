@@ -170,7 +170,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   ),
                                   const SizedBox(width: 16.0),
                                   Text(
-                                    "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${5 * 3}",
+                                    "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3}",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

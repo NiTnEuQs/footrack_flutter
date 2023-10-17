@@ -29,21 +29,15 @@ class Season extends Document<Season> {
 
   void init(WidgetRef? ref) {
     firestoreInstance.collection(matchs.ref.path).snapshots().listen((snap) {
-      ref
-          ?.read(matchsProvider.notifier)
-          .state = snap.map((e) => Match(snapshot: e, ref: ref));
+      ref?.read(matchsProvider.notifier).state = snap.map((e) => Match(snapshot: e, ref: ref));
     });
 
     firestoreInstance.collection(opponents.ref.path).snapshots().listen((snap) {
-      ref
-          ?.read(opponentsProvider.notifier)
-          .state = snap.map((e) => Opponent(snapshot: e));
+      ref?.read(opponentsProvider.notifier).state = snap.map((e) => Opponent(snapshot: e));
     });
 
     firestoreInstance.collection(players.ref.path).snapshots().listen((snap) {
-      ref
-          ?.read(playersProvider.notifier)
-          .state = snap.map((e) => Player(snapshot: e));
+      ref?.read(playersProvider.notifier).state = snap.map((e) => Player(snapshot: e));
     });
   }
 
@@ -99,20 +93,11 @@ class Season extends Document<Season> {
 
   int nbPlayedMatchs(WidgetRef ref) => playedMatchs(ref).length;
 
-  int nbWins(WidgetRef ref) =>
-      playedMatchs(ref)
-          .where((e) => e.isWon(ref))
-          .length;
+  int nbWins(WidgetRef ref) => playedMatchs(ref).where((e) => e.isWon(ref)).length;
 
-  int nbLosses(WidgetRef ref) =>
-      playedMatchs(ref)
-          .where((e) => e.isLoss(ref))
-          .length;
+  int nbLosses(WidgetRef ref) => playedMatchs(ref).where((e) => e.isLoss(ref)).length;
 
-  int nbEvens(WidgetRef ref) =>
-      playedMatchs(ref)
-          .where((e) => e.isEven(ref))
-          .length;
+  int nbEvens(WidgetRef ref) => playedMatchs(ref).where((e) => e.isEven(ref)).length;
 
   int nbPoints(WidgetRef ref) => nbWins(ref) * 3 + nbEvens(ref);
 
@@ -136,7 +121,7 @@ class Season extends Document<Season> {
 
   double pointsPercent(WidgetRef ref) => nbPoints(ref) / nbMaxPoints(ref) * 100;
 
-  MapEntry<DocumentReference?, int>? bestScorer(WidgetRef ref) {
+  Iterable<MapEntry<DocumentReference?, int>>? scorers(WidgetRef ref) {
     var playedMatchsMapped = playedMatchs(ref).map((e) => ref.watch(e.goalsProvider));
     if (playedMatchsMapped.isEmpty) return null;
 
@@ -145,19 +130,17 @@ class Season extends Document<Season> {
     });
     if (goals.isEmpty) return null;
 
-    var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))
-      ..removeWhere((key, value) => key == null);
+    var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))..removeWhere((key, value) => key == null);
     if (scorers.isEmpty) return null;
 
     var scorersSorted = Map.fromEntries(
-      scorers.entries.toList()
-        ..sort((e1, e2) => e2.value.compareTo(e1.value)),
+      scorers.entries.toList()..sort((e1, e2) => e2.value.compareTo(e1.value)),
     );
 
-    return scorersSorted.entries.first;
+    return scorersSorted.entries;
   }
 
-  MapEntry<DocumentReference?, int>? bestPasser(WidgetRef ref) {
+  Iterable<MapEntry<DocumentReference?, int>>? passers(WidgetRef ref) {
     var playedMatchsMapped = playedMatchs(ref).map((e) => ref.watch(e.goalsProvider));
     if (playedMatchsMapped.isEmpty) return null;
 
@@ -171,7 +154,7 @@ class Season extends Document<Season> {
       return MapEntry(key, value.length);
     });
     if (passers.isEmpty) return null;
-    
+
     var passersSorted = Map.fromEntries(
       passers.entries.toList()
         ..sort((e1, e2) {
@@ -179,7 +162,15 @@ class Season extends Document<Season> {
         }),
     );
 
-    return passersSorted.entries.first;
+    return passersSorted.entries;
+  }
+
+  MapEntry<DocumentReference?, int>? bestScorer(WidgetRef ref) {
+    return scorers(ref)?.first;
+  }
+
+  MapEntry<DocumentReference?, int>? bestPasser(WidgetRef ref) {
+    return passers(ref)?.first;
   }
 
   List<Match> lastPlayedMatches(WidgetRef ref, {int take = 1}) {

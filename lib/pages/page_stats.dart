@@ -5,6 +5,8 @@ import 'package:footrack_front/components/ft_stat_tile.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/pages/page_passers_list.dart';
+import 'package:footrack_front/pages/page_scorers_list.dart';
 
 class StatsPage extends ConsumerStatefulWidget {
   const StatsPage({Key? key}) : super(key: key);
@@ -85,9 +87,17 @@ class _StatsPageState extends ConsumerState<StatsPage> {
                             size: 40,
                           ),
                           value: "${bestScorer.name}",
-                          title: "meilleur buteur",
                           valueSize: 30,
+                          title: "meilleur buteur",
                           subtitle: "avec ${seasonBestScorer.value} buts",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ScorersListPage(),
+                              ),
+                            );
+                          },
                         );
                       }),
                 if (seasonBestPasser?.key != null)
@@ -103,9 +113,17 @@ class _StatsPageState extends ConsumerState<StatsPage> {
                             size: 40,
                           ),
                           value: "${bestPasser.name}",
+                          valueSize: 30,
                           title: "meilleur passeur",
                           subtitle: "avec ${seasonBestPasser.value} passes",
-                          valueSize: 30,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PassersListPage(),
+                              ),
+                            );
+                          },
                         );
                       }),
               ],
