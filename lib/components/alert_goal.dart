@@ -2,6 +2,7 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/utils/comparables.dart';
@@ -12,10 +13,12 @@ class AlertGoal extends StatefulWidget {
     Key? key,
     required this.ref,
     this.goal,
+    this.time,
   }) : super(key: key);
 
   final WidgetRef ref;
   final Goal? goal;
+  final int? time;
 
   @override
   State<AlertGoal> createState() => _AlertGoalState();
@@ -31,13 +34,19 @@ class _AlertGoalState extends State<AlertGoal> {
   @override
   void initState() {
     super.initState();
-    if (widget.goal != null) {
-      _scorerRefPath = widget.goal!.scorer?.path;
-      _passerRefPath = widget.goal!.passer?.path;
-      _timeGoalScored = widget.goal!.time;
+
+    widget.time?.let((it) {
+      _timeGoalScored = it;
+      _goalTimeController.text = it.toString();
+    });
+
+    widget.goal?.let((it) {
+      _scorerRefPath = it.scorer?.path;
+      _passerRefPath = it.passer?.path;
+      _timeGoalScored = it.time;
 
       _goalTimeController.text = _timeGoalScored?.toString() ?? "";
-    }
+    });
   }
 
   @override

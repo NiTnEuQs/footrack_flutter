@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -7,6 +8,7 @@ import 'package:footrack_front/components/alert_goal.dart';
 import 'package:footrack_front/components/alert_substitute.dart';
 import 'package:footrack_front/components/ft_grid_tile.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/enums/match_status_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
@@ -26,11 +28,20 @@ class MatchDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
+  final Stopwatch _stopwatch = Stopwatch();
+  int _baseMatchTime = 0;
+
   void _addGoal() {
+    var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+    var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertGoal(ref: ref);
+        return AlertGoal(
+          ref: ref,
+          time: ((match?.getTime() ?? 0) ~/ 60) + 1,
+        );
       },
     );
   }
@@ -40,19 +51,111 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   }
 
   void _addSubstitute() {
+    var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+    var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertSubstitute(ref: ref);
+        return AlertSubstitute(
+          ref: ref,
+          time: ((match?.getTime() ?? 0) ~/ 60) + 1,
+        );
       },
     );
   }
 
   void _openTeam() {}
 
-  void _startOrPauseMatch() {}
+  void _startOrPauseMatch() {
+    var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+    var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
 
-  void _halfTimeOrStopMatch() {}
+    var isMatchPlaying = _stopwatch.isRunning;
+
+    if (isMatchPlaying) {
+      _stopwatch.stop();
+    } else {
+      _stopwatch.start();
+    }
+
+    ref.watch(dbProvider).updateMatchStatus(
+      ref.read(seasonChoseProvider)?.id,
+      ref.read(matchChoseProvider)?.id,
+      match?.let((it) {
+        switch (it.getStatus()) {
+          case MatchStatusEnum.pausedFirst:
+            return MatchStatusEnum.playingFirst.name;
+          case MatchStatusEnum.playingFirst:
+            return MatchStatusEnum.pausedFirst.name;
+          case MatchStatusEnum.pausedSecond:
+            return MatchStatusEnum.playingSecond.name;
+          case MatchStatusEnum.playingSecond:
+            return MatchStatusEnum.pausedSecond.name;
+          default:
+            return MatchStatusEnum.finished.name;
+        }
+      }),
+    );
+  }
+
+  void _halfTimeOrStopMatch() {
+    var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+    var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
+    match?.let((it) {
+      switch (it.getStatus()) {
+        case MatchStatusEnum.none:
+          {
+            _stopwatch.reset();
+            _stopwatch.start();
+            break;
+          }
+        case MatchStatusEnum.playingFirst:
+        case MatchStatusEnum.pausedFirst:
+          {
+            _stopwatch.stop();
+
+            _baseMatchTime = 25 * 60;
+
+            ref.watch(dbProvider).updateMatchElapsedTime(
+                  ref.read(seasonChoseProvider)?.id,
+                  ref.read(matchChoseProvider)?.id,
+                  _baseMatchTime,
+                );
+
+            _stopwatch.reset();
+            _stopwatch.start();
+            break;
+          }
+        default:
+          {
+            // Do nothing
+            break;
+          }
+      }
+
+      ref.watch(dbProvider).updateMatchStatus(
+        ref.read(seasonChoseProvider)?.id,
+        ref.read(matchChoseProvider)?.id,
+        it.let((it) {
+          switch (it.getStatus()) {
+            case MatchStatusEnum.none:
+              return MatchStatusEnum.playingFirst.name;
+            case MatchStatusEnum.pausedFirst:
+            case MatchStatusEnum.playingFirst:
+              return MatchStatusEnum.playingSecond.name;
+            case MatchStatusEnum.pausedSecond:
+            case MatchStatusEnum.playingSecond:
+            case MatchStatusEnum.finished:
+              return MatchStatusEnum.finished.name;
+          }
+        }),
+      );
+
+      setState(() {});
+    });
+  }
 
   void _editEvent(PlayerEvent? event) {
     if (event is Goal) {
@@ -95,6 +198,40 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   void initState() {
     super.initState();
     Wakelock.enable();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+      var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
+      match?.let(
+        (baseMatch) {
+          _baseMatchTime = baseMatch.time ?? 0;
+
+          if (baseMatch.isPlaying()) {
+            _stopwatch.start();
+          }
+
+          Timer.periodic(const Duration(seconds: 1), (Timer t) {
+            var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+            var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
+            match?.let((it) {
+              if (it.isPlaying() && _stopwatch.isRunning) {
+                var newElapsedTime = _stopwatch.elapsed.inSeconds + _baseMatchTime;
+
+                setState(() {
+                  ref.watch(dbProvider).updateMatchElapsedTime(
+                        ref.read(seasonChoseProvider)?.id,
+                        ref.read(matchChoseProvider)?.id,
+                        newElapsedTime,
+                      );
+                });
+              }
+            });
+          });
+        },
+      );
+    });
   }
 
   @override
@@ -108,6 +245,9 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     // var goals = match != null ? ref.watch(match.goalsProvider) : <Goal>[];
     // var substitutes = match != null ? ref.watch(match.substitutesProvider) : <Substitute>[];
     // var opponentName = match != null ? ref.watch(match.opponentProvider)?.getName() ?? "Votre adversaire" : "Erreur";
+
+    var matchMinutes = (match?.getTime() ?? 0) ~/ 60;
+    var matchSeconds = (match?.getTime() ?? 0) % 60;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -135,19 +275,32 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                             ),
                           ),
                         ),
+                        !match.date.hasPassed()
+                            ? Container()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                child: Text(
+                                  match.resultString(ref),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: match.resultColor(ref),
+                                  ),
+                                ),
+                              ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                           child: Center(
-                            child: match.date.hasPassed()
-                                ? Text(
-                                    match.resultString(ref),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: match.resultColor(ref),
-                                    ),
-                                  )
-                                : Text(match.time != null ? "${match.time}'" : "N'a pas encore débuté"),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                match.getStatus().icon(),
+                                const SizedBox(width: 16),
+                                Text(match.hasBegun()
+                                    ? "${matchMinutes.toString().padLeft(2, "0")}:${matchSeconds.toString().padLeft(2, "0")}"
+                                    : "N'a pas encore débuté"),
+                              ],
+                            ),
                           ),
                         ),
                         Padding(
@@ -352,35 +505,65 @@ class MatchDashboard extends StatelessWidget {
           icon: Icons.sports_soccer,
           title: "But",
           onTap: onGoalClicked,
+          enabled: match.isPlaying() || match.isPaused(),
         ),
         FTGridTile(
           icon: Icons.person_add,
           title: "Changements",
           onTap: onSubstituteClicked,
+          enabled: match.isPlaying() || match.isPaused(),
         ),
         FTGridTile(
           icon: Icons.groups,
           title: "Effectif",
           onTap: onTeamClicked,
-          enabled: !match.date.hasPassed(),
+          enabled: false,
+          // enabled: !match.date.hasPassed(),
         ),
         FTGridTile(
           icon: Icons.sports_soccer,
           title: "But adverse",
           onTap: onOpponentGoalClicked,
           onLongPress: onOpponentGoalLongPress,
+          enabled: match.isPlaying() || match.isPaused(),
         ),
         FTGridTile(
-          icon: !match.hasBegun() ? Icons.play_arrow : Icons.pause,
-          title: !match.hasBegun() ? "Début" : "Temps mort",
+          icon: !match.isPlaying() ? Icons.play_arrow : Icons.pause,
+          title: !match.isPlaying() ? "Reprise" : "Temps mort",
           onTap: onStartClicked,
-          enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
+          enabled: match.isPlaying() || match.isPaused(),
         ),
         FTGridTile(
-          icon: !match.hasBegun() ? Icons.looks_two_rounded : Icons.stop,
-          title: !match.hasBegun() ? "Mi-temps" : "Fin du match",
+          icon: match.let((it) {
+            switch (it.getStatus()) {
+              case MatchStatusEnum.none:
+                return Icons.looks_one_rounded;
+              case MatchStatusEnum.pausedFirst:
+              case MatchStatusEnum.playingFirst:
+                return Icons.looks_two_rounded;
+              case MatchStatusEnum.pausedSecond:
+              case MatchStatusEnum.playingSecond:
+                return Icons.stop_circle;
+              case MatchStatusEnum.finished:
+                return Icons.dnd_forwardslash;
+            }
+          }),
+          title: match.let((it) {
+            switch (it.getStatus()) {
+              case MatchStatusEnum.none:
+                return "Début du match";
+              case MatchStatusEnum.pausedFirst:
+              case MatchStatusEnum.playingFirst:
+                return "2ème mi-temps";
+              case MatchStatusEnum.pausedSecond:
+              case MatchStatusEnum.playingSecond:
+                return "Fin du match";
+              case MatchStatusEnum.finished:
+                return "Match terminé";
+            }
+          }),
           onTap: onStopClicked,
-          enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
+          enabled: match.date.hasPassed(add: const Duration(hours: 2)) && match.isNotFinished(),
         ),
       ],
     );

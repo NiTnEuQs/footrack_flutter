@@ -133,7 +133,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: lastPlayedMatches!
                                     .map((e) => Icon(
-                                          Icons.noise_control_off,
+                                          Icons.circle,
                                           color: e.resultColor(ref),
                                         ))
                                     .toList(),
@@ -170,7 +170,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   ),
                                   const SizedBox(width: 16.0),
                                   Text(
-                                    "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3}",
+                                    "${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3} pts",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:footrack_front/utils/comparables.dart';
@@ -12,10 +13,12 @@ class AlertSubstitute extends StatefulWidget {
     Key? key,
     required this.ref,
     this.substitute,
+    this.time,
   }) : super(key: key);
 
   final WidgetRef ref;
   final Substitute? substitute;
+  final int? time;
 
   @override
   State<AlertSubstitute> createState() => _AlertSubstituteState();
@@ -31,13 +34,19 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
   @override
   void initState() {
     super.initState();
-    if (widget.substitute != null) {
-      _playerInRefPath = widget.substitute!.playerIn?.path;
-      _playerOutRefPath = widget.substitute!.playerOut?.path;
-      _timeSubstitution = widget.substitute!.time;
+
+    widget.time?.let((it) {
+      _timeSubstitution = it;
+      _substituteTimeController.text = it.toString();
+    });
+
+    widget.substitute?.let((it) {
+      _playerInRefPath = it.playerIn?.path;
+      _playerOutRefPath = it.playerOut?.path;
+      _timeSubstitution = it.time;
 
       _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
-    }
+    });
   }
 
   @override

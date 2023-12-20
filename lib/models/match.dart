@@ -2,7 +2,9 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flamingo_annotation/flamingo_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/converters/match_status_converter.dart';
 import 'package:footrack_front/converters/match_type_converter.dart';
+import 'package:footrack_front/enums/match_status_enum.dart';
 import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/snapshot_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
@@ -56,13 +58,12 @@ class Match extends Document<Match> {
   @Field()
   String? status;
 
-  @Field()
-  int? halfTime;
-
-  int getHalfTime({int defaultValue = 0}) => halfTime ?? defaultValue;
+  MatchStatusEnum getStatus({int defaultValue = 0}) => const MatchStatusConverter().fromJson(status);
 
   @Field()
   int? time;
+
+  int getTime({int defaultValue = 0}) => time ?? defaultValue;
 
   @Field()
   int? scoreOpponent;
@@ -127,5 +128,12 @@ class Match extends Document<Match> {
   @override
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 
-  bool hasBegun() => (time ?? -1) >= 0;
+  bool isPlaying() => getStatus() == MatchStatusEnum.playingFirst || getStatus() == MatchStatusEnum.playingSecond;
+
+  bool isPaused() => getStatus() == MatchStatusEnum.pausedFirst || getStatus() == MatchStatusEnum.pausedSecond;
+
+  bool hasBegun() =>
+      isPlaying() || getStatus() == MatchStatusEnum.pausedFirst || getStatus() == MatchStatusEnum.pausedSecond || getStatus() == MatchStatusEnum.finished;
+
+  bool isNotFinished() => getStatus() != MatchStatusEnum.finished;
 }

@@ -27,14 +27,18 @@ extension MatchStatusEnumExtension on MatchStatusEnum? {
 
   Icon icon() {
     switch (this) {
+      case MatchStatusEnum.none:
+        return const Icon(Icons.notifications_none, color: Colors.blue);
       case MatchStatusEnum.playingFirst:
-        return const Icon(Icons.noise_control_off, color: Colors.lightGreen);
+        return const Icon(Icons.play_circle_fill, color: Colors.lightGreen);
       case MatchStatusEnum.pausedFirst:
-        return const Icon(Icons.noise_control_off, color: Colors.red);
+        return const Icon(Icons.pause_circle_filled, color: Colors.red);
       case MatchStatusEnum.playingSecond:
-        return const Icon(Icons.noise_aware, color: Colors.lightGreen);
+        return const Icon(Icons.play_circle_fill, color: Colors.lightGreen);
       case MatchStatusEnum.pausedSecond:
-        return const Icon(Icons.noise_aware, color: Colors.red);
+        return const Icon(Icons.pause_circle_filled, color: Colors.red);
+      case MatchStatusEnum.finished:
+        return const Icon(Icons.stop_circle, color: Colors.grey);
       default:
         return const Icon(Icons.question_mark, color: Colors.red);
     }

@@ -290,4 +290,43 @@ class DatabaseFirestore {
       return Future.error(e);
     }
   }
+
+  // Update match is playing
+  Future<bool> updateMatchIsPlaying(String? seasonId, String? matchId, bool? newIsPlaying) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'isPlaying': newIsPlaying});
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Update match state
+  Future<bool> updateMatchStatus(String? seasonId, String? matchId, String? newStatus) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'status': newStatus});
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Update match elapsed time
+  Future<bool> updateMatchElapsedTime(String? seasonId, String? matchId, int? newElapsedTime) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'time': newElapsedTime});
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
 }
