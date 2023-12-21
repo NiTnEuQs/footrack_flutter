@@ -18,6 +18,8 @@ import 'package:footrack_front/models/player_event.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:wakelock/wakelock.dart';
 
+final elapsedTimeProvider = StateProvider<int?>((_) => null);
+
 class MatchDashboardPage extends ConsumerStatefulWidget {
   const MatchDashboardPage(this.matchId, {Key? key}) : super(key: key);
 
@@ -29,7 +31,6 @@ class MatchDashboardPage extends ConsumerStatefulWidget {
 
 class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   final Stopwatch _stopwatch = Stopwatch();
-  int _baseMatchTime = 0;
 
   void _addGoal() {
     var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
@@ -103,8 +104,8 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
     var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
 
-    match?.let((it) {
-      switch (it.getStatus()) {
+    match?.let((currentMatch) {
+      switch (currentMatch.getStatus()) {
         case MatchStatusEnum.none:
           {
             _stopwatch.reset();
@@ -116,13 +117,14 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
           {
             _stopwatch.stop();
 
-            _baseMatchTime = 25 * 60;
-
-            ref.watch(dbProvider).updateMatchElapsedTime(
-                  ref.read(seasonChoseProvider)?.id,
-                  ref.read(matchChoseProvider)?.id,
-                  _baseMatchTime,
-                );
+            (25 * 60).let((matchTime) {
+              ref.read(elapsedTimeProvider.notifier).state = matchTime;
+              // ref.read(dbProvider).updateMatchElapsedTime(
+              //       ref.read(seasonChoseProvider)?.id,
+              //       ref.read(matchChoseProvider)?.id,
+              //       matchTime,
+              //     );
+            });
 
             _stopwatch.reset();
             _stopwatch.start();
@@ -135,25 +137,25 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
           }
       }
 
-      ref.watch(dbProvider).updateMatchStatus(
-        ref.read(seasonChoseProvider)?.id,
-        ref.read(matchChoseProvider)?.id,
-        it.let((it) {
-          switch (it.getStatus()) {
-            case MatchStatusEnum.none:
-              return MatchStatusEnum.playingFirst.name;
-            case MatchStatusEnum.pausedFirst:
-            case MatchStatusEnum.playingFirst:
-              return MatchStatusEnum.playingSecond.name;
-            case MatchStatusEnum.pausedSecond:
-            case MatchStatusEnum.playingSecond:
-            case MatchStatusEnum.finished:
-              return MatchStatusEnum.finished.name;
-          }
-        }),
-      );
-
-      setState(() {});
+      currentMatch.let((it) {
+        switch (it.getStatus()) {
+          case MatchStatusEnum.none:
+            return MatchStatusEnum.playingFirst.name;
+          case MatchStatusEnum.pausedFirst:
+          case MatchStatusEnum.playingFirst:
+            return MatchStatusEnum.playingSecond.name;
+          case MatchStatusEnum.pausedSecond:
+          case MatchStatusEnum.playingSecond:
+          case MatchStatusEnum.finished:
+            return MatchStatusEnum.finished.name;
+        }
+      }).let((status) {
+        ref.read(dbProvider).updateMatchStatus(
+              ref.read(seasonChoseProvider)?.id,
+              ref.read(matchChoseProvider)?.id,
+              status,
+            );
+      });
     });
   }
 
@@ -198,40 +200,6 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   void initState() {
     super.initState();
     Wakelock.enable();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
-      var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
-
-      match?.let(
-        (baseMatch) {
-          _baseMatchTime = baseMatch.time ?? 0;
-
-          if (baseMatch.isPlaying()) {
-            _stopwatch.start();
-          }
-
-          Timer.periodic(const Duration(seconds: 1), (Timer t) {
-            var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
-            var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
-
-            match?.let((it) {
-              if (it.isPlaying() && _stopwatch.isRunning) {
-                var newElapsedTime = _stopwatch.elapsed.inSeconds + _baseMatchTime;
-
-                setState(() {
-                  ref.watch(dbProvider).updateMatchElapsedTime(
-                        ref.read(seasonChoseProvider)?.id,
-                        ref.read(matchChoseProvider)?.id,
-                        newElapsedTime,
-                      );
-                });
-              }
-            });
-          });
-        },
-      );
-    });
   }
 
   @override
@@ -245,9 +213,6 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     // var goals = match != null ? ref.watch(match.goalsProvider) : <Goal>[];
     // var substitutes = match != null ? ref.watch(match.substitutesProvider) : <Substitute>[];
     // var opponentName = match != null ? ref.watch(match.opponentProvider)?.getName() ?? "Votre adversaire" : "Erreur";
-
-    var matchMinutes = (match?.getTime() ?? 0) ~/ 60;
-    var matchSeconds = (match?.getTime() ?? 0) % 60;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -288,21 +253,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                   ),
                                 ),
                               ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                match.getStatus().icon(),
-                                const SizedBox(width: 16),
-                                Text(match.hasBegun()
-                                    ? "${matchMinutes.toString().padLeft(2, "0")}:${matchSeconds.toString().padLeft(2, "0")}"
-                                    : "N'a pas encore débuté"),
-                              ],
-                            ),
-                          ),
-                        ),
+                        MatchElapsedTime(stopwatch: _stopwatch),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                           child: Row(
@@ -388,6 +339,86 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
               ),
       ),
     );
+  }
+}
+
+class MatchElapsedTime extends ConsumerStatefulWidget {
+  const MatchElapsedTime({super.key, required this.stopwatch});
+
+  final Stopwatch stopwatch;
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _MatchElapsedTimeState();
+}
+
+class _MatchElapsedTimeState extends ConsumerState<MatchElapsedTime> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+      var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
+      match?.let(
+        (baseMatch) {
+          ref.read(elapsedTimeProvider.notifier).state = baseMatch.time;
+
+          if (baseMatch.isPlaying()) {
+            widget.stopwatch.start();
+          }
+
+          Timer.periodic(const Duration(seconds: 1), (Timer t) {
+            var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
+            var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+
+            match?.let((it) {
+              if (it.isPlaying() && widget.stopwatch.isRunning) {
+                ref.watch(elapsedTimeProvider)?.let((elapsedTime) {
+                  (elapsedTime + 1).let((newElapsedTime) {
+                    ref.read(elapsedTimeProvider.notifier).state = newElapsedTime;
+
+                    // updateMatchElapsedTime(newElapsedTime);
+                  });
+                });
+              }
+            });
+          });
+        },
+      );
+    });
+  }
+
+  void updateMatchElapsedTime(int newElapsedTime) async {
+    ref.read(dbProvider).updateMatchElapsedTime(
+          ref.read(seasonChoseProvider)?.id,
+          ref.read(matchChoseProvider)?.id,
+          newElapsedTime,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final elapsedTime = ref.watch(elapsedTimeProvider);
+    final match = ref.watch(matchChoseProvider);
+    var matchMinutes = (elapsedTime ?? 0) ~/ 60;
+    var matchSeconds = (elapsedTime ?? 0) % 60;
+
+    return match == null
+        ? Container()
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  match.getStatus().icon(),
+                  const SizedBox(width: 16),
+                  Text(match.hasBegun() ? "${matchMinutes.toString().padLeft(2, "0")}:${matchSeconds.toString().padLeft(2, "0")}" : "N'a pas encore débuté"),
+                ],
+              ),
+            ),
+          );
   }
 }
 
@@ -505,13 +536,13 @@ class MatchDashboard extends StatelessWidget {
           icon: Icons.sports_soccer,
           title: "But",
           onTap: onGoalClicked,
-          enabled: match.isPlaying() || match.isPaused(),
+          enabled: match.hasBegun(),
         ),
         FTGridTile(
           icon: Icons.person_add,
           title: "Changements",
           onTap: onSubstituteClicked,
-          enabled: match.isPlaying() || match.isPaused(),
+          enabled: match.hasBegun(),
         ),
         FTGridTile(
           icon: Icons.groups,
@@ -525,7 +556,7 @@ class MatchDashboard extends StatelessWidget {
           title: "But adverse",
           onTap: onOpponentGoalClicked,
           onLongPress: onOpponentGoalLongPress,
-          enabled: match.isPlaying() || match.isPaused(),
+          enabled: match.hasBegun(),
         ),
         FTGridTile(
           icon: !match.isPlaying() ? Icons.play_arrow : Icons.pause,
@@ -563,7 +594,7 @@ class MatchDashboard extends StatelessWidget {
             }
           }),
           onTap: onStopClicked,
-          enabled: match.date.hasPassed(add: const Duration(hours: 2)) && match.isNotFinished(),
+          enabled: match.isNotFinished(),
         ),
       ],
     );

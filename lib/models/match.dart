@@ -132,8 +132,7 @@ class Match extends Document<Match> {
 
   bool isPaused() => getStatus() == MatchStatusEnum.pausedFirst || getStatus() == MatchStatusEnum.pausedSecond;
 
-  bool hasBegun() =>
-      isPlaying() || getStatus() == MatchStatusEnum.pausedFirst || getStatus() == MatchStatusEnum.pausedSecond || getStatus() == MatchStatusEnum.finished;
+  bool hasBegun() => isPlaying() || isPaused() || getStatus() == MatchStatusEnum.finished;
 
   bool isNotFinished() => getStatus() != MatchStatusEnum.finished;
 }
