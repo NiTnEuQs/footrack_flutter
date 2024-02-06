@@ -3,19 +3,25 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/ft_config.dart';
+import 'package:footrack_front/components/generics/generic_error.dart';
+import 'package:footrack_front/components/generics/generic_loading.dart';
+import 'package:footrack_front/core/ui/app_theme_data.dart';
+import 'package:footrack_front/database/firestore_config.dart';
+import 'package:footrack_front/di/dependency_injection.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/managers/package_manager.dart';
-import 'package:footrack_front/pages/page_seasons_list.dart';
+import 'package:footrack_front/screens/seasons_list/ui/seasons_list_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 
 import 'firebase_options.dart';
 
 void main() async {
+  DependencyInjection.configure();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -88,25 +94,30 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Footrack',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: FutureBuilder<FirebaseRemoteConfig>(
+      title: "Footrack",
+      theme: appThemeData,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('fr'),
+      ],
+      home: FutureBuilder(
         future: setupRemoteConfig(),
-        builder: (BuildContext context, AsyncSnapshot<FirebaseRemoteConfig> snapshot) {
-          if (snapshot.hasData) {
+        builder: (context, snap) {
+          if (snap.hasData) {
             return const SeasonsListPage();
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text("Une erreur est survenue, veuillez redémarrer l'application"),
+          } else if (snap.hasError) {
+            return const Scaffold(
+              body: GenericError(
+                error: "Veuillez redémarrer l'application",
+              ),
             );
           } else {
-            return Container(
-              color: Colors.white,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+            return const Scaffold(
+              body: GenericLoading(),
             );
           }
         },

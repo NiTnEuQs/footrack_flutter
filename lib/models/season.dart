@@ -18,7 +18,7 @@ class Season extends Document<Season> {
     DocumentSnapshot<Map<String, dynamic>>? snapshot,
     Map<String, dynamic>? values,
     CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
+    Ref? ref,
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
     matchs = Collection(this, SeasonKey.matchs.value);
     opponents = Collection(this, SeasonKey.opponents.value);
@@ -27,7 +27,7 @@ class Season extends Document<Season> {
     init(ref);
   }
 
-  void init(WidgetRef? ref) {
+  void init(Ref? ref) {
     firestoreInstance.collection(matchs.ref.path).snapshots().listen((snap) {
       ref?.read(matchsProvider.notifier).state = snap.map((e) => Match(snapshot: e, ref: ref));
     });
@@ -41,10 +41,16 @@ class Season extends Document<Season> {
     });
   }
 
+  @override
+  Map<String, dynamic> toData() => _$toData(this);
+
+  @override
+  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+
+  // Fields
+
   @Field()
   String? name;
-
-  String getName({String defaultValue = "-"}) => name ?? defaultValue;
 
   @Field()
   String? teamName;
@@ -67,17 +73,15 @@ class Season extends Document<Season> {
   late Collection<Player> players;
   final playersProvider = StateProvider<List<Player>>((_) => []);
 
-  @override
-  Map<String, dynamic> toData() => _$toData(this);
+  // Getters
 
-  @override
-  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+  String getName({String defaultValue = "-"}) => name ?? defaultValue;
 
-  List<Match> allMatches(WidgetRef ref) => ref.watch(matchsProvider);
+  List<Match> allMatchs(WidgetRef ref) => ref.watch(matchsProvider);
 
-  List<Match> playedMatchs(WidgetRef ref) => allMatches(ref).where((e) => e.date.hasPassed()).toList();
+  List<Match> playedMatchs(WidgetRef ref) => allMatchs(ref).where((e) => e.date.hasPassed()).toList();
 
-  List<Match> notPlayedMatchs(WidgetRef ref) => allMatches(ref).where((e) => !e.date.hasPassed()).toList();
+  List<Match> notPlayedMatchs(WidgetRef ref) => allMatchs(ref).where((e) => !e.date.hasPassed()).toList();
 
   List<Goal> allGoalsFor(WidgetRef ref) {
     return playedMatchs(ref).let((it) {
@@ -87,7 +91,20 @@ class Season extends Document<Season> {
     });
   }
 
-  int nbMatches(WidgetRef ref) => allMatches(ref).length;
+  bool isInProgress() {
+    var now = DateTime.now();
+    var fromDate = from?.toDate();
+    var toDate = to?.toDate();
+
+    return switch ((fromDate, toDate)) {
+      (!= null, null) => now.isAfter(fromDate!),
+      (null, != null) => now.isBefore(toDate!),
+      (!= null, != null) => now.isAfter(fromDate!) && now.isBefore(toDate!),
+      _ => false,
+    };
+  }
+
+  int nbMatchs(WidgetRef ref) => allMatchs(ref).length;
 
   int nbNotPlayedMatchs(WidgetRef ref) => notPlayedMatchs(ref).length;
 
@@ -130,7 +147,8 @@ class Season extends Document<Season> {
     });
     if (goals.isEmpty) return null;
 
-    var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))..removeWhere((key, value) => key == null);
+    var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))
+      ..removeWhere((key, value) => key == null);
     if (scorers.isEmpty) return null;
 
     var scorersSorted = Map.fromEntries(
@@ -173,8 +191,8 @@ class Season extends Document<Season> {
     return passers(ref)?.first;
   }
 
-  List<Match> lastPlayedMatches(WidgetRef ref, {int take = 1}) {
-    var matchs = List.of(allMatches(ref))
+  List<Match> lastPlayedMatchs(WidgetRef ref, {int take = 1}) {
+    var matchs = List.of(allMatchs(ref))
       ..removeWhere((e) => !e.date.hasPassed())
       ..sort((e1, e2) {
         if (e1.date == null || e2.date == null) return 0;
@@ -185,8 +203,8 @@ class Season extends Document<Season> {
     return matchs.take(take).toList();
   }
 
-  List<Match>? nextMatches(WidgetRef ref, {int take = 1}) {
-    var matchs = List.of(allMatches(ref))
+  List<Match>? nextMatchs(WidgetRef ref, {int take = 1}) {
+    var matchs = List.of(allMatchs(ref))
       ..removeWhere((e) => e.date.hasPassed(add: const Duration(hours: -2)))
       ..sort((e1, e2) {
         if (e1.date == null || e2.date == null) return 0;

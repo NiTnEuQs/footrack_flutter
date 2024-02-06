@@ -27,7 +27,7 @@ extension PlayerStatusEnumExtension on PlayerStatusEnum? {
   Icon icon() {
     switch (this) {
       case PlayerStatusEnum.valid:
-        return const Icon(Icons.noise_control_off, color: Colors.lightGreen);
+        return const Icon(Icons.circle, color: Colors.lightGreen);
       case PlayerStatusEnum.injured:
         return const Icon(Icons.medical_services, color: Colors.red);
       case PlayerStatusEnum.suspended:

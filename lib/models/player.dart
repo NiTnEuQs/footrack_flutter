@@ -15,10 +15,16 @@ class Player extends Document<Player> {
     CollectionReference<Map<String, dynamic>>? collectionRef,
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef);
 
+  @override
+  Map<String, dynamic> toData() => _$toData(this);
+
+  @override
+  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+
+  // Fields
+
   @Field()
   String? name;
-
-  String getName({String defaultValue = "-"}) => name ?? defaultValue;
 
   @Field()
   Timestamp? birthdate;
@@ -26,16 +32,14 @@ class Player extends Document<Player> {
   @Field()
   String? role;
 
-  PlayerRoleEnum getRole() => const PlayerRoleConverter().fromJson(role);
-
   @Field()
   String? status;
 
+  // Getters
+
+  String getName({String defaultValue = "-"}) => name ?? defaultValue;
+
+  PlayerRoleEnum getRole() => const PlayerRoleConverter().fromJson(role);
+
   PlayerStatusEnum getStatus() => const PlayerStatusConverter().fromJson(status);
-
-  @override
-  Map<String, dynamic> toData() => _$toData(this);
-
-  @override
-  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 }

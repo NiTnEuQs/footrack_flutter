@@ -11,14 +11,18 @@ class Opponent extends Document<Opponent> {
     CollectionReference<Map<String, dynamic>>? collectionRef,
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef);
 
-  @Field()
-  String? name;
-
-  String getName({String defaultValue = "-"}) => name ?? defaultValue;
-
   @override
   Map<String, dynamic> toData() => _$toData(this);
 
   @override
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+
+  // Fields
+
+  @Field()
+  String? name;
+
+  // Getters
+
+  String getName({String defaultValue = "-"}) => name ?? defaultValue;
 }

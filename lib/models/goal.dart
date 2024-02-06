@@ -13,40 +13,44 @@ class Goal extends PlayerEvent<Goal> {
     DocumentSnapshot<Map<String, dynamic>>? snapshot,
     Map<String, dynamic>? values,
     CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
+    Ref? ref,
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef, ref: ref);
-
-  @Field()
-  DocumentReference? scorer;
-  final scorerProvider = StateProvider<Player?>((_) => null);
-
-  @override
-  DocumentReference<Object?>? getPlayer1() => scorer;
-
-  @override
-  StateProvider<Player?> getPlayer1Provider() => scorerProvider;
-
-  @Field()
-  DocumentReference? passer;
-  final passerProvider = StateProvider<Player?>((_) => null);
-
-  @override
-  DocumentReference<Object?>? getPlayer2() => passer;
-
-  @override
-  StateProvider<Player?> getPlayer2Provider() => passerProvider;
-
-  @Field()
-  int? time;
-
-  @override
-  int? getTime() => time;
 
   @override
   Map<String, dynamic> toData() => _$toData(this);
 
   @override
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+
+  // Fields
+
+  @Field()
+  DocumentReference? scorer;
+  final scorerProvider = StateProvider<Player?>((_) => null);
+
+  @Field()
+  DocumentReference? passer;
+  final passerProvider = StateProvider<Player?>((_) => null);
+
+  @Field()
+  int? time;
+
+  // Getters
+
+  @override
+  DocumentReference<Object?>? getPlayer1() => scorer;
+
+  @override
+  DocumentReference<Object?>? getPlayer2() => passer;
+
+  @override
+  StateProvider<Player?> getPlayer1Provider() => scorerProvider;
+
+  @override
+  StateProvider<Player?> getPlayer2Provider() => passerProvider;
+
+  @override
+  int? getTime() => time;
 
   @override
   IconData? getIcon() => Icons.sports_soccer;
@@ -55,7 +59,7 @@ class Goal extends PlayerEvent<Goal> {
   String getTitle(WidgetRef ref) {
     var scorer = ref.watch(scorerProvider);
     if (scorer != null) {
-      return "But de ${scorer.getName()}";
+      return scorer.getName();
     }
 
     return "Contre son camp";

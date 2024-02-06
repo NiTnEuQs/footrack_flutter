@@ -13,40 +13,44 @@ class Substitute extends PlayerEvent<Substitute> {
     DocumentSnapshot<Map<String, dynamic>>? snapshot,
     Map<String, dynamic>? values,
     CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
+    Ref? ref,
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef, ref: ref);
-
-  @Field()
-  DocumentReference? playerIn;
-  final playerInProvider = StateProvider<Player?>((_) => null);
-
-  @override
-  DocumentReference<Object?>? getPlayer1() => playerIn;
-
-  @override
-  StateProvider<Player?> getPlayer1Provider() => playerInProvider;
-
-  @Field()
-  DocumentReference? playerOut;
-  final playerOutProvider = StateProvider<Player?>((_) => null);
-
-  @override
-  DocumentReference<Object?>? getPlayer2() => playerOut;
-
-  @override
-  StateProvider<Player?> getPlayer2Provider() => playerOutProvider;
-
-  @Field()
-  int? time;
-
-  @override
-  int? getTime() => time;
 
   @override
   Map<String, dynamic> toData() => _$toData(this);
 
   @override
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
+
+  // Fields
+
+  @Field()
+  DocumentReference? playerIn;
+  final playerInProvider = StateProvider<Player?>((_) => null);
+
+  @Field()
+  DocumentReference? playerOut;
+  final playerOutProvider = StateProvider<Player?>((_) => null);
+
+  @Field()
+  int? time;
+
+  // Getters
+
+  @override
+  DocumentReference<Object?>? getPlayer1() => playerIn;
+
+  @override
+  DocumentReference<Object?>? getPlayer2() => playerOut;
+
+  @override
+  StateProvider<Player?> getPlayer1Provider() => playerInProvider;
+
+  @override
+  StateProvider<Player?> getPlayer2Provider() => playerOutProvider;
+
+  @override
+  int? getTime() => time;
 
   @override
   IconData? getIcon() => Icons.compare_arrows;
@@ -55,7 +59,7 @@ class Substitute extends PlayerEvent<Substitute> {
   String getTitle(WidgetRef ref) {
     var playerIn = ref.watch(playerInProvider);
     if (playerIn != null) {
-      return "Entrée de ${playerIn.getName()}";
+      return playerIn.getName();
     }
 
     return "";
