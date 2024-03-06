@@ -22,9 +22,9 @@ class MatchDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _MatchDashboardPageState extends ViewModelConsumerState<MatchDashboardPage, MatchDashboardViewModel> {
-  List<Goal> _goals = List.empty(growable: true);
-  List<Substitute> _substitutes = List.empty(growable: true);
-  Opponent _opponent = Opponent();
+  var _goals = List<Goal>.empty(growable: true);
+  var _substitutes = List<Substitute>.empty(growable: true);
+  var _opponent = Opponent();
 
   @override
   Widget build(BuildContext context) {

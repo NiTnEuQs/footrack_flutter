@@ -63,7 +63,7 @@ extension MatchsExtensions on List<Match> {
       return 0;
     }
 
-    return map((e) => ref.watch(e.goalsProvider).length).reduce((prev, curr) => prev + curr);
+    return map((e) => e.getTotalScoreTeam(ref)).reduce((prev, curr) => prev + curr);
   }
 
   int nbGoalsOpponents(WidgetRef ref) {

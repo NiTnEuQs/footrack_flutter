@@ -75,11 +75,11 @@ class Match extends Document<Match> {
 
   @SubCollection()
   late Collection<Goal> goals;
-  final goalsProvider = StateProvider<List<Goal>>((_) => []);
+  final goalsProvider = StateProvider<List<Goal>?>((_) => null);
 
   @SubCollection()
   late Collection<Substitute> substitutes;
-  final substitutesProvider = StateProvider<List<Substitute>>((_) => []);
+  final substitutesProvider = StateProvider<List<Substitute>?>((_) => null);
 
   // Getters
 
@@ -90,7 +90,7 @@ class Match extends Document<Match> {
   int getScoreOpponent({int defaultValue = 0}) => scoreOpponent ?? defaultValue;
 
   int getTotalScoreTeam(WidgetRef ref) {
-    return ref.watch(goalsProvider).length;
+    return ref.watch(goalsProvider)?.length ?? 0;
   }
 
   bool isWon(WidgetRef ref) {

@@ -85,9 +85,10 @@ class Season extends Document<Season> {
 
   List<Goal> allGoalsFor(WidgetRef ref) {
     return playedMatchs(ref).let((it) {
-      if (it.isEmpty) return <Goal>[];
+      if (it.isEmpty) return [];
 
-      return it.map((e) => ref.watch(e.goalsProvider)).reduce((prev, curr) => [...prev, ...curr]).toList();
+      return (it.map((e) => ref.watch(e.goalsProvider)).reduce((prev, curr) => [...prev ?? [], ...curr ?? []]) ?? [])
+          .toList();
     });
   }
 
@@ -143,8 +144,9 @@ class Season extends Document<Season> {
     if (playedMatchsMapped.isEmpty) return null;
 
     var goals = playedMatchsMapped.reduce((prev, curr) {
-      return [...prev, ...curr];
-    });
+          return [...prev ?? [], ...curr ?? []];
+        }) ??
+        [];
     if (goals.isEmpty) return null;
 
     var scorers = goals.groupListsBy((e) => e.scorer).map((key, value) => MapEntry(key, value.length))
@@ -162,9 +164,10 @@ class Season extends Document<Season> {
     var playedMatchsMapped = playedMatchs(ref).map((e) => ref.watch(e.goalsProvider));
     if (playedMatchsMapped.isEmpty) return null;
 
-    var goals = playedMatchsMapped.reduce((prev, curr) {
-      return [...prev, ...curr];
-    })
+    var goals = (playedMatchsMapped.reduce((prev, curr) {
+          return [...prev ?? [], ...curr ?? []];
+        }) ??
+        [])
       ..removeWhere((e) => e.passer == null || e.scorer == null);
     if (goals.isEmpty) return null;
 
