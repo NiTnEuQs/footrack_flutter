@@ -40,39 +40,39 @@ class FTStatTile extends StatelessWidget {
             ),
           ),
         ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) icon!,
-                if (icon != null) const SizedBox(height: 16),
-                Text(
-                  value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: valueSize ?? 38,
-                  ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (icon != null) icon!,
+              Text(
+                value,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: valueSize ?? 38,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: titleSize ?? 16,
+              ),
+              Column(
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: titleSize ?? 16,
+                    ),
                   ),
-                ),
-                Text(
-                  subtitle ?? "",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: subtitleSize ?? 12,
-                    color: Colors.grey,
+                  Text(
+                    subtitle ?? "",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: subtitleSize ?? 12,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              )
+            ],
           ),
         ),
       ),

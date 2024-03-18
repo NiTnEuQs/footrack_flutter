@@ -49,27 +49,50 @@ class Goal extends PlayerEvent<Goal> {
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 
   @override
-  IconData? getIcon() => Icons.sports_soccer;
+  Widget? getIcon() => const Icon(Icons.sports_soccer, color: Colors.amber);
 
   @override
-  String getTitle(WidgetRef ref) {
+  Widget getTitle(WidgetRef ref) {
     var scorer = ref.watch(scorerProvider);
     if (scorer != null) {
-      return "But de ${scorer.getName()}";
+      return Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: "But de "),
+            TextSpan(
+              text: scorer.getName(),
+              style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
     }
 
-    return "Contre son camp";
+    return const Text("Contre son camp");
   }
 
   @override
-  String getSubtitle(WidgetRef ref) {
+  Widget getSubtitle(WidgetRef ref) {
     if (scorer != null) {
       var passer = ref.watch(passerProvider);
       if (passer != null) {
-        return "Passe de ${passer.getName()}";
+        return Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(
+                text: "Passe de ",
+                style: TextStyle(color: Colors.grey, fontSize: 10),
+              ),
+              TextSpan(
+                text: passer.getName(),
+                style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        );
       }
     }
 
-    return "";
+    return Container();
   }
 }

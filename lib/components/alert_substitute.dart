@@ -32,9 +32,9 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
   void initState() {
     super.initState();
     if (widget.substitute != null) {
-      _playerInRefPath = widget.substitute!.playerIn?.path;
-      _playerOutRefPath = widget.substitute!.playerOut?.path;
-      _timeSubstitution = widget.substitute!.time;
+      _playerInRefPath = widget.substitute?.playerIn?.path;
+      _playerOutRefPath = widget.substitute?.playerOut?.path;
+      _timeSubstitution = widget.substitute?.time;
 
       _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
     }
@@ -85,8 +85,11 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
                             return const Center(child: Text("Loading ..."));
                           }
 
-                          List<Pair<String, String>>? playersInList =
-                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()?..sort(comparePairSecond);
+                          List<Pair<String, String>>? playersInList = snapshot.data?.docs
+                              .map((e) => Player(snapshot: e))
+                              .map((e) => Pair(e.reference.path, e.name))
+                              .toList()
+                            ?..sort(comparePairSecond);
 
                           if (widget.substitute == null) {
                             _playerInRefPath ??= playersInList?.first.first;
@@ -131,8 +134,11 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
                             return const Center(child: Text("Loading ..."));
                           }
 
-                          List<Pair<String, String>>? playersOutList =
-                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()?..sort(comparePairSecond);
+                          List<Pair<String, String>>? playersOutList = snapshot.data?.docs
+                              .map((e) => Player(snapshot: e))
+                              .map((e) => Pair(e.reference.path, e.name))
+                              .toList()
+                            ?..sort(comparePairSecond);
 
                           if (widget.substitute == null) {
                             _playerOutRefPath ??= playersOutList?.first.first;
@@ -180,9 +186,11 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref
-                              .read(dbProvider)
-                              .removeSubstitute(widget.ref.read(seasonChoseProvider)?.id, widget.ref.read(matchChoseProvider)?.id, widget.substitute!.id);
+                          widget.ref.read(dbProvider).removeSubstitute(
+                                widget.ref.read(seasonChoseProvider)?.id,
+                                widget.ref.read(matchChoseProvider)?.id,
+                                widget.substitute!.id,
+                              );
 
                           Navigator.pop(context);
                         },

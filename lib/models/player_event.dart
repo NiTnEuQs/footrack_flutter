@@ -38,9 +38,9 @@ abstract class PlayerEvent<T> extends Document<T> {
 
   int? getTime();
 
-  IconData? getIcon();
+  Widget? getIcon();
 
-  String getTitle(WidgetRef ref);
+  Widget getTitle(WidgetRef ref);
 
-  String getSubtitle(WidgetRef ref);
+  Widget getSubtitle(WidgetRef ref);
 }

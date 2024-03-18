@@ -94,13 +94,11 @@ class Match extends Document<Match> {
   }
 
   String resultString(WidgetRef ref) {
-    var score = getTotalScoreTeam(ref);
-
-    if (scoreOpponent == null) return "Erreur";
-
-    if (score.compareTo(scoreOpponent!).isEven == true) {
+    if (scoreOpponent == null) {
+      return "Erreur";
+    } else if (isEven(ref)) {
       return "Egalité";
-    } else if (score.compareTo(scoreOpponent!).isNegative == true) {
+    } else if (isLoss(ref)) {
       return "Défaite";
     } else {
       return "Victoire";
@@ -108,17 +106,35 @@ class Match extends Document<Match> {
   }
 
   Color resultColor(WidgetRef ref) {
-    var score = getTotalScoreTeam(ref);
-
-    if (scoreOpponent == null) return Colors.black;
-
-    if (score.compareTo(scoreOpponent!).isEven == true) {
+    if (scoreOpponent == null) {
+      return Colors.black;
+    } else if (isEven(ref)) {
       return Colors.black.withAlpha(150);
-    } else if (score.compareTo(scoreOpponent!).isNegative == true) {
+    } else if (isLoss(ref)) {
       return Colors.red.withAlpha(200);
     } else {
       return Colors.lightGreen;
     }
+  }
+
+  FontWeight teamFontWeight(WidgetRef ref) {
+    if (scoreOpponent == null) {
+      return FontWeight.normal;
+    } else if (isWon(ref)) {
+      return FontWeight.bold;
+    }
+
+    return FontWeight.normal;
+  }
+
+  FontWeight opponentFontWeight(WidgetRef ref) {
+    if (scoreOpponent == null) {
+      return FontWeight.normal;
+    } else if (isLoss(ref)) {
+      return FontWeight.bold;
+    }
+
+    return FontWeight.normal;
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_match.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/match.dart';
@@ -96,18 +97,14 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 16,
+                columnSpacing: 8,
                 columns: [
-                  // const DataColumn(
-                  //   label: Text(""),
-                  //   numeric: true,
-                  // ),
-                  // const DataColumn(
-                  //   label: Text("J"),
-                  //   numeric: true,
-                  // ),
+                  const DataColumn(
+                    label: Text(""),
+                    numeric: true,
+                  ),
                   DataColumn(
-                    label: const Text("Adversaire"),
+                    label: Text("Match (${matchs.length})"),
                     onSort: (index, sorted) {
                       int columnIndex = 0;
                       setState(() {
@@ -145,8 +142,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                       _openMatch(match);
                     },
                     cells: [
-                      // DataCell(match.getType().icon()),
-                      // DataCell(Text((season.nbMatches(ref) - matchs.indexOf(match)).toString())),
+                      DataCell(match.getType().icon()),
                       DataCell(
                         Column(
                           mainAxisSize: MainAxisSize.max,
@@ -161,18 +157,21 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                                 color: Colors.grey,
                               ),
                             ),
-                            if (match.date.hasPassed())
-                              Text(
-                                match.resultString(ref),
-                                style: TextStyle(
-                                  color: match.resultColor(ref),
-                                ),
-                              ),
                           ],
                         ),
                       ),
-                      DataCell(Text(match.date.hasPassed() ? match.getTotalScoreTeam(ref).toString() : "")),
-                      DataCell(Text(match.date.hasPassed() ? match.getScoreOpponent().toString() : "")),
+                      DataCell(
+                        Text(
+                          match.date.hasPassed() ? match.getTotalScoreTeam(ref).toString() : "",
+                          style: TextStyle(color: match.resultColor(ref), fontWeight: match.teamFontWeight(ref)),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          match.date.hasPassed() ? match.getScoreOpponent().toString() : "",
+                          style: TextStyle(color: match.resultColor(ref), fontWeight: match.opponentFontWeight(ref)),
+                        ),
+                      ),
                     ],
                     onLongPress: () {
                       _editMatch(match);

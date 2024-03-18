@@ -66,7 +66,7 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
-                  columnSpacing: 16,
+                  columnSpacing: 8,
                   columns: [
                     DataColumn(
                       label: Text("Adversaire (${opponents.length})"),

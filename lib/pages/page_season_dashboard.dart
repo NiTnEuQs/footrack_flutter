@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/ft_grid_tile.dart';
@@ -98,7 +99,9 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                       : Padding(
                           padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 32.0, bottom: 16.0),
                           child: Text(
-                            nbMatches > 0 ? "Il n'y a pas de match prochainement" : "Ajoutez des matchs dans le calendrier pour avoir accès à toutes les stats",
+                            nbMatches > 0
+                                ? "Il n'y a pas de match prochainement"
+                                : "Ajoutez des matchs dans le calendrier pour avoir accès à toutes les stats",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 16,
@@ -132,10 +135,13 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: lastPlayedMatches!
-                                    .map((e) => Icon(
-                                          Icons.noise_control_off,
-                                          color: e.resultColor(ref),
-                                        ))
+                                    .mapIndexed(
+                                      (i, e) => Icon(
+                                        Icons.circle,
+                                        color: e.resultColor(ref),
+                                        size: (16 + (2 * i)).toDouble(),
+                                      ),
+                                    )
                                     .toList(),
                               ),
                               Row(

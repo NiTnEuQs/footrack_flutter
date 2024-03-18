@@ -49,25 +49,51 @@ class Substitute extends PlayerEvent<Substitute> {
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 
   @override
-  IconData? getIcon() => Icons.compare_arrows;
+  Widget? getIcon() => const Icon(Icons.compare_arrows, color: Colors.blue);
 
   @override
-  String getTitle(WidgetRef ref) {
+  Widget getTitle(WidgetRef ref) {
     var playerIn = ref.watch(playerInProvider);
     if (playerIn != null) {
-      return "Entrée de ${playerIn.getName()}";
+      return Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: "Entrée de "),
+            TextSpan(
+              text: playerIn.getName(),
+              style: const TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
-    return "";
+    return Container();
   }
 
   @override
-  String getSubtitle(WidgetRef ref) {
+  Widget getSubtitle(WidgetRef ref) {
     var playerOut = ref.watch(playerOutProvider);
     if (playerOut != null) {
-      return "Sortie de ${playerOut.getName()}";
+      return Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: "Sortie de "),
+            TextSpan(
+              text: playerOut.getName(),
+              style: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
-    return "";
+    return Container();
   }
 }

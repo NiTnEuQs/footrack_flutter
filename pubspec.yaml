@@ -2,13 +2,15 @@ name: footrack_front
 description: Footrack is an application to help football managers managing their seasons
 
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
   cupertino_icons: ^1.0.5
@@ -32,6 +34,7 @@ dependencies:
 
   # --- Misc
 
+  collection: ^1.17.2
   intl: ^0.18.0
   wakelock: ^0.6.2
   json_annotation: ^4.8.1

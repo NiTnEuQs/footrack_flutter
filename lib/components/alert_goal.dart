@@ -32,9 +32,9 @@ class _AlertGoalState extends State<AlertGoal> {
   void initState() {
     super.initState();
     if (widget.goal != null) {
-      _scorerRefPath = widget.goal!.scorer?.path;
-      _passerRefPath = widget.goal!.passer?.path;
-      _timeGoalScored = widget.goal!.time;
+      _scorerRefPath = widget.goal?.scorer?.path;
+      _passerRefPath = widget.goal?.passer?.path;
+      _timeGoalScored = widget.goal?.time;
 
       _goalTimeController.text = _timeGoalScored?.toString() ?? "";
     }
@@ -85,10 +85,12 @@ class _AlertGoalState extends State<AlertGoal> {
                             return const Center(child: Text("Loading ..."));
                           }
 
-                          List<Pair<String, String>>? scorersList =
-                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()
-                                ?..add(Pair(null, "- Contre son camp"))
-                                ..sort(comparePairSecond);
+                          List<Pair<String, String>>? scorersList = snapshot.data?.docs
+                              .map((e) => Player(snapshot: e))
+                              .map((e) => Pair(e.reference.path, e.name))
+                              .toList()
+                            ?..add(Pair(null, "- Contre son camp"))
+                            ..sort(comparePairSecond);
 
                           if (widget.goal == null) {
                             _scorerRefPath ??= scorersList?.first.first;
@@ -131,10 +133,12 @@ class _AlertGoalState extends State<AlertGoal> {
                             return const Center(child: Text("Loading ..."));
                           }
 
-                          List<Pair<String, String>>? passersList =
-                              snapshot.data?.docs.map((e) => Player(snapshot: e)).map((e) => Pair(e.reference.path, e.name)).toList()
-                                ?..add(Pair(null, "- Pas de passeur"))
-                                ..sort(comparePairSecond);
+                          List<Pair<String, String>>? passersList = snapshot.data?.docs
+                              .map((e) => Player(snapshot: e))
+                              .map((e) => Pair(e.reference.path, e.name))
+                              .toList()
+                            ?..add(Pair(null, "- Pas de passeur"))
+                            ..sort(comparePairSecond);
 
                           if (widget.goal == null) {
                             _passerRefPath ??= passersList?.first.first;
@@ -180,9 +184,11 @@ class _AlertGoalState extends State<AlertGoal> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref
-                              .read(dbProvider)
-                              .removeGoal(widget.ref.read(seasonChoseProvider)?.id, widget.ref.read(matchChoseProvider)?.id, widget.goal!.id);
+                          widget.ref.read(dbProvider).removeGoal(
+                                widget.ref.read(seasonChoseProvider)?.id,
+                                widget.ref.read(matchChoseProvider)?.id,
+                                widget.goal!.id,
+                              );
 
                           Navigator.pop(context);
                         },

@@ -81,7 +81,7 @@ class _ScorersListPageState extends ConsumerState<ScorersListPage> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 16,
+                columnSpacing: 8,
                 columns: [
                   DataColumn(
                     label: Text("Joueur (${_listScorers.length})"),

@@ -36,7 +36,9 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   }
 
   void _updateOpponentGoal(int? newOpponentGoal) {
-    ref.watch(dbProvider).updateOpponentGoal(ref.read(seasonChoseProvider)?.id, ref.read(matchChoseProvider)?.id, newOpponentGoal);
+    ref
+        .watch(dbProvider)
+        .updateOpponentGoal(ref.read(seasonChoseProvider)?.id, ref.read(matchChoseProvider)?.id, newOpponentGoal);
   }
 
   void _addSubstitute() {
@@ -100,7 +102,9 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
-    var match = season != null ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id) : null;
+    var match = season != null
+        ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id)
+        : null;
     var goals = match != null ? ref.watch(match.goalsProvider) : <Goal>[];
     var substitutes = match != null ? ref.watch(match.substitutesProvider) : <Substitute>[];
     var opponent = match != null ? ref.watch(match.opponentProvider) : Opponent();
@@ -282,30 +286,15 @@ class EventsListPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
                   child: Row(
                     children: [
-                      Icon(event.getIcon()),
+                      event.getIcon() ?? Container(),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (event.getTitle(ref).isNotEmpty)
-                                Text(
-                                  event.getTitle(ref),
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              if (event.getSubtitle(ref).isNotEmpty)
-                                Text(
-                                  event.getSubtitle(ref),
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                              event.getTitle(ref),
+                              event.getSubtitle(ref),
                             ],
                           ),
                         ),
@@ -370,18 +359,18 @@ class MatchDashboard extends StatelessWidget {
           onTap: onOpponentGoalClicked,
           onLongPress: onOpponentGoalLongPress,
         ),
-        FTGridTile(
-          icon: !match.hasBegun() ? Icons.play_arrow : Icons.pause,
-          title: !match.hasBegun() ? "Début" : "Temps mort",
-          onTap: onStartClicked,
-          enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
-        ),
-        FTGridTile(
-          icon: !match.hasBegun() ? Icons.looks_two_rounded : Icons.stop,
-          title: !match.hasBegun() ? "Mi-temps" : "Fin du match",
-          onTap: onStopClicked,
-          enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
-        ),
+        // FTGridTile(
+        //   icon: !match.hasBegun() ? Icons.play_arrow : Icons.pause,
+        //   title: !match.hasBegun() ? "Début" : "Temps mort",
+        //   onTap: onStartClicked,
+        //   enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
+        // ),
+        // FTGridTile(
+        //   icon: !match.hasBegun() ? Icons.looks_two_rounded : Icons.stop,
+        //   title: !match.hasBegun() ? "Mi-temps" : "Fin du match",
+        //   onTap: onStopClicked,
+        //   enabled: !match.date.hasPassed(add: const Duration(hours: -2)),
+        // ),
       ],
     );
   }

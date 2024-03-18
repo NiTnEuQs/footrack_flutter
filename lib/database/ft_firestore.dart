@@ -12,7 +12,7 @@ class DatabaseFirestore {
   // Add a Season
   Future<bool> addNewSeason(Season m) async {
     try {
-      await _firestore.collection('seasons').add({
+      await _firestore.collection("seasons").add({
         'name': m.name,
         'teamName': m.teamName,
         'from': m.from,
@@ -28,9 +28,8 @@ class DatabaseFirestore {
   Future<bool> addNewMatch(String? seasonId, Match m) async {
     if (seasonId == null) return false;
 
-    var opponents = _firestore.collection('seasons').doc(seasonId).collection("matchs");
     try {
-      await opponents.add({
+      await _firestore.collection("seasons").doc(seasonId).collection("matchs").add({
         'type': m.type,
         'opponent': m.opponent,
         'date': m.date,
@@ -46,9 +45,8 @@ class DatabaseFirestore {
   Future<bool> addNewGoal(String? seasonId, String? matchId, Goal m) async {
     if (seasonId == null) return false;
 
-    var goals = _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("goals");
     try {
-      await goals.add({
+      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("goals").add({
         'scorer': m.scorer,
         'passer': m.passer,
         'time': m.time,
@@ -63,9 +61,14 @@ class DatabaseFirestore {
   Future<bool> addNewSubstitute(String? seasonId, String? matchId, Substitute m) async {
     if (seasonId == null) return false;
 
-    var goals = _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("substitutes");
     try {
-      await goals.add({
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("substitutes")
+          .add({
         'playerIn': m.playerIn,
         'playerOut': m.playerOut,
         'time': m.time,
@@ -80,9 +83,8 @@ class DatabaseFirestore {
   Future<bool> addNewOpponent(String? seasonId, Opponent m) async {
     if (seasonId == null) return false;
 
-    var opponents = _firestore.collection('seasons').doc(seasonId).collection("opponents");
     try {
-      await opponents.add({
+      await _firestore.collection("seasons").doc(seasonId).collection("opponents").add({
         'name': m.name,
       });
       return true;
@@ -95,9 +97,8 @@ class DatabaseFirestore {
   Future<bool> addNewPlayer(String? seasonId, Player m) async {
     if (seasonId == null) return false;
 
-    var players = _firestore.collection('seasons').doc(seasonId).collection("players");
     try {
-      await players.add({
+      await _firestore.collection("seasons").doc(seasonId).collection("players").add({
         'name': m.name,
         'role': m.role,
         'status': m.status,
@@ -112,7 +113,7 @@ class DatabaseFirestore {
   // Remove a Season
   Future<bool> removeSeason(String seasonId) async {
     try {
-      await _firestore.collection('seasons').doc(seasonId).delete();
+      await _firestore.collection("seasons").doc(seasonId).delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -124,7 +125,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).delete();
+      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -137,7 +138,14 @@ class DatabaseFirestore {
     if (matchId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("goals").doc(goalId).delete();
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("goals")
+          .doc(goalId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -150,7 +158,14 @@ class DatabaseFirestore {
     if (matchId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("substitutes").doc(substituteId).delete();
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("substitutes")
+          .doc(substituteId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -162,7 +177,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("opponents").doc(opponentId).delete();
+      await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -174,7 +189,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("players").doc(playerId).delete();
+      await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -184,7 +199,7 @@ class DatabaseFirestore {
   // Edit a Season
   Future<bool> editSeason(Season m, String seasonId) async {
     try {
-      await _firestore.collection('seasons').doc(seasonId).update({
+      await _firestore.collection("seasons").doc(seasonId).update({
         'name': m.name,
         'teamName': m.teamName,
         'from': m.from,
@@ -201,7 +216,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({
+      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).update({
         'type': m.type,
         'opponent': m.opponent,
         'date': m.date,
@@ -219,7 +234,14 @@ class DatabaseFirestore {
     if (matchId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("goals").doc(goalId).update({
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("goals")
+          .doc(goalId)
+          .update({
         'scorer': m.scorer,
         'passer': m.passer,
         'time': m.time,
@@ -236,7 +258,14 @@ class DatabaseFirestore {
     if (matchId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).collection("substitutes").doc(substituteId).update({
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("substitutes")
+          .doc(substituteId)
+          .update({
         'playerIn': m.playerIn,
         'playerOut': m.playerOut,
         'time': m.time,
@@ -252,7 +281,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("opponents").doc(opponentId).update({
+      await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).update({
         'name': m.name,
       });
       return true;
@@ -266,7 +295,7 @@ class DatabaseFirestore {
     if (seasonId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("players").doc(playerId).update({
+      await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).update({
         'name': m.name,
         'role': m.role,
         'status': m.status,
@@ -284,7 +313,12 @@ class DatabaseFirestore {
     if (matchId == null) return false;
 
     try {
-      await _firestore.collection('seasons').doc(seasonId).collection("matchs").doc(matchId).update({'scoreOpponent': newOpponentGoal});
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .update({'scoreOpponent': newOpponentGoal});
       return true;
     } catch (e) {
       return Future.error(e);

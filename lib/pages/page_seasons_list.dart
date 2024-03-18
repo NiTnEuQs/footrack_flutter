@@ -63,9 +63,9 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
 
   @override
   void dispose() {
-    super.dispose();
-
     disposeSeasons.cancel();
+
+    super.dispose();
   }
 
   @override
@@ -92,7 +92,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
-                          columnSpacing: 16,
+                          columnSpacing: 8,
                           columns: [
                             DataColumn(label: Text("Saison (${seasons.length})")),
                             const DataColumn(label: Text("Matchs"), numeric: true),

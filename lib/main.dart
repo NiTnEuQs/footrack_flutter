@@ -3,6 +3,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_config.dart';
@@ -88,9 +89,9 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Footrack',
+      title: "Footrack",
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: FutureBuilder<FirebaseRemoteConfig>(
         future: setupRemoteConfig(),
@@ -98,13 +99,14 @@ class _AppState extends ConsumerState<App> {
           if (snapshot.hasData) {
             return const SeasonsListPage();
           } else if (snapshot.hasError) {
-            return const Center(
-              child: Text("Une erreur est survenue, veuillez redémarrer l'application"),
+            return const Scaffold(
+              body: Center(
+                child: Text("Une erreur est survenue, veuillez redémarrer l'application"),
+              ),
             );
           } else {
-            return Container(
-              color: Colors.white,
-              child: const Center(
+            return const Scaffold(
+              body: Center(
                 child: CircularProgressIndicator(),
               ),
             );

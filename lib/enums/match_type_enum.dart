@@ -19,7 +19,7 @@ extension MatchTypeEnumExtension on MatchTypeEnum? {
   Icon icon() {
     switch (this) {
       case MatchTypeEnum.cup:
-        return const Icon(Icons.military_tech, color: Colors.amber);
+        return const Icon(Icons.emoji_events, color: Colors.amber);
       case MatchTypeEnum.championship:
       default:
         return const Icon(Icons.military_tech, color: Colors.blue);

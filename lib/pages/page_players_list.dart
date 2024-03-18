@@ -57,11 +57,15 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
             }
           case 2:
             {
-              return (_sortAscending ? e2.getStatus().format().compareTo(e1.getStatus().format()) : e1.getStatus().format().compareTo(e2.getStatus().format()));
+              return (_sortAscending
+                  ? e2.getStatus().format().compareTo(e1.getStatus().format())
+                  : e1.getStatus().format().compareTo(e2.getStatus().format()));
             }
           case 3:
             {
-              return (_sortAscending ? e2.getRole().format().compareTo(e1.getRole().format()) : e1.getRole().format().compareTo(e2.getRole().format()));
+              return (_sortAscending
+                  ? e2.getRole().format().compareTo(e1.getRole().format())
+                  : e1.getRole().format().compareTo(e2.getRole().format()));
             }
           default:
             return e1.getName().compareTo(e2.getName());
@@ -84,7 +88,7 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 16,
+                columnSpacing: 8,
                 columns: [
                   DataColumn(
                     label: Text("Joueur (${players.length})"),
