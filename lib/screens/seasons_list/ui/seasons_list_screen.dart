@@ -6,14 +6,14 @@ import 'package:footrack_front/screens/seasons_list/components/seasons_list_fab.
 import 'package:footrack_front/screens/seasons_list/seasons_list_view_model.dart';
 import 'package:footrack_front/shared/view_model_consumer_state.dart';
 
-class SeasonsListPage extends ConsumerStatefulWidget {
-  const SeasonsListPage({Key? key}) : super(key: key);
+class SeasonsListScreen extends ConsumerStatefulWidget {
+  const SeasonsListScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonsListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonsListScreenState();
 }
 
-class _SeasonsListPageState extends ViewModelConsumerState<SeasonsListPage, SeasonsListViewModel> {
+class _SeasonsListScreenState extends ViewModelConsumerState<SeasonsListScreen, SeasonsListViewModel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

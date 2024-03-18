@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:footrack_front/components/alerts/alert_player.dart';
-import 'package:footrack_front/database/global_providers.dart';
+import 'package:footrack_front/database/firestore_providers.dart';
 import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/shared/view_model.dart';
 
 class PlayersListViewModel extends ViewModel {
@@ -12,7 +13,7 @@ class PlayersListViewModel extends ViewModel {
         return AlertPlayer(
           onAddPressed: (newPlayer) async {
             ref.read(dbProvider).addNewPlayer(
-                  ref.read(seasonProvider).id,
+                  ref.read(selectedSeasonProvider).id,
                   newPlayer,
                 );
 
@@ -31,7 +32,7 @@ class PlayersListViewModel extends ViewModel {
           player: player,
           onEditPressed: (newPlayer) async {
             ref.read(dbProvider).editPlayer(
-                  ref.read(seasonProvider).id,
+                  ref.read(selectedSeasonProvider).id,
                   player.id,
                   newPlayer,
                 );
@@ -40,7 +41,7 @@ class PlayersListViewModel extends ViewModel {
           },
           onDeletePressed: () async {
             ref.read(dbProvider).removePlayer(
-                  ref.read(seasonProvider).id,
+                  ref.read(selectedSeasonProvider).id,
                   player.id,
                 );
 

@@ -12,7 +12,7 @@ import 'package:footrack_front/database/firestore_config.dart';
 import 'package:footrack_front/di/dependency_injection.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/managers/package_manager.dart';
-import 'package:footrack_front/screens/seasons_list/ui/seasons_list_page.dart';
+import 'package:footrack_front/screens/seasons_list/ui/seasons_list_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -77,19 +77,19 @@ class _AppState extends ConsumerState<App> {
     Intl.defaultLocale = language;
   }
 
-  Future<FirebaseRemoteConfig> setupRemoteConfig() async {
-    return FirebaseRemoteConfig.instance.let((it) async {
-      await it.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: const Duration(minutes: 10),
-      ));
-      await it.setDefaults(Conf.defaults);
-      await it.fetchAndActivate();
-      RemoteConfigValue(null, ValueSource.valueStatic);
-      ref.read(remoteConfigProvider.notifier).state = it;
-      return it;
-    });
-  }
+  // Future<FirebaseRemoteConfig> setupRemoteConfig() async {
+  //   return FirebaseRemoteConfig.instance.let((it) async {
+  //     await it.setConfigSettings(RemoteConfigSettings(
+  //       fetchTimeout: const Duration(seconds: 10),
+  //       minimumFetchInterval: const Duration(minutes: 10),
+  //     ));
+  //     await it.setDefaults(Conf.defaults);
+  //     await it.fetchAndActivate();
+  //     RemoteConfigValue(null, ValueSource.valueStatic);
+  //     ref.read(remoteConfigProvider.notifier).state = it;
+  //     return it;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -104,24 +104,25 @@ class _AppState extends ConsumerState<App> {
       supportedLocales: const [
         Locale('fr'),
       ],
-      home: FutureBuilder(
-        future: setupRemoteConfig(),
-        builder: (context, snap) {
-          if (snap.hasData) {
-            return const SeasonsListPage();
-          } else if (snap.hasError) {
-            return const Scaffold(
-              body: GenericError(
-                error: "Veuillez redémarrer l'application",
-              ),
-            );
-          } else {
-            return const Scaffold(
-              body: GenericLoading(),
-            );
-          }
-        },
-      ),
+      home: const SeasonsListScreen(),
+      // home: FutureBuilder(
+      //   future: setupRemoteConfig(),
+      //   builder: (context, snap) {
+      //     if (snap.hasData) {
+      //       return const SeasonsListScreen();
+      //     } else if (snap.hasError) {
+      //       return const Scaffold(
+      //         body: GenericError(
+      //           error: "Veuillez redémarrer l'application",
+      //         ),
+      //       );
+      //     } else {
+      //       return const Scaffold(
+      //         body: GenericLoading(),
+      //       );
+      //     }
+      //   },
+      // ),
     );
   }
 }

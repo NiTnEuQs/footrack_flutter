@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/global_providers.dart';
+import 'package:footrack_front/database/firestore_providers.dart';
 import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 
 class AlertOpponent extends ConsumerStatefulWidget {
   const AlertOpponent({
@@ -70,7 +71,7 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
                       ElevatedButton(
                         onPressed: () {
                           ref.read(dbProvider).removeOpponent(
-                                ref.read(seasonProvider).id,
+                                ref.read(selectedSeasonProvider).id,
                                 widget.opponent!.id,
                               );
 
@@ -104,9 +105,9 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
             var value = Opponent()..name = _opponentNameController.value.text;
 
             if (widget.opponent != null) {
-              ref.read(dbProvider).editOpponent(ref.read(seasonProvider).id, widget.opponent!.id, value);
+              ref.read(dbProvider).editOpponent(ref.read(selectedSeasonProvider).id, widget.opponent!.id, value);
             } else {
-              ref.read(dbProvider).addNewOpponent(ref.read(seasonProvider).id, value);
+              ref.read(dbProvider).addNewOpponent(ref.read(selectedSeasonProvider).id, value);
             }
 
             Navigator.pop(context);

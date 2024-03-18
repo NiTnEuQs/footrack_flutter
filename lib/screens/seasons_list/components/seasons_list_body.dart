@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/generics/generic_loading.dart';
-import 'package:footrack_front/database/global_providers.dart';
 import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/screens/seasons_list/components/seasons_list_body_bottom.dart';
 import 'package:footrack_front/components/generics/generic_error.dart';
 import 'package:footrack_front/screens/seasons_list/components/seasons_list_body_empty.dart';

@@ -1,8 +1,8 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/global_providers.dart';
 import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/screens/passers_list/models/passer.dart';
 
 class PassersListPage extends ConsumerStatefulWidget {
@@ -22,7 +22,7 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      var season = ref.watch(seasonProvider);
+      var season = ref.watch(selectedSeasonProvider);
       var seasonPassers = season.passers(ref);
 
       seasonPassers?.forEach((seasonPasser) {

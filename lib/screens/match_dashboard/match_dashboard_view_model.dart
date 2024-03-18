@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alerts/alert_goal.dart';
 import 'package:footrack_front/components/alerts/alert_substitute.dart';
 import 'package:footrack_front/database/firestore_providers.dart';
-import 'package:footrack_front/database/global_providers.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/player_event.dart';
 import 'package:footrack_front/models/substitute.dart';
+import 'package:footrack_front/notifiers/match_notifier.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/shared/view_model.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -30,8 +31,8 @@ class MatchDashboardViewModel extends ViewModel {
         return AlertGoal(
           onAddPressed: (newGoal) async {
             ref.read(dbProvider).addNewGoal(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   newGoal,
                 );
 
@@ -57,8 +58,8 @@ class MatchDashboardViewModel extends ViewModel {
         return AlertSubstitute(
           onAddPressed: (newSubstitute) async {
             ref.read(dbProvider).addNewSubstitute(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   newSubstitute,
                 );
 
@@ -92,8 +93,8 @@ class MatchDashboardViewModel extends ViewModel {
           goal: goal,
           onEditPressed: (newGoal) async {
             ref.read(dbProvider).editGoal(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   goal.id,
                   newGoal,
                 );
@@ -102,8 +103,8 @@ class MatchDashboardViewModel extends ViewModel {
           },
           onDeletePressed: () async {
             ref.read(dbProvider).removeGoal(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   goal.id,
                 );
 
@@ -122,8 +123,8 @@ class MatchDashboardViewModel extends ViewModel {
           substitute: substitute,
           onEditPressed: (newSubstitute) async {
             ref.read(dbProvider).editSubstitute(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   substitute.id,
                   newSubstitute,
                 );
@@ -132,8 +133,8 @@ class MatchDashboardViewModel extends ViewModel {
           },
           onDeletePressed: () async {
             ref.read(dbProvider).removeSubstitute(
-                  ref.read(seasonProvider).id,
-                  ref.read(matchProvider).id,
+                  ref.read(selectedSeasonProvider).id,
+                  ref.read(selectedMatchProvider).id,
                   substitute.id,
                 );
 

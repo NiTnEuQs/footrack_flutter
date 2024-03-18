@@ -2,9 +2,9 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/tiles/tile_stat.dart';
-import 'package:footrack_front/database/global_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/screens/passers_list/ui/passers_list_page.dart';
 import 'package:footrack_front/screens/scorers_list/ui/scorers_list_page.dart';
 
@@ -18,15 +18,15 @@ class StatsPage extends ConsumerStatefulWidget {
 class _StatsPageState extends ConsumerState<StatsPage> {
   @override
   Widget build(BuildContext context) {
-    var season = ref.watch(seasonProvider);
+    var season = ref.watch(selectedSeasonProvider);
     var seasonBestScorer = season.bestScorer(ref);
     var seasonBestPasser = season.bestPasser(ref);
     var lastPlayedMatchs = season.lastPlayedMatchs(ref);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            !lastPlayedMatchs.isNotEmpty ? "Stats" : "Stats au ${lastPlayedMatchs.first.date.toDateTime().format()}"),
+        title:
+            Text(lastPlayedMatchs.isEmpty ? "Stats" : "Stats au ${lastPlayedMatchs.first.date.toDateTime().format()}"),
       ),
       body: GridView.count(
         crossAxisCount: 2,

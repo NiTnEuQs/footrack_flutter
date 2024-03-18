@@ -1,9 +1,9 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/global_providers.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
 
@@ -44,7 +44,7 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
 
   @override
   Widget build(BuildContext context) {
-    var players = ref.read(seasonProvider).players;
+    var players = ref.watch(selectedSeasonProvider).players;
 
     return AlertDialog(
       title: Text(widget.goal != null ? "Modifier le but" : "Ajouter un but"),

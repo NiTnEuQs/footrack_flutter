@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 
 class StatTile extends StatelessWidget {
   const StatTile({
     Key? key,
     required this.value,
-    required this.title,
+    this.title,
     this.subtitle,
     this.icon,
-    this.valueSize,
-    this.titleSize,
-    this.subtitleSize,
+    this.valueSize = 38,
+    this.titleSize = 16,
+    this.subtitleSize = 12,
     this.onTap,
     this.onLongPress,
   }) : super(key: key);
 
   final String value;
-  final double? valueSize;
-  final String title;
-  final double? titleSize;
+  final double valueSize;
+  final String? title;
+  final double titleSize;
   final String? subtitle;
-  final double? subtitleSize;
+  final double subtitleSize;
   final Icon? icon;
   final Function()? onTap;
   final Function()? onLongPress;
@@ -40,39 +41,42 @@ class StatTile extends StatelessWidget {
             ),
           ),
         ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) icon!,
-                if (icon != null) const SizedBox(height: 16),
-                Text(
-                  value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: valueSize ?? 38,
-                  ),
+        child: Padding(
+          padding: const EdgeInsets.all(Spacing.xs),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              icon?.build(context) ?? Container(),
+              Text(
+                value,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: valueSize,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: titleSize ?? 16,
-                  ),
-                ),
-                Text(
-                  subtitle ?? "",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: subtitleSize ?? 12,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              if (title != null || subtitle != null)
+                Column(
+                  children: [
+                    if (title != null)
+                      Text(
+                        title!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: titleSize,
+                        ),
+                      ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: subtitleSize,
+                          color: Colors.grey,
+                        ),
+                      ),
+                  ],
+                )
+            ],
           ),
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/screens/season_dashboard/components/season_dashboard_body_actions_grid.dart';
@@ -24,7 +23,7 @@ class SeasonDashboardBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var matchs = season.let((s) => ref.watch(s.matchsProvider));
+    var matchs = ref.watch(season.matchsProvider);
 
     return SingleChildScrollView(
       child: Column(

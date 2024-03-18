@@ -1,11 +1,12 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/global_providers.dart';
+import 'package:footrack_front/database/firestore_providers.dart';
 import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/notifiers/season_notifier.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/pickers.dart';
 import 'package:footrack_front/utils/tuples.dart';
@@ -45,7 +46,7 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
 
   @override
   Widget build(BuildContext context) {
-    var opponents = ref.read(seasonProvider).opponents;
+    var opponents = ref.watch(selectedSeasonProvider).opponents;
 
     return AlertDialog(
       title: Text(widget.match != null ? "Modifier le match" : "Créer un match"),
@@ -167,7 +168,7 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          ref.read(dbProvider).removeMatch(ref.read(seasonProvider).id, widget.match!.id);
+                          ref.read(dbProvider).removeMatch(ref.read(selectedSeasonProvider).id, widget.match!.id);
 
                           Navigator.pop(context);
                         },
@@ -204,13 +205,13 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
 
             if (widget.match != null) {
               ref.read(dbProvider).editMatch(
-                    ref.read(seasonProvider).id,
+                    ref.read(selectedSeasonProvider).id,
                     widget.match!.id,
                     value,
                   );
             } else {
               ref.read(dbProvider).addNewMatch(
-                    ref.read(seasonProvider).id,
+                    ref.read(selectedSeasonProvider).id,
                     value,
                   );
             }

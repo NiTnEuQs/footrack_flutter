@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/global_providers.dart';
+import 'package:footrack_front/database/firestore_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/utils/pickers.dart';
