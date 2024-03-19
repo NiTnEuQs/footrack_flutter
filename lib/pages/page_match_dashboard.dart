@@ -14,6 +14,7 @@ import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/models/opponent.dart';
 import 'package:footrack_front/models/player_event.dart';
 import 'package:footrack_front/models/substitute.dart';
+import 'package:footrack_front/pages/page_match_squad.dart';
 import 'package:wakelock/wakelock.dart';
 
 class MatchDashboardPage extends ConsumerStatefulWidget {
@@ -50,7 +51,14 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     );
   }
 
-  void _openTeam() {}
+  void _openSquad() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MatchSquadPage(),
+      ),
+    );
+  }
 
   void _startOrPauseMatch() {}
 
@@ -215,8 +223,8 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                     onSubstituteClicked: () {
                       _addSubstitute();
                     },
-                    onTeamClicked: () {
-                      _openTeam();
+                    onSquadClicked: () {
+                      _openSquad();
                     },
                     onStartClicked: () {
                       _startOrPauseMatch();
@@ -315,7 +323,7 @@ class MatchDashboard extends StatelessWidget {
     required this.match,
     this.onGoalClicked,
     this.onSubstituteClicked,
-    this.onTeamClicked,
+    this.onSquadClicked,
     this.onStartClicked,
     this.onStopClicked,
     this.onOpponentGoalClicked,
@@ -325,7 +333,7 @@ class MatchDashboard extends StatelessWidget {
   final Match match;
   final Function()? onGoalClicked;
   final Function()? onSubstituteClicked;
-  final Function()? onTeamClicked;
+  final Function()? onSquadClicked;
   final Function()? onStartClicked;
   final Function()? onStopClicked;
   final Function()? onOpponentGoalClicked;
@@ -350,7 +358,7 @@ class MatchDashboard extends StatelessWidget {
         FTGridTile(
           icon: Icons.groups,
           title: "Effectif",
-          onTap: onTeamClicked,
+          onTap: onSquadClicked,
           enabled: !match.date.hasPassed(),
         ),
         FTGridTile(

@@ -2,7 +2,8 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/enums/player_roles_enum.dart';
+import 'package:footrack_front/models/squad_player.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
@@ -42,7 +43,26 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
 
   @override
   Widget build(BuildContext context) {
-    var players = widget.ref.read(seasonChoseProvider)?.players;
+    var match = widget.ref.watch(matchChoseProvider);
+    var squad = match != null ? widget.ref.watch(match.squadProvider) : <SquadPlayer>[];
+    var players = squad
+        .map(
+          (e) => widget.ref.watch(e.playerProvider),
+        )
+        .where(
+          (e) => e?.getRole() == PlayerRoleEnum.player,
+        );
+
+    List<Pair<String, String>> playersInList = players.map((e) => Pair(e?.reference.path, e?.name)).toList()
+      ..sort(comparePairSecond);
+
+    List<Pair<String, String>> playersOutList = players.map((e) => Pair(e?.reference.path, e?.name)).toList()
+      ..sort(comparePairSecond);
+
+    if (widget.substitute == null) {
+      _playerInRefPath ??= playersInList.first.first;
+      _playerOutRefPath ??= playersOutList.first.first;
+    }
 
     return AlertDialog(
       title: Text(widget.substitute != null ? "Modifier le remplacement" : "Ajouter un remplacement"),
@@ -72,47 +92,23 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
               const Icon(Icons.arrow_forward, color: Colors.green),
               const SizedBox(width: 8),
               Expanded(
-                child: players == null
-                    ? const Text("Une erreur est survenue")
-                    : FutureBuilder(
-                        future: firestoreInstance.collection(players.path).get(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                          if (snapshot.hasError) {
-                            return const Center(child: Text("Erreur"));
-                          }
-
-                          if (!snapshot.hasData) {
-                            return const Center(child: Text("Loading ..."));
-                          }
-
-                          List<Pair<String, String>>? playersInList = snapshot.data?.docs
-                              .map((e) => Player(snapshot: e))
-                              .map((e) => Pair(e.reference.path, e.name))
-                              .toList()
-                            ?..sort(comparePairSecond);
-
-                          if (widget.substitute == null) {
-                            _playerInRefPath ??= playersInList?.first.first;
-                          }
-
-                          return DropdownButton(
-                            isExpanded: true,
-                            value: _playerInRefPath,
-                            items: playersInList?.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                              return DropdownMenuItem<String>(
-                                value: value.first,
-                                child: Text(value.second ?? ""),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              if (value != null) {
-                                setState(() {
-                                  _playerInRefPath = value;
-                                });
-                              }
-                            },
-                          );
-                        }),
+                child: DropdownButton(
+                  isExpanded: true,
+                  value: _playerInRefPath,
+                  items: playersInList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                    return DropdownMenuItem<String>(
+                      value: value.first,
+                      child: Text(value.second ?? ""),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      setState(() {
+                        _playerInRefPath = value;
+                      });
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -121,47 +117,23 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
               const Icon(Icons.arrow_back, color: Colors.red),
               const SizedBox(width: 8),
               Expanded(
-                child: players == null
-                    ? const Text("Une erreur est survenue")
-                    : FutureBuilder(
-                        future: firestoreInstance.collection(players.path).get(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                          if (snapshot.hasError) {
-                            return const Center(child: Text("Erreur"));
-                          }
-
-                          if (!snapshot.hasData) {
-                            return const Center(child: Text("Loading ..."));
-                          }
-
-                          List<Pair<String, String>>? playersOutList = snapshot.data?.docs
-                              .map((e) => Player(snapshot: e))
-                              .map((e) => Pair(e.reference.path, e.name))
-                              .toList()
-                            ?..sort(comparePairSecond);
-
-                          if (widget.substitute == null) {
-                            _playerOutRefPath ??= playersOutList?.first.first;
-                          }
-
-                          return DropdownButton(
-                            isExpanded: true,
-                            value: _playerOutRefPath,
-                            items: playersOutList?.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                              return DropdownMenuItem<String>(
-                                value: value.first,
-                                child: Text(value.second ?? ""),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {
-                              if (value != null) {
-                                setState(() {
-                                  _playerOutRefPath = value;
-                                });
-                              }
-                            },
-                          );
-                        }),
+                child: DropdownButton(
+                  isExpanded: true,
+                  value: _playerOutRefPath,
+                  items: playersOutList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                    return DropdownMenuItem<String>(
+                      value: value.first,
+                      child: Text(value.second ?? ""),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      setState(() {
+                        _playerOutRefPath = value;
+                      });
+                    }
+                  },
+                ),
               ),
             ],
           ),

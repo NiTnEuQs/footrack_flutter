@@ -4,6 +4,7 @@ import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/models/opponent.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/models/season.dart';
+import 'package:footrack_front/models/squad_player.dart';
 import 'package:footrack_front/models/substitute.dart';
 
 class DatabaseFirestore {
@@ -34,6 +35,20 @@ class DatabaseFirestore {
         'opponent': m.opponent,
         'date': m.date,
         'scoreOpponent': m.scoreOpponent,
+      });
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Add a Squad Player
+  Future<bool> addNewSquadPlayer(String? seasonId, String? matchId, SquadPlayer sp) async {
+    if (seasonId == null) return false;
+
+    try {
+      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("squad").add({
+        'player': sp.player,
       });
       return true;
     } catch (e) {
@@ -132,6 +147,26 @@ class DatabaseFirestore {
     }
   }
 
+  // Remove a Squad Player
+  Future<bool> removeSquadPlayer(String? seasonId, String? matchId, String squadPlayerId) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("squad")
+          .doc(squadPlayerId)
+          .delete();
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
   // Remove a Goal
   Future<bool> removeGoal(String? seasonId, String? matchId, String goalId) async {
     if (seasonId == null) return false;
@@ -221,6 +256,28 @@ class DatabaseFirestore {
         'opponent': m.opponent,
         'date': m.date,
         'scoreOpponent': m.scoreOpponent,
+      });
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Edit a Squad Player
+  Future<bool> editSquadPlayer(String? seasonId, String? matchId, String squadPlayerId, SquadPlayer sp) async {
+    if (seasonId == null) return false;
+    if (matchId == null) return false;
+
+    try {
+      await _firestore
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("squad")
+          .doc(squadPlayerId)
+          .update({
+        'player': sp.player,
       });
       return true;
     } catch (e) {

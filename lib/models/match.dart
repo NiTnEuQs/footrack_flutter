@@ -7,6 +7,7 @@ import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/snapshot_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/opponent.dart';
+import 'package:footrack_front/models/squad_player.dart';
 import 'package:footrack_front/models/substitute.dart';
 
 part 'match.flamingo.dart';
@@ -21,6 +22,7 @@ class Match extends Document<Match> {
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
     goals = Collection(this, MatchKey.goals.value);
     substitutes = Collection(this, MatchKey.substitutes.value);
+    squad = Collection(this, MatchKey.squad.value);
 
     init(ref);
   }
@@ -32,6 +34,10 @@ class Match extends Document<Match> {
 
     firestoreInstance.collection(substitutes.ref.path).snapshots().listen((snap) {
       ref?.read(substitutesProvider.notifier).state = snap.map((e) => Substitute(snapshot: e, ref: ref));
+    });
+
+    firestoreInstance.collection(squad.ref.path).snapshots().listen((snap) {
+      ref?.read(squadProvider.notifier).state = snap.map((e) => SquadPlayer(snapshot: e, ref: ref));
     });
 
     if (opponent != null) {
@@ -76,6 +82,10 @@ class Match extends Document<Match> {
   @SubCollection()
   late Collection<Substitute> substitutes;
   final substitutesProvider = StateProvider<List<Substitute>>((_) => []);
+
+  @SubCollection()
+  late Collection<SquadPlayer> squad;
+  final squadProvider = StateProvider<List<SquadPlayer>>((_) => []);
 
   int getTotalScoreTeam(WidgetRef ref) {
     return ref.watch(goalsProvider).length;
