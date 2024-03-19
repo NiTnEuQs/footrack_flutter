@@ -23,7 +23,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertSquadPlayer(ref: ref);
+        return const AlertSquadPlayer();
       },
     );
   }
@@ -33,7 +33,6 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
       context: context,
       builder: (context) {
         return AlertSquadPlayer(
-          ref: ref,
           squadPlayer: player,
         );
       },

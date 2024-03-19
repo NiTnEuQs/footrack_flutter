@@ -23,7 +23,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertMatch(ref: ref);
+        return const AlertMatch();
       },
     );
   }
@@ -33,7 +33,6 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
       context: context,
       builder: (context) {
         return AlertMatch(
-          ref: ref,
           match: match,
         );
       },

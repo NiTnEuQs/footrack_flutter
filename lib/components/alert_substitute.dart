@@ -3,26 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/squad_player.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
 
-class AlertSubstitute extends StatefulWidget {
+class AlertSubstitute extends ConsumerStatefulWidget {
   const AlertSubstitute({
     Key? key,
-    required this.ref,
     this.substitute,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final Substitute? substitute;
 
   @override
-  State<AlertSubstitute> createState() => _AlertSubstituteState();
+  ConsumerState<AlertSubstitute> createState() => _AlertSubstituteState();
 }
 
-class _AlertSubstituteState extends State<AlertSubstitute> {
+class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
   final TextEditingController _substituteTimeController = TextEditingController();
 
   String? _playerInRefPath;
@@ -32,22 +31,21 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
   @override
   void initState() {
     super.initState();
-    if (widget.substitute != null) {
-      _playerInRefPath = widget.substitute?.playerIn?.path;
-      _playerOutRefPath = widget.substitute?.playerOut?.path;
-      _timeSubstitution = widget.substitute?.time;
 
-      _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
-    }
+    _playerInRefPath = widget.substitute?.playerIn?.path;
+    _playerOutRefPath = widget.substitute?.playerOut?.path;
+    _timeSubstitution = widget.substitute?.time;
+
+    _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
-    var match = widget.ref.watch(matchChoseProvider);
-    var squad = match != null ? widget.ref.watch(match.squadProvider) : <SquadPlayer>[];
+    var match = ref.watch(matchChoseProvider);
+    var squad = match != null ? ref.watch(match.squadProvider) : <SquadPlayer>[];
     var players = squad
         .map(
-          (e) => widget.ref.watch(e.playerProvider),
+          (e) => ref.watch(e.playerProvider),
         )
         .where(
           (e) => e?.getRole() == PlayerRoleEnum.player,
@@ -60,162 +58,167 @@ class _AlertSubstituteState extends State<AlertSubstitute> {
       ..sort(comparePairSecond);
 
     if (widget.substitute == null) {
-      _playerInRefPath ??= playersInList.first.first;
-      _playerOutRefPath ??= playersOutList.first.first;
+      _playerInRefPath ??= playersInList.firstOrNull?.first;
+      _playerOutRefPath ??= playersOutList.firstOrNull?.first;
     }
 
-    return AlertDialog(
-      title: Text(widget.substitute != null ? "Modifier le remplacement" : "Ajouter un remplacement"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.access_alarm),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _substituteTimeController,
-                  decoration: const InputDecoration(
-                    hintText: "Temps",
-                  ),
-                  onChanged: (value) {
-                    _timeSubstitution = int.parse(value);
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(Icons.arrow_forward, color: Colors.green),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: _playerInRefPath,
-                  items: playersInList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                    return DropdownMenuItem<String>(
-                      value: value.first,
-                      child: Text(value.second ?? ""),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      setState(() {
-                        _playerInRefPath = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(Icons.arrow_back, color: Colors.red),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: _playerOutRefPath,
-                  items: playersOutList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                    return DropdownMenuItem<String>(
-                      value: value.first,
-                      child: Text(value.second ?? ""),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      setState(() {
-                        _playerOutRefPath = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      actions: [
-        if (widget.substitute != null)
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          widget.ref.read(dbProvider).removeSubstitute(
-                                widget.ref.read(seasonChoseProvider)?.id,
-                                widget.ref.read(matchChoseProvider)?.id,
-                                widget.substitute!.id,
-                              );
-
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
-                            },
-                          ),
+    return players.isEmpty
+        ? const AlertDialog(
+            title: Text("Attention"),
+            content: Text("Veuillez remplir votre effectif avant de faire un changement"),
+          )
+        : AlertDialog(
+            title: Text(widget.substitute != null ? "Modifier le remplacement" : "Ajouter un remplacement"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.access_alarm),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _substituteTimeController,
+                        decoration: const InputDecoration(
+                          hintText: "Temps",
                         ),
-                        child: const Text("Supprimer"),
+                        onChanged: (value) {
+                          _timeSubstitution = int.parse(value);
+                        },
                       ),
-                    ],
-                  );
-                },
-              );
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return Colors.red;
-                },
-              ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.arrow_forward, color: Colors.green),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        value: _playerInRefPath,
+                        items: playersInList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                          return DropdownMenuItem<String>(
+                            value: value.first,
+                            child: Text(value.second ?? ""),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _playerInRefPath = value;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.arrow_back, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        value: _playerOutRefPath,
+                        items: playersOutList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                          return DropdownMenuItem<String>(
+                            value: value.first,
+                            child: Text(value.second ?? ""),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              _playerOutRefPath = value;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            child: const Text("Supprimer"),
-          ),
-        ElevatedButton(
-          onPressed: () {
-            var substitute = Substitute()
-              ..playerIn = _playerInRefPath != null ? FirebaseFirestore.instance.doc(_playerInRefPath!) : null
-              ..playerOut = _playerOutRefPath != null ? FirebaseFirestore.instance.doc(_playerOutRefPath!) : null
-              ..time = _timeSubstitution;
+            actions: [
+              if (widget.substitute != null)
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
 
-            if (widget.substitute != null) {
-              widget.ref.read(dbProvider).editSubstitute(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    widget.ref.read(matchChoseProvider)?.id,
-                    widget.substitute!.id,
-                    substitute,
-                  );
-            } else {
-              widget.ref.read(dbProvider).addNewSubstitute(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    widget.ref.read(matchChoseProvider)?.id,
-                    substitute,
-                  );
-            }
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Annuler")),
+                            ElevatedButton(
+                              onPressed: () {
+                                ref.read(dbProvider).removeSubstitute(
+                                      ref.read(seasonChoseProvider)?.id,
+                                      ref.read(matchChoseProvider)?.id,
+                                      widget.substitute!.id,
+                                    );
 
-            Navigator.pop(context);
-          },
-          child: Text(widget.substitute != null ? "Modifier" : "Ajouter"),
-        ),
-      ],
-    );
+                                Navigator.pop(context);
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    return Colors.red;
+                                  },
+                                ),
+                              ),
+                              child: const Text("Supprimer"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        return Colors.red;
+                      },
+                    ),
+                  ),
+                  child: const Text("Supprimer"),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  var substitute = Substitute()
+                    ..playerIn = _playerInRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..playerOut = _playerOutRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..time = _timeSubstitution;
+
+                  if (widget.substitute != null) {
+                    ref.read(dbProvider).editSubstitute(
+                          ref.read(seasonChoseProvider)?.id,
+                          ref.read(matchChoseProvider)?.id,
+                          widget.substitute!.id,
+                          substitute,
+                        );
+                  } else {
+                    ref.read(dbProvider).addNewSubstitute(
+                          ref.read(seasonChoseProvider)?.id,
+                          ref.read(matchChoseProvider)?.id,
+                          substitute,
+                        );
+                  }
+
+                  Navigator.pop(context);
+                },
+                child: Text(widget.substitute != null ? "Modifier" : "Ajouter"),
+              ),
+            ],
+          );
   }
 }

@@ -7,21 +7,19 @@ import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/utils/pickers.dart';
 
-class AlertPlayer extends StatefulWidget {
+class AlertPlayer extends ConsumerStatefulWidget {
   const AlertPlayer({
     Key? key,
-    required this.ref,
     this.player,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final Player? player;
 
   @override
-  State<AlertPlayer> createState() => _AlertPlayerState();
+  ConsumerState<AlertPlayer> createState() => _AlertPlayerState();
 }
 
-class _AlertPlayerState extends State<AlertPlayer> {
+class _AlertPlayerState extends ConsumerState<AlertPlayer> {
   final TextEditingController _playerNameController = TextEditingController();
   final TextEditingController _playerBirthdateController = TextEditingController();
 
@@ -32,14 +30,12 @@ class _AlertPlayerState extends State<AlertPlayer> {
   @override
   void initState() {
     super.initState();
-    if (widget.player != null) {
-      _birthdatePicked = widget.player!.birthdate.toDateTime();
+    _playerRole = widget.player?.getRole();
+    _playerStatus = widget.player?.getStatus();
+    _birthdatePicked = widget.player?.birthdate.toDateTime();
 
-      _playerNameController.text = widget.player!.getName();
-      _playerBirthdateController.text = _birthdatePicked.format();
-      _playerRole = widget.player!.getRole();
-      _playerStatus = widget.player!.getStatus();
-    }
+    _playerNameController.text = widget.player?.getName() ?? "";
+    _playerBirthdateController.text = _birthdatePicked.format();
   }
 
   @override
@@ -154,8 +150,8 @@ class _AlertPlayerState extends State<AlertPlayer> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref.read(dbProvider).removePlayer(
-                                widget.ref.read(seasonChoseProvider)?.id,
+                          ref.read(dbProvider).removePlayer(
+                                ref.read(seasonChoseProvider)?.id,
                                 widget.player!.id,
                               );
 

@@ -5,21 +5,19 @@ import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/utils/pickers.dart';
 
-class AlertSeason extends StatefulWidget {
+class AlertSeason extends ConsumerStatefulWidget {
   const AlertSeason({
     Key? key,
-    required this.ref,
     this.season,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final Season? season;
 
   @override
-  State<AlertSeason> createState() => _AlertSeasonState();
+  ConsumerState<AlertSeason> createState() => _AlertSeasonState();
 }
 
-class _AlertSeasonState extends State<AlertSeason> {
+class _AlertSeasonState extends ConsumerState<AlertSeason> {
   final TextEditingController _seasonNameController = TextEditingController();
   final TextEditingController _seasonTeamNameController = TextEditingController();
   final TextEditingController _seasonDateStartController = TextEditingController();
@@ -28,22 +26,21 @@ class _AlertSeasonState extends State<AlertSeason> {
   DateTime? _dateStartPicked;
   DateTime? _dateEndPicked;
 
-  _initState() {
-    if (widget.season != null) {
-      _seasonNameController.text = widget.season!.getName();
-      _seasonTeamNameController.text = widget.season!.teamName ?? "";
-      _seasonDateStartController.text = widget.season!.from.toDateTime().format();
-      _seasonDateEndController.text = widget.season!.to.toDateTime().format();
+  @override
+  void initState() {
+    super.initState();
 
-      _dateStartPicked = widget.season!.from.toDateTime();
-      _dateEndPicked = widget.season!.to.toDateTime();
-    }
+    _seasonNameController.text = widget.season?.getName() ?? "";
+    _seasonTeamNameController.text = widget.season?.teamName ?? "";
+    _seasonDateStartController.text = widget.season?.from.toDateTime().format() ?? "";
+    _seasonDateEndController.text = widget.season?.to.toDateTime().format() ?? "";
+
+    _dateStartPicked = widget.season?.from.toDateTime();
+    _dateEndPicked = widget.season?.to.toDateTime();
   }
 
   @override
   Widget build(BuildContext context) {
-    _initState();
-
     return AlertDialog(
       title: Text(widget.season != null ? "Modifier votre saison" : "Créer votre saison"),
       content: Column(
@@ -119,7 +116,7 @@ class _AlertSeasonState extends State<AlertSeason> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref.read(dbProvider).removeSeason(widget.season!.id);
+                          ref.read(dbProvider).removeSeason(widget.season!.id);
 
                           Navigator.pop(context);
                         },
@@ -148,19 +145,21 @@ class _AlertSeasonState extends State<AlertSeason> {
           ),
         ElevatedButton(
           onPressed: () {
-            var value = Season()
+            var season = Season()
               ..name = _seasonNameController.value.text
               ..teamName = _seasonTeamNameController.value.text
               ..from = _dateStartPicked.toTimestamp()
               ..to = _dateEndPicked.toTimestamp();
 
             if (widget.season != null) {
-              widget.ref.read(dbProvider).editSeason(
-                    value,
+              ref.read(dbProvider).editSeason(
                     widget.season!.id,
+                    season,
                   );
             } else {
-              widget.ref.read(dbProvider).addNewSeason(value);
+              ref.read(dbProvider).addNewSeason(
+                    season,
+                  );
             }
 
             Navigator.pop(context);

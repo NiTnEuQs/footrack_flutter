@@ -19,7 +19,7 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertOpponent(ref: ref);
+        return const AlertOpponent();
       },
     );
   }
@@ -29,7 +29,6 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
       context: context,
       builder: (context) {
         return AlertOpponent(
-          ref: ref,
           opponent: opponent,
         );
       },

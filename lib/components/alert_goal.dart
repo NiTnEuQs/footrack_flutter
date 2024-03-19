@@ -3,26 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/squad_player.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
 
-class AlertGoal extends StatefulWidget {
+class AlertGoal extends ConsumerStatefulWidget {
   const AlertGoal({
     Key? key,
-    required this.ref,
     this.goal,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final Goal? goal;
 
   @override
-  State<AlertGoal> createState() => _AlertGoalState();
+  ConsumerState<AlertGoal> createState() => _AlertGoalState();
 }
 
-class _AlertGoalState extends State<AlertGoal> {
+class _AlertGoalState extends ConsumerState<AlertGoal> {
   final TextEditingController _goalTimeController = TextEditingController();
 
   String? _scorerRefPath;
@@ -32,22 +31,21 @@ class _AlertGoalState extends State<AlertGoal> {
   @override
   void initState() {
     super.initState();
-    if (widget.goal != null) {
-      _scorerRefPath = widget.goal?.scorer?.path;
-      _passerRefPath = widget.goal?.passer?.path;
-      _timeGoalScored = widget.goal?.time;
 
-      _goalTimeController.text = _timeGoalScored?.toString() ?? "";
-    }
+    _scorerRefPath = widget.goal?.scorer?.path;
+    _passerRefPath = widget.goal?.passer?.path;
+    _timeGoalScored = widget.goal?.time;
+
+    _goalTimeController.text = _timeGoalScored?.toString() ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
-    var match = widget.ref.watch(matchChoseProvider);
-    var squad = match != null ? widget.ref.watch(match.squadProvider) : <SquadPlayer>[];
+    var match = ref.watch(matchChoseProvider);
+    var squad = match != null ? ref.watch(match.squadProvider) : <SquadPlayer>[];
     var players = squad
         .map(
-          (e) => widget.ref.watch(e.playerProvider),
+          (e) => ref.watch(e.playerProvider),
         )
         .where(
           (e) => e?.getRole() == PlayerRoleEnum.player,
@@ -66,154 +64,159 @@ class _AlertGoalState extends State<AlertGoal> {
       _passerRefPath ??= passersList.first.first;
     }
 
-    return AlertDialog(
-      title: Text(widget.goal != null ? "Modifier le but" : "Ajouter un but"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.access_alarm),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _goalTimeController,
-                  decoration: const InputDecoration(
-                    hintText: "Temps",
-                  ),
-                  onChanged: (value) {
-                    _timeGoalScored = value.isNotEmpty ? int.parse(value) : null;
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(Icons.sports_soccer),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: _scorerRefPath,
-                  items: scorersList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                    return DropdownMenuItem<String>(
-                      value: value.first,
-                      child: Text(value.second ?? ""),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _scorerRefPath = value;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Icon(Icons.person),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: _passerRefPath,
-                  items: passersList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
-                    return DropdownMenuItem<String>(
-                      value: value.first,
-                      child: Text(value.second ?? ""),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _passerRefPath = value;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      actions: [
-        if (widget.goal != null)
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir supprimer ce but ?"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          widget.ref.read(dbProvider).removeGoal(
-                                widget.ref.read(seasonChoseProvider)?.id,
-                                widget.ref.read(matchChoseProvider)?.id,
-                                widget.goal!.id,
-                              );
-
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
-                            },
-                          ),
+    return players.isEmpty
+        ? const AlertDialog(
+            title: Text("Attention"),
+            content: Text("Veuillez remplir votre effectif avant d'ajouter un but"),
+          )
+        : AlertDialog(
+            title: Text(widget.goal != null ? "Modifier le but" : "Ajouter un but"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.access_alarm),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: _goalTimeController,
+                        decoration: const InputDecoration(
+                          hintText: "Temps",
                         ),
-                        child: const Text("Supprimer"),
+                        onChanged: (value) {
+                          _timeGoalScored = value.isNotEmpty ? int.parse(value) : null;
+                        },
                       ),
-                    ],
-                  );
-                },
-              );
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return Colors.red;
-                },
-              ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.sports_soccer),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        value: _scorerRefPath,
+                        items: scorersList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                          return DropdownMenuItem<String>(
+                            value: value.first,
+                            child: Text(value.second ?? ""),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _scorerRefPath = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.person),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        value: _passerRefPath,
+                        items: passersList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                          return DropdownMenuItem<String>(
+                            value: value.first,
+                            child: Text(value.second ?? ""),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _passerRefPath = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            child: const Text("Supprimer"),
-          ),
-        ElevatedButton(
-          onPressed: () {
-            Goal goal = Goal()
-              ..scorer = _scorerRefPath != null ? FirebaseFirestore.instance.doc(_scorerRefPath!) : null
-              ..passer = _passerRefPath != null ? FirebaseFirestore.instance.doc(_passerRefPath!) : null
-              ..time = _timeGoalScored;
+            actions: [
+              if (widget.goal != null)
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
 
-            if (widget.goal != null) {
-              widget.ref.read(dbProvider).editGoal(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    widget.ref.read(matchChoseProvider)?.id,
-                    widget.goal!.id,
-                    goal,
-                  );
-            } else {
-              widget.ref.read(dbProvider).addNewGoal(
-                    widget.ref.read(seasonChoseProvider)?.id,
-                    widget.ref.read(matchChoseProvider)?.id,
-                    goal,
-                  );
-            }
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Êtes-vous sûr de vouloir supprimer ce but ?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Annuler")),
+                            ElevatedButton(
+                              onPressed: () {
+                                ref.read(dbProvider).removeGoal(
+                                      ref.read(seasonChoseProvider)?.id,
+                                      ref.read(matchChoseProvider)?.id,
+                                      widget.goal!.id,
+                                    );
 
-            Navigator.pop(context);
-          },
-          child: Text(widget.goal != null ? "Modifier" : "Ajouter"),
-        ),
-      ],
-    );
+                                Navigator.pop(context);
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    return Colors.red;
+                                  },
+                                ),
+                              ),
+                              child: const Text("Supprimer"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        return Colors.red;
+                      },
+                    ),
+                  ),
+                  child: const Text("Supprimer"),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  Goal newGoal = Goal()
+                    ..scorer = _scorerRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..passer = _passerRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..time = _timeGoalScored;
+
+                  if (widget.goal != null) {
+                    ref.read(dbProvider).editGoal(
+                          ref.read(seasonChoseProvider)?.id,
+                          ref.read(matchChoseProvider)?.id,
+                          widget.goal!.id,
+                          newGoal,
+                        );
+                  } else {
+                    ref.read(dbProvider).addNewGoal(
+                          ref.read(seasonChoseProvider)?.id,
+                          ref.read(matchChoseProvider)?.id,
+                          newGoal,
+                        );
+                  }
+
+                  Navigator.pop(context);
+                },
+                child: Text(widget.goal != null ? "Modifier" : "Ajouter"),
+              ),
+            ],
+          );
   }
 }

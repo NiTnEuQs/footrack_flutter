@@ -24,7 +24,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertSeason(ref: ref);
+        return const AlertSeason();
       },
     );
   }
@@ -34,7 +34,6 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
       context: context,
       builder: (context) {
         return AlertSeason(
-          ref: ref,
           season: season,
         );
       },

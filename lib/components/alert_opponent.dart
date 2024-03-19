@@ -3,30 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/models/opponent.dart';
 
-class AlertOpponent extends StatelessWidget {
-  AlertOpponent({
+class AlertOpponent extends ConsumerStatefulWidget {
+  const AlertOpponent({
     Key? key,
-    required this.ref,
     this.opponent,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final Opponent? opponent;
 
+  @override
+  ConsumerState<AlertOpponent> createState() => _AlertOpponentState();
+}
+
+class _AlertOpponentState extends ConsumerState<AlertOpponent> {
   final TextEditingController _opponentNameController = TextEditingController();
 
-  _initState() {
-    if (opponent != null) {
-      _opponentNameController.text = opponent!.getName();
-    }
+  @override
+  void initState() {
+    super.initState();
+
+    _opponentNameController.text = widget.opponent?.getName() ?? "";
   }
 
   @override
   Widget build(BuildContext context) {
-    _initState();
-
     return AlertDialog(
-      title: Text(opponent != null ? "Modifier l'adversaire" : "Ajouter un adversaire"),
+      title: Text(widget.opponent != null ? "Modifier l'adversaire" : "Ajouter un adversaire"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -47,7 +49,7 @@ class AlertOpponent extends StatelessWidget {
         ],
       ),
       actions: [
-        if (opponent != null)
+        if (widget.opponent != null)
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -57,7 +59,7 @@ class AlertOpponent extends StatelessWidget {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text("Êtes-vous sûr de vouloir supprimer l'adversaire ?"),
-                    content: Text(opponent!.getName()),
+                    content: Text(widget.opponent!.getName()),
                     actions: [
                       TextButton(
                           onPressed: () {
@@ -68,7 +70,7 @@ class AlertOpponent extends StatelessWidget {
                         onPressed: () {
                           ref.read(dbProvider).removeOpponent(
                                 ref.read(seasonChoseProvider)?.id,
-                                opponent!.id,
+                                widget.opponent!.id,
                               );
 
                           Navigator.pop(context);
@@ -98,17 +100,24 @@ class AlertOpponent extends StatelessWidget {
           ),
         ElevatedButton(
           onPressed: () {
-            var value = Opponent()..name = _opponentNameController.value.text;
+            var opponent = Opponent()..name = _opponentNameController.value.text;
 
-            if (opponent != null) {
-              ref.read(dbProvider).editOpponent(ref.read(seasonChoseProvider)?.id, opponent!.id, value);
+            if (widget.opponent != null) {
+              ref.read(dbProvider).editOpponent(
+                    ref.read(seasonChoseProvider)?.id,
+                    widget.opponent!.id,
+                    opponent,
+                  );
             } else {
-              ref.read(dbProvider).addNewOpponent(ref.read(seasonChoseProvider)?.id, value);
+              ref.read(dbProvider).addNewOpponent(
+                    ref.read(seasonChoseProvider)?.id,
+                    opponent,
+                  );
             }
 
             Navigator.pop(context);
           },
-          child: Text(opponent != null ? "Modifier" : "Ajouter"),
+          child: Text(widget.opponent != null ? "Modifier" : "Ajouter"),
         ),
       ],
     );

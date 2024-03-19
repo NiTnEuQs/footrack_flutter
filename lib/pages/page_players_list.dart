@@ -22,7 +22,7 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertPlayer(ref: ref);
+        return const AlertPlayer();
       },
     );
   }
@@ -32,7 +32,6 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
       context: context,
       builder: (context) {
         return AlertPlayer(
-          ref: ref,
           player: player,
         );
       },

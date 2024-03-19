@@ -31,7 +31,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertGoal(ref: ref);
+        return const AlertGoal();
       },
     );
   }
@@ -46,7 +46,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertSubstitute(ref: ref);
+        return const AlertSubstitute();
       },
     );
   }
@@ -77,7 +77,6 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
       context: context,
       builder: (context) {
         return AlertGoal(
-          ref: ref,
           goal: goal,
         );
       },
@@ -89,7 +88,6 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
       context: context,
       builder: (context) {
         return AlertSubstitute(
-          ref: ref,
           substitute: substitute,
         );
       },

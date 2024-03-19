@@ -232,13 +232,13 @@ class DatabaseFirestore {
   }
 
   // Edit a Season
-  Future<bool> editSeason(Season m, String seasonId) async {
+  Future<bool> editSeason(String seasonId, Season s) async {
     try {
       await _firestore.collection("seasons").doc(seasonId).update({
-        'name': m.name,
-        'teamName': m.teamName,
-        'from': m.from,
-        'to': m.to,
+        'name': s.name,
+        'teamName': s.teamName,
+        'from': s.from,
+        'to': s.to,
       });
       return true;
     } catch (e) {
