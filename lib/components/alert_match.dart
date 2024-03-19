@@ -54,29 +54,30 @@ class _AlertMatchState extends State<AlertMatch> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Row(
-          //   children: [
-          //     const Icon(Icons.military_tech, color: Colors.amber),
-          //     const SizedBox(width: 8),
-          //     Expanded(
-          //       child: DropdownButton(
-          //         isExpanded: true,
-          //         value: _matchType,
-          //         items: List<MatchTypeEnum>.from(MatchTypeEnum.values).map<DropdownMenuItem<MatchTypeEnum>>((MatchTypeEnum value) {
-          //           return DropdownMenuItem<MatchTypeEnum>(
-          //             value: value,
-          //             child: Text(value.format()),
-          //           );
-          //         }).toList(),
-          //         onChanged: (MatchTypeEnum? value) {
-          //           setState(() {
-          //             _matchType = value;
-          //           });
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          Row(
+            children: [
+              const Icon(Icons.emoji_events, color: Colors.amber),
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButton(
+                  isExpanded: true,
+                  value: _matchType,
+                  items: List<MatchTypeEnum>.from(MatchTypeEnum.values)
+                      .map<DropdownMenuItem<MatchTypeEnum>>((MatchTypeEnum value) {
+                    return DropdownMenuItem<MatchTypeEnum>(
+                      value: value,
+                      child: Text(value.format()),
+                    );
+                  }).toList(),
+                  onChanged: (MatchTypeEnum? value) {
+                    setState(() {
+                      _matchType = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
           Row(
             children: [
               const Icon(Icons.calendar_month, color: Colors.blue),
@@ -171,7 +172,9 @@ class _AlertMatchState extends State<AlertMatch> {
                           child: const Text("Annuler")),
                       ElevatedButton(
                         onPressed: () {
-                          widget.ref.read(dbProvider).removeMatch(widget.ref.read(seasonChoseProvider)?.id, widget.match!.id);
+                          widget.ref
+                              .read(dbProvider)
+                              .removeMatch(widget.ref.read(seasonChoseProvider)?.id, widget.match!.id);
 
                           Navigator.pop(context);
                         },
