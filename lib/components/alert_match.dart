@@ -97,10 +97,10 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                         ),
                         readOnly: true,
                         onTap: () {
-                          dateTimePicker(context).then((value) {
-                            if (value != null) {
-                              _dateStartPicked = value;
-                              _matchDateStartController.text = value.formatWithTime();
+                          ref.read(dateTimePicker(context).future).then((d) {
+                            if (d != null) {
+                              _dateStartPicked = d;
+                              _matchDateStartController.text = d.formatWithTime();
                             }
                           });
                         },

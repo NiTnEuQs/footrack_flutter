@@ -71,10 +71,10 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
                   ),
                   readOnly: true,
                   onTap: () {
-                    datePicker(context).then((value) {
-                      if (value != null) {
-                        _birthdatePicked = value;
-                        _playerBirthdateController.text = value.format();
+                    ref.read(datePicker(context).future).then((d) {
+                      if (d != null) {
+                        _birthdatePicked = d;
+                        _playerBirthdateController.text = d.format();
                       }
                     });
                   },
@@ -90,7 +90,8 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
                 child: DropdownButton(
                   isExpanded: true,
                   value: _playerRole,
-                  items: List<PlayerRoleEnum>.from(PlayerRoleEnum.values).map<DropdownMenuItem<PlayerRoleEnum>>((PlayerRoleEnum value) {
+                  items: List<PlayerRoleEnum>.from(PlayerRoleEnum.values)
+                      .map<DropdownMenuItem<PlayerRoleEnum>>((PlayerRoleEnum value) {
                     return DropdownMenuItem<PlayerRoleEnum>(
                       value: value,
                       child: Text(value.format()),
@@ -113,7 +114,8 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
                 child: DropdownButton(
                   isExpanded: true,
                   value: _playerStatus,
-                  items: List<PlayerStatusEnum>.from(PlayerStatusEnum.values).map<DropdownMenuItem<PlayerStatusEnum>>((PlayerStatusEnum value) {
+                  items: List<PlayerStatusEnum>.from(PlayerStatusEnum.values)
+                      .map<DropdownMenuItem<PlayerStatusEnum>>((PlayerStatusEnum value) {
                     return DropdownMenuItem<PlayerStatusEnum>(
                       value: value,
                       child: Text(value.format()),
@@ -182,16 +184,23 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
           ),
         ElevatedButton(
           onPressed: () {
-            var value = Player()
+            var player = Player()
               ..name = _playerNameController.value.text
               ..birthdate = _birthdatePicked.toTimestamp()
               ..role = _playerRole?.name
               ..status = _playerStatus?.name;
 
             if (widget.player != null) {
-              widget.ref.read(dbProvider).editPlayer(widget.ref.read(seasonChoseProvider)?.id, widget.player!.id, value);
+              ref.read(dbProvider).editPlayer(
+                    ref.read(seasonChoseProvider)?.id,
+                    widget.player!.id,
+                    player,
+                  );
             } else {
-              widget.ref.read(dbProvider).addNewPlayer(widget.ref.read(seasonChoseProvider)?.id, value);
+              ref.read(dbProvider).addNewPlayer(
+                    ref.read(seasonChoseProvider)?.id,
+                    player,
+                  );
             }
 
             Navigator.pop(context);

@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 
-Future<DateTime?> datePicker(context) async {
+var datePicker = FutureProvider.autoDispose.family<DateTime?, BuildContext>((ref, context) async {
+  var languageCode = ref.watch(languageCodeProvider);
+
   return await showDatePicker(
     context: context,
+    locale: Locale(languageCode),
     initialDate: DateTime.now(),
     firstDate: DateTime(1900),
     lastDate: DateTime(3000),
   );
-}
+});
 
-Future<TimeOfDay?> timePicker(context) async {
+var timePicker = FutureProvider.autoDispose.family<TimeOfDay?, BuildContext>((ref, context) async {
   return await showTimePicker(
     context: context,
     initialTime: TimeOfDay.now(),
   );
-}
+});
 
-Future<DateTime?> dateTimePicker(context) async {
-  DateTime? date = await datePicker(context);
+var dateTimePicker = FutureProvider.autoDispose.family<DateTime?, BuildContext>((ref, context) async {
+  DateTime? date = await ref.read(datePicker(context).future);
   if (date == null) return Future.value(null);
 
-  TimeOfDay? time = await timePicker(context);
+  TimeOfDay? time = await ref.read(timePicker(context).future);
   if (time == null) return Future.value(null);
 
   return Future.value(
@@ -32,4 +37,4 @@ Future<DateTime?> dateTimePicker(context) async {
       time.minute,
     ),
   );
-}
+});

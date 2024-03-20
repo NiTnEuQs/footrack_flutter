@@ -64,16 +64,13 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
               hintText: "Date de début",
             ),
             readOnly: true,
-            onTap: () {
-              datePicker(context).then(
-                (value) => {
-                  if (value != null)
-                    {
-                      _dateStartPicked = value,
-                      _seasonDateStartController.text = value.format(),
-                    }
-                },
-              );
+            onTap: () async {
+              ref.read(datePicker(context).future).then((d) {
+                if (d != null) {
+                  _dateStartPicked = d;
+                  _seasonDateStartController.text = d.format();
+                }
+              });
             },
           ),
           TextFormField(
@@ -83,15 +80,12 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
             ),
             readOnly: true,
             onTap: () {
-              datePicker(context).then(
-                (value) => {
-                  if (value != null)
-                    {
-                      _dateEndPicked = value,
-                      _seasonDateEndController.text = value.format(),
-                    }
-                },
-              );
+              ref.read(datePicker(context).future).then((d) {
+                if (d != null) {
+                  _dateEndPicked = d;
+                  _seasonDateEndController.text = d.format();
+                }
+              });
             },
           ),
         ],

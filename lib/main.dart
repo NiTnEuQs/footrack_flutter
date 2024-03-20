@@ -3,10 +3,12 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_config.dart';
+import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/managers/package_manager.dart';
 import 'package:footrack_front/pages/page_seasons_list.dart';
@@ -68,6 +70,7 @@ class _AppState extends ConsumerState<App> {
     var language = "fr";
     // var language = Localizations.localeOf(context).languageCode;
 
+    ref.read(languageCodeProvider.notifier).state = language;
     await initializeDateFormatting(language);
     Intl.defaultLocale = language;
   }
@@ -93,6 +96,14 @@ class _AppState extends ConsumerState<App> {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("fr"),
+      ],
       home: FutureBuilder<FirebaseRemoteConfig>(
         future: setupRemoteConfig(),
         builder: (BuildContext context, AsyncSnapshot<FirebaseRemoteConfig> snapshot) {
