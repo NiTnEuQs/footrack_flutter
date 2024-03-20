@@ -19,9 +19,7 @@ import 'package:footrack_front/pages/page_match_squad.dart';
 import 'package:wakelock/wakelock.dart';
 
 class MatchDashboardPage extends ConsumerStatefulWidget {
-  const MatchDashboardPage(this.matchId, {Key? key}) : super(key: key);
-
-  final String matchId;
+  const MatchDashboardPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MatchDashboardPageState();
@@ -31,24 +29,14 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   void _addGoal() {
     showDialog(
       context: context,
-      builder: (context) {
-        return const AlertGoal();
-      },
+      builder: (context) => const AlertGoal(),
     );
-  }
-
-  void _updateOpponentGoal(int? newOpponentGoal) {
-    ref
-        .watch(dbProvider)
-        .updateOpponentGoal(ref.read(seasonChoseProvider)?.id, ref.read(matchChoseProvider)?.id, newOpponentGoal);
   }
 
   void _addSubstitute() {
     showDialog(
       context: context,
-      builder: (context) {
-        return const AlertSubstitute();
-      },
+      builder: (_) => const AlertSubstitute(),
     );
   }
 
@@ -56,9 +44,17 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const MatchSquadPage(),
+        builder: (_) => const MatchSquadPage(),
       ),
     );
+  }
+
+  void _updateOpponentGoal(int? opponentGoal) {
+    ref.watch(dbProvider).updateOpponentGoal(
+          ref.read(seasonChoseProvider)?.id,
+          ref.read(matchChoseProvider)?.id,
+          opponentGoal,
+        );
   }
 
   void _startOrPauseMatch() {}
@@ -108,17 +104,10 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    var season = ref.watch(seasonsProvider).firstWhereOrNull((e) => e.id == ref.watch(seasonChoseProvider)?.id);
-    var match = season != null
-        ? ref.watch(season.matchsProvider).firstWhereOrNull((e) => e.id == ref.watch(matchChoseProvider)?.id)
-        : null;
-    var goals = match != null ? ref.watch(match.goalsProvider) : <Goal>[];
-    var substitutes = match != null ? ref.watch(match.substitutesProvider) : <Substitute>[];
-    var opponent = match != null ? ref.watch(match.opponentProvider) : Opponent();
-    // var match = season != null ? ref.watch(season.matchsProvider).firstWhere((element) => element.id == ref.watch(matchChoseProvider)?.id) : null;
-    // var goals = match != null ? ref.watch(match.goalsProvider) : <Goal>[];
-    // var substitutes = match != null ? ref.watch(match.substitutesProvider) : <Substitute>[];
-    // var opponentName = match != null ? ref.watch(match.opponentProvider)?.getName() ?? "Votre adversaire" : "Erreur";
+    var match = ref.watch(matchChoseProvider);
+    var goals = match?.goalsProvider.let((it) => ref.watch(it)) ?? <Goal>[];
+    var substitutes = match?.substitutesProvider.let((it) => ref.watch(it)) ?? <Substitute>[];
+    var opponent = match?.opponentProvider.let((it) => ref.watch(it));
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -180,7 +169,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                 flex: 2,
                                 child: Center(
                                   child: Text(
-                                    "${match.getTotalScoreTeam(ref).toString()} - ${match.scoreOpponent?.toString()}",
+                                    "${match.getTotalScoreTeam(ref)} - ${match.getScoreOpponent()}",
                                     maxLines: 2,
                                     style: const TextStyle(
                                       fontSize: 20,
@@ -207,40 +196,25 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                   ),
                   Expanded(
                     child: EventsListPage(
-                      ref: ref,
-                      events: <PlayerEvent>[...goals, ...substitutes]..sort((a, b) {
-                          return b.getTime().compare(a.getTime(), nullIsFirst: true);
-                        }),
+                      events: <PlayerEvent>[...goals, ...substitutes]
+                        ..sort((a, b) => b.createdAt.compare(a.createdAt, nullIsFirst: true))
+                        ..sort((a, b) => b.getTime().compare(a.getTime(), nullIsFirst: true)),
                       onEventLongPress: _editEvent,
                     ),
                   ),
                   MatchDashboard(
                     match: match,
-                    onGoalClicked: () {
-                      _addGoal();
-                    },
-                    onSubstituteClicked: () {
-                      _addSubstitute();
-                    },
-                    onSquadClicked: () {
-                      _openSquad();
-                    },
-                    onStartClicked: () {
-                      _startOrPauseMatch();
-                    },
-                    onStopClicked: () {
-                      _halfTimeOrStopMatch();
-                    },
+                    onGoalClicked: _addGoal,
+                    onSubstituteClicked: _addSubstitute,
+                    onSquadClicked: _openSquad,
                     onOpponentGoalClicked: () {
-                      if (match.scoreOpponent == null) return;
-
-                      _updateOpponentGoal(match.scoreOpponent! + 1);
+                      _updateOpponentGoal(match.getScoreOpponent() + 1);
                     },
                     onOpponentGoalLongPress: () {
-                      if (match.scoreOpponent == null) return;
-
-                      _updateOpponentGoal(max(0, match.scoreOpponent! - 1));
+                      _updateOpponentGoal(max(0, match.getScoreOpponent() - 1));
                     },
+                    onStartClicked: _startOrPauseMatch,
+                    onStopClicked: _halfTimeOrStopMatch,
                   ),
                 ],
               ),
@@ -249,22 +223,20 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   }
 }
 
-class EventsListPage extends StatelessWidget {
+class EventsListPage extends ConsumerWidget {
   const EventsListPage({
     Key? key,
-    required this.ref,
     required this.events,
     this.onEventTap,
     this.onEventLongPress,
   }) : super(key: key);
 
-  final WidgetRef ref;
   final List<PlayerEvent> events;
   final Function(PlayerEvent? event)? onEventTap;
   final Function(PlayerEvent? event)? onEventLongPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return events.isEmpty
         ? const Center(child: Text("Aucun évènement"))
         : ListView.separated(

@@ -54,7 +54,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => MatchDashboardPage(nextMatch.id),
+                                builder: (_) => const MatchDashboardPage(),
                               ),
                             );
                           },

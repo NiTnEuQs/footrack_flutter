@@ -45,7 +45,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MatchDashboardPage(match.id),
+        builder: (context) => const MatchDashboardPage(),
       ),
     );
   }
