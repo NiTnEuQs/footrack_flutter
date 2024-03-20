@@ -23,15 +23,15 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
   final TextEditingController _playerNameController = TextEditingController();
   final TextEditingController _playerBirthdateController = TextEditingController();
 
-  PlayerRoleEnum? _playerRole = PlayerRoleEnum.none;
-  PlayerStatusEnum? _playerStatus = PlayerStatusEnum.none;
+  PlayerRoleEnum? _playerRole;
+  PlayerStatusEnum? _playerStatus;
   DateTime? _birthdatePicked;
 
   @override
   void initState() {
     super.initState();
-    _playerRole = widget.player?.getRole();
-    _playerStatus = widget.player?.getStatus();
+    _playerRole = widget.player?.getRole() ?? PlayerRoleEnum.none;
+    _playerStatus = widget.player?.getStatus() ?? PlayerStatusEnum.none;
     _birthdatePicked = widget.player?.birthdate.toDateTime();
 
     _playerNameController.text = widget.player?.getName() ?? "";
@@ -141,34 +141,38 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir supprimer le joueur ?"),
-                    content: Text(widget.player!.getName()),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(dbProvider).removePlayer(
-                                ref.read(seasonChoseProvider)?.id,
-                                widget.player!.id,
-                              );
+                  return Consumer(
+                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      return AlertDialog(
+                        title: const Text("Êtes-vous sûr de vouloir supprimer le joueur ?"),
+                        content: Text(widget.player!.getName()),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Annuler")),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(dbProvider).removePlayer(
+                                    ref.watch(seasonChoseProvider)?.id,
+                                    widget.player!.id,
+                                  );
 
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
+                              Navigator.pop(context);
                             },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                (Set<MaterialState> states) {
+                                  return Colors.red;
+                                },
+                              ),
+                            ),
+                            child: const Text("Supprimer"),
                           ),
-                        ),
-                        child: const Text("Supprimer"),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
                 },
               );
@@ -192,13 +196,13 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
 
             if (widget.player != null) {
               ref.read(dbProvider).editPlayer(
-                    ref.read(seasonChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
                     widget.player!.id,
                     player,
                   );
             } else {
               ref.read(dbProvider).addNewPlayer(
-                    ref.read(seasonChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
                     player,
                   );
             }

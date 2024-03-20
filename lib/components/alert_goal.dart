@@ -149,34 +149,38 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Êtes-vous sûr de vouloir supprimer ce but ?"),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Annuler")),
-                            ElevatedButton(
-                              onPressed: () {
-                                ref.read(dbProvider).removeGoal(
-                                      ref.read(seasonChoseProvider)?.id,
-                                      ref.read(matchChoseProvider)?.id,
-                                      widget.goal!.id,
-                                    );
+                        return Consumer(
+                          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                            return AlertDialog(
+                              title: const Text("Êtes-vous sûr de vouloir supprimer ce but ?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Annuler")),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    ref.read(dbProvider).removeGoal(
+                                          ref.watch(seasonChoseProvider)?.id,
+                                          ref.watch(matchChoseProvider)?.id,
+                                          widget.goal!.id,
+                                        );
 
-                                Navigator.pop(context);
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                    return Colors.red;
+                                    Navigator.pop(context);
                                   },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                        return Colors.red;
+                                      },
+                                    ),
+                                  ),
+                                  child: const Text("Supprimer"),
                                 ),
-                              ),
-                              child: const Text("Supprimer"),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         );
                       },
                     );
@@ -192,23 +196,23 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                 ),
               ElevatedButton(
                 onPressed: () {
-                  Goal newGoal = Goal()
+                  Goal goal = Goal()
                     ..scorer = _scorerRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
                     ..passer = _passerRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
                     ..time = _timeGoalScored;
 
                   if (widget.goal != null) {
                     ref.read(dbProvider).editGoal(
-                          ref.read(seasonChoseProvider)?.id,
-                          ref.read(matchChoseProvider)?.id,
+                          ref.watch(seasonChoseProvider)?.id,
+                          ref.watch(matchChoseProvider)?.id,
                           widget.goal!.id,
-                          newGoal,
+                          goal,
                         );
                   } else {
                     ref.read(dbProvider).addNewGoal(
-                          ref.read(seasonChoseProvider)?.id,
-                          ref.read(matchChoseProvider)?.id,
-                          newGoal,
+                          ref.watch(seasonChoseProvider)?.id,
+                          ref.watch(matchChoseProvider)?.id,
+                          goal,
                         );
                   }
 

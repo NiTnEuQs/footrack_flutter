@@ -99,31 +99,35 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir supprimer la saison ?"),
-                    content: Text(widget.season!.getName()),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(dbProvider).removeSeason(widget.season!.id);
+                  return Consumer(
+                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      return AlertDialog(
+                        title: const Text("Êtes-vous sûr de vouloir supprimer la saison ?"),
+                        content: Text(widget.season!.getName()),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Annuler")),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(dbProvider).removeSeason(widget.season!.id);
 
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
+                              Navigator.pop(context);
                             },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                (Set<MaterialState> states) {
+                                  return Colors.red;
+                                },
+                              ),
+                            ),
+                            child: const Text("Supprimer"),
                           ),
-                        ),
-                        child: const Text("Supprimer"),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
                 },
               );

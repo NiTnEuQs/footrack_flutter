@@ -57,34 +57,38 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir supprimer l'adversaire ?"),
-                    content: Text(widget.opponent!.getName()),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(dbProvider).removeOpponent(
-                                ref.read(seasonChoseProvider)?.id,
-                                widget.opponent!.id,
-                              );
+                  return Consumer(
+                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      return AlertDialog(
+                        title: const Text("Êtes-vous sûr de vouloir supprimer l'adversaire ?"),
+                        content: Text(widget.opponent!.getName()),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Annuler")),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(dbProvider).removeOpponent(
+                                    ref.watch(seasonChoseProvider)?.id,
+                                    widget.opponent!.id,
+                                  );
 
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
+                              Navigator.pop(context);
                             },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                (Set<MaterialState> states) {
+                                  return Colors.red;
+                                },
+                              ),
+                            ),
+                            child: const Text("Supprimer"),
                           ),
-                        ),
-                        child: const Text("Supprimer"),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
                 },
               );
@@ -104,13 +108,13 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
 
             if (widget.opponent != null) {
               ref.read(dbProvider).editOpponent(
-                    ref.read(seasonChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
                     widget.opponent!.id,
                     opponent,
                   );
             } else {
               ref.read(dbProvider).addNewOpponent(
-                    ref.read(seasonChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
                     opponent,
                   );
             }

@@ -81,34 +81,38 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Êtes-vous sûr de vouloir enlever ce joueur de l'effectif ?"),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Annuler")),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(dbProvider).removeSquadPlayer(
-                                ref.read(seasonChoseProvider)?.id,
-                                ref.read(matchChoseProvider)?.id,
-                                widget.squadPlayer!.id,
-                              );
+                  return Consumer(
+                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                      return AlertDialog(
+                        title: const Text("Êtes-vous sûr de vouloir enlever ce joueur de l'effectif ?"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Annuler")),
+                          ElevatedButton(
+                            onPressed: () {
+                              ref.read(dbProvider).removeSquadPlayer(
+                                    ref.watch(seasonChoseProvider)?.id,
+                                    ref.watch(matchChoseProvider)?.id,
+                                    widget.squadPlayer!.id,
+                                  );
 
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              return Colors.red;
+                              Navigator.pop(context);
                             },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                (Set<MaterialState> states) {
+                                  return Colors.red;
+                                },
+                              ),
+                            ),
+                            child: const Text("Enlever"),
                           ),
-                        ),
-                        child: const Text("Enlever"),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
                 },
               );
@@ -131,8 +135,8 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
 
             if (widget.squadPlayer != null) {
               ref.read(dbProvider).editSquadPlayer(
-                    ref.read(seasonChoseProvider)?.id,
-                    ref.read(matchChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
+                    ref.watch(matchChoseProvider)?.id,
                     widget.squadPlayer!.id,
                     squadPlayer,
                   );
@@ -140,8 +144,8 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
               Navigator.pop(context);
             } else if (!playerPaths.contains(squadPlayer.player?.id)) {
               ref.read(dbProvider).addNewSquadPlayer(
-                    ref.read(seasonChoseProvider)?.id,
-                    ref.read(matchChoseProvider)?.id,
+                    ref.watch(seasonChoseProvider)?.id,
+                    ref.watch(matchChoseProvider)?.id,
                     squadPlayer,
                   );
 

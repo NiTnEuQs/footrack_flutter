@@ -26,8 +26,8 @@ class AlertMatch extends ConsumerStatefulWidget {
 class _AlertMatchState extends ConsumerState<AlertMatch> {
   final TextEditingController _matchDateStartController = TextEditingController();
 
-  MatchTypeEnum? _matchType = MatchTypeEnum.championship;
-  int? _scoreOpponent = 0;
+  MatchTypeEnum? _matchType;
+  int? _scoreOpponent;
   String? _opponentRefPath;
   DateTime? _dateStartPicked;
 
@@ -35,10 +35,10 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
   void initState() {
     super.initState();
 
-    _matchType = widget.match?.getType();
+    _matchType = widget.match?.getType() ?? MatchTypeEnum.championship;
     _dateStartPicked = widget.match?.date.toDateTime();
     _opponentRefPath = widget.match?.opponent?.path;
-    _scoreOpponent = widget.match?.scoreOpponent;
+    _scoreOpponent = widget.match?.scoreOpponent ?? 0;
 
     _matchDateStartController.text = _dateStartPicked.formatWithTime();
   }
@@ -46,10 +46,14 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var opponents = season != null ? ref.read(season.opponentsProvider) : <Opponent>[];
+    var opponents = season != null ? ref.watch(season.opponentsProvider) : <Opponent>[];
 
     List<Pair<String, String>> opponentsList = opponents.map((e) => Pair(e.reference.path, e.name)).toList()
       ..sort(comparePairSecond);
+
+    if (widget.match == null) {
+      _opponentRefPath ??= opponentsList.firstOrNull?.first;
+    }
 
     return opponents.isEmpty
         ? const AlertDialog(
@@ -144,31 +148,38 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Êtes-vous sûr de vouloir supprimer le match ?"),
-                          content: Text(widget.match!.date.toDateTime().format()),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Annuler")),
-                            ElevatedButton(
-                              onPressed: () {
-                                ref.read(dbProvider).removeMatch(ref.read(seasonChoseProvider)?.id, widget.match!.id);
+                        return Consumer(
+                          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                            return AlertDialog(
+                              title: const Text("Êtes-vous sûr de vouloir supprimer le match ?"),
+                              content: Text(widget.match!.date.toDateTime().format()),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Annuler")),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    ref.read(dbProvider).removeMatch(
+                                          ref.watch(seasonChoseProvider)?.id,
+                                          widget.match!.id,
+                                        );
 
-                                Navigator.pop(context);
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                    return Colors.red;
+                                    Navigator.pop(context);
                                   },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                        return Colors.red;
+                                      },
+                                    ),
+                                  ),
+                                  child: const Text("Supprimer"),
                                 ),
-                              ),
-                              child: const Text("Supprimer"),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         );
                       },
                     );
@@ -192,13 +203,13 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
 
                   if (widget.match != null) {
                     ref.read(dbProvider).editMatch(
-                          ref.read(seasonChoseProvider)?.id,
+                          ref.watch(seasonChoseProvider)?.id,
                           widget.match!.id,
                           match,
                         );
                   } else {
                     ref.read(dbProvider).addNewMatch(
-                          ref.read(seasonChoseProvider)?.id,
+                          ref.watch(seasonChoseProvider)?.id,
                           match,
                         );
                   }

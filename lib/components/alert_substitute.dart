@@ -151,34 +151,38 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Annuler")),
-                            ElevatedButton(
-                              onPressed: () {
-                                ref.read(dbProvider).removeSubstitute(
-                                      ref.read(seasonChoseProvider)?.id,
-                                      ref.read(matchChoseProvider)?.id,
-                                      widget.substitute!.id,
-                                    );
+                        return Consumer(
+                          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                            return AlertDialog(
+                              title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Annuler")),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    ref.read(dbProvider).removeSubstitute(
+                                          ref.watch(seasonChoseProvider)?.id,
+                                          ref.watch(matchChoseProvider)?.id,
+                                          widget.substitute!.id,
+                                        );
 
-                                Navigator.pop(context);
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                    return Colors.red;
+                                    Navigator.pop(context);
                                   },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                        return Colors.red;
+                                      },
+                                    ),
+                                  ),
+                                  child: const Text("Supprimer"),
                                 ),
-                              ),
-                              child: const Text("Supprimer"),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         );
                       },
                     );
@@ -201,15 +205,15 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
 
                   if (widget.substitute != null) {
                     ref.read(dbProvider).editSubstitute(
-                          ref.read(seasonChoseProvider)?.id,
-                          ref.read(matchChoseProvider)?.id,
+                          ref.watch(seasonChoseProvider)?.id,
+                          ref.watch(matchChoseProvider)?.id,
                           widget.substitute!.id,
                           substitute,
                         );
                   } else {
                     ref.read(dbProvider).addNewSubstitute(
-                          ref.read(seasonChoseProvider)?.id,
-                          ref.read(matchChoseProvider)?.id,
+                          ref.watch(seasonChoseProvider)?.id,
+                          ref.watch(matchChoseProvider)?.id,
                           substitute,
                         );
                   }
