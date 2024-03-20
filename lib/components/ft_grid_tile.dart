@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
 
 class FTGridTile extends StatelessWidget {
@@ -52,7 +53,7 @@ class FTGridTile extends StatelessWidget {
           onLongPress: enabled ? onLongPress : null,
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(Spacing.xs),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

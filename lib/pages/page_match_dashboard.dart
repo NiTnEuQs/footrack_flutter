@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_goal.dart';
 import 'package:footrack_front/components/alert_substitute.dart';
 import 'package:footrack_front/components/ft_grid_tile.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
@@ -130,11 +131,11 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
             : Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(vertical: Spacing.xs2),
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Center(
                             child: Text(
                               match.date.toDateTime().formatWithTimeAndDay(),
@@ -146,7 +147,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Center(
                             child: match.date.hasPassed()
                                 ? Text(
@@ -161,7 +162,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -289,13 +290,13 @@ class EventsListPage extends StatelessWidget {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: Spacing.xs, vertical: Spacing.s),
                   child: Row(
                     children: [
                       event.getIcon() ?? Container(),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.xs),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

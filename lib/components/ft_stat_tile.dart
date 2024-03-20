@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 
 class FTStatTile extends StatelessWidget {
   const FTStatTile({
@@ -41,7 +42,7 @@ class FTStatTile extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(Spacing.xs),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -4,6 +4,7 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_season.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/managers/package_manager.dart';
@@ -77,7 +78,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
         title: const Text("Vos saisons"),
       ),
       body: Container(
-        margin: const EdgeInsets.only(bottom: 16.0),
+        margin: const EdgeInsets.only(bottom: Spacing.m),
         child: Column(
           children: [
             Expanded(

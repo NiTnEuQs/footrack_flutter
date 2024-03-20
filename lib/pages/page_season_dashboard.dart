@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/ft_grid_tile.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_config.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
@@ -58,7 +59,8 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 32.0, bottom: 16.0),
+                            padding: const EdgeInsets.only(
+                                left: Spacing.xl2, right: Spacing.xl2, top: Spacing.xl2, bottom: Spacing.m),
                             child: Row(
                               children: [
                                 Expanded(
@@ -97,7 +99,8 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 32.0, bottom: 16.0),
+                          padding: const EdgeInsets.only(
+                              left: Spacing.xl2, right: Spacing.xl2, top: Spacing.xl2, bottom: Spacing.m),
                           child: Text(
                             nbMatches > 0
                                 ? "Il n'y a pas de match prochainement"
@@ -120,7 +123,8 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                         );
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 16.0, bottom: 16.0),
+                        padding: const EdgeInsets.only(
+                            left: Spacing.xl2, right: Spacing.xl2, top: Spacing.m, bottom: Spacing.m),
                         child: Center(
                           child: Column(
                             children: [
@@ -131,7 +135,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 8.0),
+                              const SizedBox(height: Spacing.xs),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: lastPlayedMatches!
@@ -151,7 +155,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                     Icons.sports_soccer,
                                     color: Colors.lightGreen,
                                   ),
-                                  const SizedBox(width: 8.0),
+                                  const SizedBox(width: Spacing.xs),
                                   Text(
                                     "${lastPlayedMatches.map((e) => ref.watch(e.goalsProvider).length).reduce((prev, curr) => prev + curr)}",
                                     style: const TextStyle(
@@ -160,12 +164,12 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                       color: Colors.lightGreen,
                                     ),
                                   ),
-                                  const SizedBox(width: 16.0),
+                                  const SizedBox(width: Spacing.m),
                                   const Icon(
                                     Icons.sports_soccer,
                                     color: Colors.red,
                                   ),
-                                  const SizedBox(width: 8.0),
+                                  const SizedBox(width: Spacing.xs),
                                   Text(
                                     "${lastPlayedMatches.map((e) => e.getScoreOpponent()).reduce((prev, curr) => prev + curr)}",
                                     style: const TextStyle(
@@ -174,7 +178,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                       color: Colors.red,
                                     ),
                                   ),
-                                  const SizedBox(width: 16.0),
+                                  const SizedBox(width: Spacing.m),
                                   Text(
                                     "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3}",
                                     style: const TextStyle(
@@ -201,7 +205,8 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                         );
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 16.0, bottom: 32.0),
+                        padding: const EdgeInsets.only(
+                            left: Spacing.xl2, right: Spacing.xl2, top: Spacing.m, bottom: Spacing.xl2),
                         child: Column(
                           children: [
                             const Text(
@@ -211,7 +216,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8.0),
+                            const SizedBox(height: Spacing.xs),
                             Stack(
                               alignment: Alignment.center,
                               children: [
@@ -225,7 +230,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: Spacing.xs),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
@@ -253,9 +258,9 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(4.0),
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 4.0,
+                    padding: const EdgeInsets.all(Spacing.xs2),
+                    crossAxisSpacing: Spacing.xs2,
+                    mainAxisSpacing: Spacing.xs2,
                     crossAxisCount: 2,
                     children: [
                       // FootrackGridTile(
