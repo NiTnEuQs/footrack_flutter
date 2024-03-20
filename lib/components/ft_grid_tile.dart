@@ -31,7 +31,7 @@ class FTGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridTile(
       child: Card(
-        color: enabled ? color ?? Colors.blue : Colors.grey,
+        color: enabled ? (color ?? Theme.of(context).primaryColor) : Colors.grey,
         child: InkWell(
           onTap: enabled
               ? () {

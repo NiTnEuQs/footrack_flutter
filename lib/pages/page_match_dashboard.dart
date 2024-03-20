@@ -347,22 +347,26 @@ class MatchDashboard extends StatelessWidget {
           icon: Icons.sports_soccer,
           title: "But",
           onTap: onGoalClicked,
+          color: Colors.green,
         ),
         FTGridTile(
           icon: Icons.person_add,
           title: "Changements",
           onTap: onSubstituteClicked,
+          color: Colors.green,
         ),
         FTGridTile(
           icon: Icons.groups,
           title: "Effectif",
           onTap: onSquadClicked,
+          color: Colors.blue,
           enabled: !match.date.hasPassed(),
         ),
         FTGridTile(
           icon: Icons.sports_soccer,
           title: "But adverse",
           onTap: onOpponentGoalClicked,
+          color: Colors.red,
           onLongPress: onOpponentGoalLongPress,
         ),
         // FTGridTile(
