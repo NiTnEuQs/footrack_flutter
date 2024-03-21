@@ -1,9 +1,7 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/converters/match_type_converter.dart';
-import 'package:footrack_front/enums/match_type_enum.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/extensions/snapshot_extensions.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/opponent.dart';
@@ -40,21 +38,15 @@ class Match extends Document<Match> {
       ref?.read(squadProvider.notifier).state = snap.map((e) => SquadPlayer(snapshot: e, ref: ref));
     });
 
-    if (opponent != null) {
-      firestoreInstance.doc(opponent!.path).snapshots().listen((snap) {
+    opponent?.path.let((path) {
+      firestoreInstance.doc(path).snapshots().listen((snap) {
         ref?.read(opponentProvider.notifier).state = Opponent(snapshot: snap);
       });
-    }
+    });
   }
 
   @Field()
   String? type;
-
-  MatchTypeEnum getType() => const MatchTypeConverter().fromJson(type);
-
-  @Field()
-  DocumentReference? opponent;
-  final opponentProvider = StateProvider<Opponent?>((_) => null);
 
   @Field()
   Timestamp? date;
@@ -63,95 +55,40 @@ class Match extends Document<Match> {
   String? status;
 
   @Field()
-  int? halfTime;
-
-  int getHalfTime({int defaultValue = 0}) => halfTime ?? defaultValue;
-
-  @Field()
   int? time;
 
   @Field()
   int? scoreOpponent;
 
-  int getScoreOpponent({int defaultValue = 0}) => scoreOpponent ?? defaultValue;
+  // Opponent
+
+  @Field()
+  DocumentReference? opponent;
+  final opponentProvider = StateProvider<Opponent?>((_) => null);
+
+  // Goals
 
   @SubCollection()
   late Collection<Goal> goals;
   final goalsProvider = StateProvider<List<Goal>>((_) => []);
 
+  // Substitutes
+
   @SubCollection()
   late Collection<Substitute> substitutes;
   final substitutesProvider = StateProvider<List<Substitute>>((_) => []);
+
+  // Squad
 
   @SubCollection()
   late Collection<SquadPlayer> squad;
   final squadProvider = StateProvider<List<SquadPlayer>>((_) => []);
 
-  int getTotalScoreTeam(WidgetRef ref) {
-    return ref.watch(goalsProvider).length;
-  }
-
-  bool isWon(WidgetRef ref) {
-    return getTotalScoreTeam(ref) > getScoreOpponent();
-  }
-
-  bool isLoss(WidgetRef ref) {
-    return getTotalScoreTeam(ref) < getScoreOpponent();
-  }
-
-  bool isEven(WidgetRef ref) {
-    return getTotalScoreTeam(ref) == getScoreOpponent();
-  }
-
-  String resultString(WidgetRef ref) {
-    if (scoreOpponent == null) {
-      return "Erreur";
-    } else if (isEven(ref)) {
-      return "Egalité";
-    } else if (isLoss(ref)) {
-      return "Défaite";
-    } else {
-      return "Victoire";
-    }
-  }
-
-  Color resultColor(WidgetRef ref) {
-    if (scoreOpponent == null) {
-      return Colors.black;
-    } else if (isEven(ref)) {
-      return Colors.black.withAlpha(150);
-    } else if (isLoss(ref)) {
-      return Colors.red.withAlpha(200);
-    } else {
-      return Colors.lightGreen;
-    }
-  }
-
-  FontWeight teamFontWeight(WidgetRef ref) {
-    if (scoreOpponent == null) {
-      return FontWeight.normal;
-    } else if (isWon(ref)) {
-      return FontWeight.bold;
-    }
-
-    return FontWeight.normal;
-  }
-
-  FontWeight opponentFontWeight(WidgetRef ref) {
-    if (scoreOpponent == null) {
-      return FontWeight.normal;
-    } else if (isLoss(ref)) {
-      return FontWeight.bold;
-    }
-
-    return FontWeight.normal;
-  }
+  // Json
 
   @override
   Map<String, dynamic> toData() => _$toData(this);
 
   @override
   void fromData(Map<String, dynamic> data) => _$fromData(this, data);
-
-  bool hasBegun() => (time ?? -1) >= 0;
 }

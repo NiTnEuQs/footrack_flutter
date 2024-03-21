@@ -2,6 +2,8 @@ import 'package:flamingo/flamingo.dart';
 import 'package:flamingo_annotation/flamingo_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/models/extensions/goal_extension.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/models/player_event.dart';
 
@@ -17,8 +19,24 @@ class Goal extends PlayerEvent<Goal> {
   }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef, ref: ref);
 
   @Field()
+  int? time;
+
+  // Scorer
+
+  @Field()
   DocumentReference? scorer;
   final scorerProvider = StateProvider<Player?>((_) => null);
+
+  // Passer
+
+  @Field()
+  DocumentReference? passer;
+  final passerProvider = StateProvider<Player?>((_) => null);
+
+  // Overriden
+
+  @override
+  int? getTime() => time;
 
   @override
   DocumentReference<Object?>? getPlayer1() => scorer;
@@ -26,41 +44,26 @@ class Goal extends PlayerEvent<Goal> {
   @override
   StateProvider<Player?> getPlayer1Provider() => scorerProvider;
 
-  @Field()
-  DocumentReference? passer;
-  final passerProvider = StateProvider<Player?>((_) => null);
-
   @override
   DocumentReference<Object?>? getPlayer2() => passer;
 
   @override
   StateProvider<Player?> getPlayer2Provider() => passerProvider;
 
-  @Field()
-  int? time;
-
-  @override
-  int? getTime() => time;
-
-  @override
-  Map<String, dynamic> toData() => _$toData(this);
-
-  @override
-  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
-
   @override
   Widget? getIcon() => const Icon(Icons.sports_soccer, color: Colors.amber);
 
   @override
   Widget getTitle(WidgetRef ref) {
-    var scorer = ref.watch(scorerProvider);
+    var scorer = getScorer(ref);
+
     if (scorer != null) {
       return Text.rich(
         TextSpan(
           children: [
             const TextSpan(text: "But de "),
             TextSpan(
-              text: scorer.getName(),
+              text: scorer.getName(defaultValue: "-"),
               style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ],
@@ -74,7 +77,8 @@ class Goal extends PlayerEvent<Goal> {
   @override
   Widget getSubtitle(WidgetRef ref) {
     if (scorer != null) {
-      var passer = ref.watch(passerProvider);
+      var passer = getPasser(ref);
+
       if (passer != null) {
         return Text.rich(
           TextSpan(
@@ -95,4 +99,12 @@ class Goal extends PlayerEvent<Goal> {
 
     return Container();
   }
+
+  // Json
+
+  @override
+  Map<String, dynamic> toData() => _$toData(this);
+
+  @override
+  void fromData(Map<String, dynamic> data) => _$fromData(this, data);
 }

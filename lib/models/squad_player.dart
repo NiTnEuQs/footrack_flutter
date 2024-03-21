@@ -1,6 +1,7 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flamingo_annotation/flamingo_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/player.dart';
 
 part 'squad_player.flamingo.dart';
@@ -17,16 +18,20 @@ class SquadPlayer extends Document<SquadPlayer> {
   }
 
   void init(WidgetRef? ref) {
-    if (player != null) {
-      firestoreInstance.doc(player!.path).snapshots().listen((snap) {
+    player?.path.let((path) {
+      firestoreInstance.doc(path).snapshots().listen((snap) {
         ref?.read(playerProvider.notifier).state = Player(snapshot: snap);
       });
-    }
+    });
   }
+
+  // Player
 
   @Field()
   DocumentReference? player;
   final playerProvider = StateProvider<Player?>((_) => null);
+
+  // Json
 
   @override
   Map<String, dynamic> toData() => _$toData(this);

@@ -1,8 +1,10 @@
-import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/pages/passers/domain/models/passer.dart';
 
 class PassersListPage extends ConsumerStatefulWidget {
@@ -23,46 +25,43 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var season = ref.watch(seasonChoseProvider);
-      var seasonPassers = season?.passers(ref);
+      var seasonPassers = season.passers(ref);
 
       seasonPassers?.forEach((seasonPasser) {
-        firestoreInstance.doc(seasonPasser.key!.path).get().then(
-          (data) {
-            var passer = Player(snapshot: data);
-
-            setState(() {
-              _listPassers.add(
-                Passer(
-                  player: passer,
-                  passes: seasonPasser.value,
-                ),
-              );
-            });
-          },
-        );
+        setState(() {
+          _listPassers.add(
+            Passer(
+              player: seasonPasser.key,
+              passes: seasonPasser.value,
+            ),
+          );
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    _listPassers.sort((e1, e2) {
-      switch (_sortIndex) {
-        case 0:
-          {
-            var e1Name = e1.player?.getName() ?? "";
-            var e2Name = e2.player?.getName() ?? "";
+    _listPassers.sort((a, b) {
+      dynamic first;
+      dynamic second;
 
-            return _sortAscending ? e1Name.compareTo(e2Name) : e2Name.compareTo(e1Name);
+      switch (_sortIndex) {
+        case 1:
+          {
+            first = a.player.getName();
+            second = b.player.getName();
           }
         default:
           {
-            var e1Goals = e1.passes ?? 0;
-            var e2Goals = e2.passes ?? 0;
-
-            return _sortAscending ? e1Goals.compareTo(e2Goals) : e2Goals.compareTo(e1Goals);
+            first = a.passes;
+            second = b.passes;
           }
       }
+
+      return _sortAscending
+          ? (first as Comparable?).compare(second as Comparable?)
+          : (second as Comparable?).compare(first as Comparable?);
     });
 
     return Scaffold(
@@ -76,20 +75,19 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                 showCheckboxColumn: false,
                 sortAscending: _sortAscending,
                 sortColumnIndex: _sortIndex,
-                headingRowHeight: 35,
+                headingRowHeight: Spacing.xl3,
                 headingTextStyle: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 8,
+                columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
                     label: Text("Joueur (${_listPassers.length})"),
                     onSort: (index, sorted) {
-                      int columnIndex = 0;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : true;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -97,10 +95,9 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                     label: const Text("Passes"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 1;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : false;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -108,8 +105,8 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                 rows: List.of(_listPassers).map((passer) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(passer.player?.getName() ?? "")),
-                      DataCell(Text(passer.passes.toString())),
+                      DataCell(Text(passer.player.getName())),
+                      DataCell(Text("${passer.passes}")),
                     ],
                   );
                 }).toList(),

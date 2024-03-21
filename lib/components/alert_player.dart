@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
 import 'package:footrack_front/enums/player_status_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
 import 'package:footrack_front/models/player.dart';
 import 'package:footrack_front/utils/pickers.dart';
 
@@ -30,11 +32,11 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
   @override
   void initState() {
     super.initState();
-    _playerRole = widget.player?.getRole() ?? PlayerRoleEnum.none;
-    _playerStatus = widget.player?.getStatus() ?? PlayerStatusEnum.none;
-    _birthdatePicked = widget.player?.birthdate.toDateTime();
+    _playerRole = widget.player.getRole();
+    _playerStatus = widget.player.getStatus();
+    _birthdatePicked = widget.player.getBirthDate();
 
-    _playerNameController.text = widget.player?.getName() ?? "";
+    _playerNameController.text = widget.player.getName();
     _playerBirthdateController.text = _birthdatePicked.format();
   }
 
@@ -48,7 +50,7 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
           Row(
             children: [
               const Icon(Icons.abc),
-              const SizedBox(width: 8),
+              const SizedBox(width: Spacing.xs),
               Expanded(
                 child: TextFormField(
                   controller: _playerNameController,
@@ -62,7 +64,7 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
           Row(
             children: [
               const Icon(Icons.calendar_month),
-              const SizedBox(width: 8),
+              const SizedBox(width: Spacing.xs),
               Expanded(
                 child: TextFormField(
                   controller: _playerBirthdateController,
@@ -85,7 +87,7 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
           Row(
             children: [
               const Icon(Icons.label_important, color: Colors.amber),
-              const SizedBox(width: 8),
+              const SizedBox(width: Spacing.xs),
               Expanded(
                 child: DropdownButton(
                   isExpanded: true,
@@ -109,7 +111,7 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
           Row(
             children: [
               const Icon(Icons.add_circle, color: Colors.lightGreen),
-              const SizedBox(width: 8),
+              const SizedBox(width: Spacing.xs),
               Expanded(
                 child: DropdownButton(
                   isExpanded: true,

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
 enum PlayerRoleEnum {
-  none,
-  delegate,
   player,
+  delegate,
 }
 
 extension PlayerRoleEnumExtension on PlayerRoleEnum? {
   String format() {
     switch (this) {
-      case PlayerRoleEnum.delegate:
-        return "Délégué";
       case PlayerRoleEnum.player:
         return "Joueur";
+      case PlayerRoleEnum.delegate:
+        return "Délégué";
       default:
         return "Pas de rôle";
     }

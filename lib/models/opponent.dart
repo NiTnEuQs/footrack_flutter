@@ -14,7 +14,7 @@ class Opponent extends Document<Opponent> {
   @Field()
   String? name;
 
-  String getName({String defaultValue = "-"}) => name ?? defaultValue;
+  // Json
 
   @override
   Map<String, dynamic> toData() => _$toData(this);

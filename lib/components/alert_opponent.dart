@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/models/extensions/opponent_extension.dart';
 import 'package:footrack_front/models/opponent.dart';
 
 class AlertOpponent extends ConsumerStatefulWidget {
@@ -22,7 +24,7 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
   void initState() {
     super.initState();
 
-    _opponentNameController.text = widget.opponent?.getName() ?? "";
+    _opponentNameController.text = widget.opponent.getName();
   }
 
   @override
@@ -35,7 +37,7 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
           Row(
             children: [
               const Icon(Icons.abc),
-              const SizedBox(width: 8),
+              const SizedBox(width: Spacing.xs),
               Expanded(
                 child: TextFormField(
                   controller: _opponentNameController,

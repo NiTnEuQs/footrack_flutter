@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/utils/pickers.dart';
 
@@ -30,13 +31,13 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
   void initState() {
     super.initState();
 
-    _seasonNameController.text = widget.season?.getName() ?? "";
-    _seasonTeamNameController.text = widget.season?.teamName ?? "";
-    _seasonDateStartController.text = widget.season?.from.toDateTime().format() ?? "";
-    _seasonDateEndController.text = widget.season?.to.toDateTime().format() ?? "";
+    _dateStartPicked = widget.season.getFrom();
+    _dateEndPicked = widget.season.getTo();
 
-    _dateStartPicked = widget.season?.from.toDateTime();
-    _dateEndPicked = widget.season?.to.toDateTime();
+    _seasonNameController.text = widget.season.getName();
+    _seasonTeamNameController.text = widget.season.getTeamName();
+    _seasonDateStartController.text = _dateStartPicked.format();
+    _seasonDateEndController.text = _dateEndPicked.format();
   }
 
   @override
@@ -103,7 +104,7 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
                     builder: (BuildContext context, WidgetRef ref, Widget? child) {
                       return AlertDialog(
                         title: const Text("Êtes-vous sûr de vouloir supprimer la saison ?"),
-                        content: Text(widget.season!.getName()),
+                        content: Text(widget.season.getName()),
                         actions: [
                           TextButton(
                               onPressed: () {

@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_goal.dart';
@@ -10,9 +9,11 @@ import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/opponent_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/goal.dart';
 import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/opponent.dart';
 import 'package:footrack_front/models/player_event.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:footrack_front/pages/page_match_squad.dart';
@@ -104,10 +105,11 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    var season = ref.watch(seasonChoseProvider);
     var match = ref.watch(matchChoseProvider);
-    var goals = match?.goalsProvider.let((it) => ref.watch(it)) ?? <Goal>[];
-    var substitutes = match?.substitutesProvider.let((it) => ref.watch(it)) ?? <Substitute>[];
-    var opponent = match?.opponentProvider.let((it) => ref.watch(it));
+    var goals = match.getGoals(ref);
+    var substitutes = match.getSubstitutes(ref);
+    var opponent = match.getOpponent(ref);
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -127,7 +129,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                           padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Center(
                             child: Text(
-                              match.date.toDateTime().formatWithTimeAndDay(),
+                              match.getDate().formatWithTimeAndDay(),
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -138,7 +140,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Center(
-                            child: match.date.hasPassed()
+                            child: match.getDate().hasPassed()
                                 ? Text(
                                     match.resultString(ref),
                                     style: TextStyle(
@@ -147,7 +149,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                       color: match.resultColor(ref),
                                     ),
                                   )
-                                : Text(match.time != null ? "${match.time}'" : "N'a pas encore débuté"),
+                                : Text(match.getTime() != null ? "${match.getTime()}'" : "N'a pas encore débuté"),
                           ),
                         ),
                         Padding(
@@ -160,7 +162,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                 fit: FlexFit.tight,
                                 child: Center(
                                   child: Text(
-                                    ref.watch(seasonChoseProvider)?.teamName ?? "Votre équipe",
+                                    season.getTeamName(defaultValue: "Votre équipe"),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -183,7 +185,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                 fit: FlexFit.tight,
                                 child: Center(
                                   child: Text(
-                                    opponent?.getName() ?? "Adversaire",
+                                    opponent.getName(defaultValue: "Adversaire"),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -333,7 +335,7 @@ class MatchDashboard extends StatelessWidget {
           title: "Effectif",
           onTap: onSquadClicked,
           color: Colors.blue,
-          enabled: !match.date.hasPassed(),
+          enabled: !match.getDate().hasPassed(),
         ),
         FTGridTile(
           icon: Icons.sports_soccer,

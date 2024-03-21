@@ -8,6 +8,7 @@ import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/managers/package_manager.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/season.dart';
 import 'package:footrack_front/pages/page_season_dashboard.dart';
 
@@ -57,7 +58,11 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
     super.initState();
 
     disposeSeasons = firestoreInstance.collection("seasons").snapshots().listen((snap) {
-      ref.read(seasonsProvider.notifier).state = snap.docs.map((e) => Season(snapshot: e, ref: ref)).toList();
+      ref.read(seasonsProvider.notifier).state = snap.docs
+          .map(
+            (e) => Season(snapshot: e, ref: ref),
+          )
+          .toList();
     });
   }
 
@@ -86,41 +91,42 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                   ? const Center(child: Text("Aucune saison"))
                   : SingleChildScrollView(
                       child: DataTable(
-                          showCheckboxColumn: false,
-                          headingRowHeight: 35,
-                          headingTextStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          columnSpacing: 8,
-                          columns: [
-                            DataColumn(label: Text("Saison (${seasons.length})")),
-                            const DataColumn(label: Text("Matchs"), numeric: true),
-                            const DataColumn(label: Text("BP"), numeric: true),
-                            const DataColumn(label: Text("BC"), numeric: true),
-                          ],
-                          rows: List.of(seasons).map((season) {
-                            return DataRow(
-                              cells: [
-                                DataCell(seasonColumn(season)),
-                                DataCell(Text("${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}")),
-                                DataCell(Text(season.nbGoalsFor(ref).toString())),
-                                DataCell(Text(season.nbGoalsAgainst(ref).toString())),
-                              ],
-                              onSelectChanged: (selected) {
-                                _openSeason(season);
-                              },
-                              onLongPress: () {
-                                _editSeason(season);
-                              },
-                            );
-                          }).toList()),
+                        showCheckboxColumn: false,
+                        headingRowHeight: 35,
+                        headingTextStyle: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        columnSpacing: 8,
+                        columns: [
+                          DataColumn(label: Text("Saison (${seasons.length})")),
+                          const DataColumn(label: Text("Matchs"), numeric: true),
+                          const DataColumn(label: Text("BP"), numeric: true),
+                          const DataColumn(label: Text("BC"), numeric: true),
+                        ],
+                        rows: List.of(seasons).map((season) {
+                          return DataRow(
+                            cells: [
+                              DataCell(seasonColumn(season)),
+                              DataCell(Text("${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}")),
+                              DataCell(Text(season.nbGoalsFor(ref).toString())),
+                              DataCell(Text(season.nbGoalsAgainst(ref).toString())),
+                            ],
+                            onSelectChanged: (selected) {
+                              _openSeason(season);
+                            },
+                            onLongPress: () {
+                              _editSeason(season);
+                            },
+                          );
+                        }).toList(),
+                      ),
                     ),
             ),
             Text(
               "Version $version",
               style: const TextStyle(color: Colors.black45),
-            )
+            ),
           ],
         ),
       ),
@@ -145,7 +151,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
           ),
         ),
         Text(
-          "${season.from.toDateTime().format()}${season.to != null ? " - " : ""}${season.to.toDateTime().format()}",
+          "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
           style: const TextStyle(
             color: Colors.grey,
             fontSize: 12,

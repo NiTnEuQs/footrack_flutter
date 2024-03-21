@@ -62,7 +62,7 @@ class FTGridTile extends StatelessWidget {
                     color: Colors.white,
                     size: iconSize,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: Spacing.m),
                   Text(
                     title,
                     textAlign: TextAlign.center,

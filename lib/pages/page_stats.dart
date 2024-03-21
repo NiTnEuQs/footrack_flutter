@@ -1,10 +1,11 @@
-import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/ft_stat_tile.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/player.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/pages/page_passers_list.dart';
 import 'package:footrack_front/pages/page_scorers_list.dart';
 
@@ -19,15 +20,20 @@ class _StatsPageState extends ConsumerState<StatsPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var seasonBestScorer = season?.bestScorer(ref);
-    var seasonBestPasser = season?.bestPasser(ref);
-    var lastPlayedMatches = season?.lastPlayedMatches(ref);
+    var seasonBestScorer = season.bestScorer(ref);
+    var seasonBestPasser = season.bestPasser(ref);
+    var lastPlayedMatches = season.lastPlayedMatches(ref);
 
-    var hasStats = season != null && lastPlayedMatches != null && lastPlayedMatches.isNotEmpty;
+    var hasStats = season != null && lastPlayedMatches.isNotEmpty;
+
+    var bestScorer = seasonBestScorer?.key;
+    var bestScorerGoals = seasonBestScorer?.value;
+    var bestPasser = seasonBestPasser?.key;
+    var bestPasserPasses = seasonBestPasser?.value;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(!hasStats ? "Stats" : "Stats au ${lastPlayedMatches.first.date.toDateTime().format()}"),
+        title: Text(!hasStats ? "Stats" : "Stats au ${lastPlayedMatches.firstOrNull.getDate().format()}"),
       ),
       body: season == null
           ? const Center(child: Text("Stat non disponible"))
@@ -74,58 +80,46 @@ class _StatsPageState extends ConsumerState<StatsPage> {
                   title: "buts pris/match",
                   subtitle: "${season.nbGoalsAgainst(ref)} buts en ${season.nbPlayedMatchs(ref)} matchs",
                 ),
-                if (seasonBestScorer?.key != null)
-                  FutureBuilder(
-                      future: firestoreInstance.doc(seasonBestScorer!.key!.path).get(),
-                      builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snap) {
-                        var bestScorer = Player(snapshot: snap.data);
-
-                        return FTStatTile(
-                          icon: const Icon(
-                            Icons.sports_soccer,
-                            color: Colors.amber,
-                            size: 40,
-                          ),
-                          value: "${bestScorer.name}",
-                          valueSize: 30,
-                          title: "meilleur buteur",
-                          subtitle: "avec ${seasonBestScorer.value} buts",
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ScorersListPage(),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                if (seasonBestPasser?.key != null)
-                  FutureBuilder(
-                      future: firestoreInstance.doc(seasonBestPasser!.key!.path).get(),
-                      builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snap) {
-                        var bestPasser = Player(snapshot: snap.data);
-
-                        return FTStatTile(
-                          icon: const Icon(
-                            Icons.auto_awesome,
-                            color: Colors.purpleAccent,
-                            size: 40,
-                          ),
-                          value: "${bestPasser.name}",
-                          valueSize: 30,
-                          title: "meilleur passeur",
-                          subtitle: "avec ${seasonBestPasser.value} passes",
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PassersListPage(),
-                              ),
-                            );
-                          },
-                        );
-                      }),
+                if (bestScorer != null && bestScorerGoals != null)
+                  FTStatTile(
+                    icon: const Icon(
+                      Icons.sports_soccer,
+                      color: Colors.amber,
+                      size: 40,
+                    ),
+                    value: bestScorer.getName(defaultValue: "-"),
+                    valueSize: 30,
+                    title: "meilleur buteur",
+                    subtitle: "avec $bestScorerGoals buts",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ScorersListPage(),
+                        ),
+                      );
+                    },
+                  ),
+                if (bestPasser != null && bestPasserPasses != null)
+                  FTStatTile(
+                    icon: const Icon(
+                      Icons.auto_awesome,
+                      color: Colors.purpleAccent,
+                      size: 40,
+                    ),
+                    value: bestPasser.getName(),
+                    valueSize: 30,
+                    title: "meilleur passeur",
+                    subtitle: "avec $bestPasserPasses passes",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PassersListPage(),
+                        ),
+                      );
+                    },
+                  ),
               ],
             ),
     );

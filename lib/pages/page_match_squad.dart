@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_squad_player.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
 import 'package:footrack_front/enums/player_status_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
+import 'package:footrack_front/models/extensions/squad_player_extension.dart';
 import 'package:footrack_front/models/squad_player.dart';
 
 class MatchSquadPage extends ConsumerStatefulWidget {
@@ -16,7 +20,7 @@ class MatchSquadPage extends ConsumerStatefulWidget {
 }
 
 class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
-  bool _sortAscending = false;
+  bool _sortAscending = true;
   int _sortIndex = 0;
 
   void _addSquadPlayer() {
@@ -42,37 +46,37 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
   @override
   Widget build(BuildContext context) {
     var match = ref.watch(matchChoseProvider);
-    var squad = match != null ? ref.watch(match.squadProvider) : <SquadPlayer>[]
-      ..sort((e1, e2) {
-        dynamic player1;
-        dynamic player2;
+    var squad = match.getSquad(ref)
+      ..sort((a, b) {
+        dynamic first;
+        dynamic second;
 
         switch (_sortIndex) {
           case 1:
             {
-              player1 = ref.watch(e1.playerProvider)?.birthdate?.toDateTime();
-              player2 = ref.watch(e2.playerProvider)?.birthdate?.toDateTime();
+              first = a.getPlayer(ref).getBirthDate();
+              second = b.getPlayer(ref).getBirthDate();
             }
           case 2:
             {
-              player1 = ref.watch(e1.playerProvider)?.getStatus().format();
-              player2 = ref.watch(e2.playerProvider)?.getStatus().format();
+              first = a.getPlayer(ref).getStatus().index;
+              second = b.getPlayer(ref).getStatus().index;
             }
           case 3:
             {
-              player1 = ref.watch(e1.playerProvider)?.getRole().format();
-              player2 = ref.watch(e2.playerProvider)?.getRole().format();
+              first = a.getPlayer(ref).getRole().index;
+              second = b.getPlayer(ref).getRole().index;
             }
           default:
             {
-              player1 = ref.watch(e1.playerProvider)?.getName();
-              player2 = ref.watch(e2.playerProvider)?.getName();
+              first = a.getPlayer(ref).getName();
+              second = b.getPlayer(ref).getName();
             }
         }
 
-        return (_sortAscending
-            ? (player2 as Comparable?).compare(player1 as Comparable?)
-            : (player1 as Comparable?).compare(player2 as Comparable?));
+        return _sortAscending
+            ? (first as Comparable?).compare(second as Comparable?)
+            : (second as Comparable?).compare(first as Comparable?);
       });
 
     return Scaffold(
@@ -86,20 +90,19 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                 showCheckboxColumn: false,
                 sortAscending: _sortAscending,
                 sortColumnIndex: _sortIndex,
-                headingRowHeight: 35,
+                headingRowHeight: Spacing.xl3,
                 headingTextStyle: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 8,
+                columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
                     label: Text("Joueur (${squad.length})"),
                     onSort: (index, sorted) {
-                      int columnIndex = 0;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -107,10 +110,9 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     label: const Text("Naissance"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 1;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -118,10 +120,9 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     label: const Text("Status"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 2;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -129,32 +130,20 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     label: const Text("Rôle"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 3;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
                 ],
                 rows: List.of(squad).map((squadPlayer) {
-                  var player = ref.watch(squadPlayer.playerProvider);
-
-                  if (player == null) {
-                    return const DataRow(
-                      cells: [
-                        DataCell(Text("Une erreur est survenue")),
-                        DataCell(Text("")),
-                        DataCell(Text("")),
-                        DataCell(Text("")),
-                      ],
-                    );
-                  }
+                  var player = squadPlayer.getPlayer(ref);
 
                   return DataRow(
                     cells: [
                       DataCell(Text(player.getName())),
-                      DataCell(Text(player.birthdate.toDateTime().format())),
+                      DataCell(Text(player.getBirthDate().format())),
                       DataCell(player.getStatus().icon()),
                       DataCell(player.getRole().icon()),
                     ],
@@ -167,7 +156,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addSquadPlayer,
-        tooltip: 'Ajouter un joueur',
+        tooltip: "Ajouter un joueur",
         child: const Icon(Icons.add),
       ),
     );

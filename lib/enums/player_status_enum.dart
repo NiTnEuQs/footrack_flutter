@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 enum PlayerStatusEnum {
-  none,
   valid,
   injured,
   suspended,

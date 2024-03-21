@@ -6,6 +6,11 @@ import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_config.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/extensions/list_extensions.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/opponent_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/pages/page_match_dashboard.dart';
 import 'package:footrack_front/pages/page_matchs_list.dart';
 import 'package:footrack_front/pages/page_opponents_list.dart';
@@ -23,25 +28,19 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var nextMatch = season?.nextMatches(ref)?.first;
-    var nextMatchOpponent = nextMatch != null ? ref.watch(nextMatch.opponentProvider) : null;
-    var lastPlayedMatches = season?.lastPlayedMatches(ref, take: 5)
-      ?..sort((e1, e2) {
-        if (e1.date == null || e2.date == null) return 0;
-
-        return e1.date!.compareTo(e2.date!);
-      });
-    var nbMatches = (season?.nbMatches(ref) ?? 0);
-    var nbPlayedMatches = (season?.nbPlayedMatchs(ref) ?? 0);
-    var nbNotPlayedMatches = (season?.nbNotPlayedMatchs(ref) ?? 0);
-    var playedMatchesRatio = nbMatches > 0 ? nbPlayedMatches / nbMatches : 0.toDouble();
-    // var notPlayedMatchesRatio = nbMatches > 0 ? nbNotPlayedMatches / nbMatches : 0.toDouble();
+    var nextMatch = season.nextMatches(ref).firstOrNull;
+    var nextMatchOpponent = nextMatch.getOpponent(ref);
+    var lastPlayedMatches = season?.lastPlayedMatches(ref, take: 5)?..sort((a, b) => a.getDate().compare(b.getDate()));
+    var nbMatches = season.nbMatches(ref);
+    var nbPlayedMatches = season.nbPlayedMatchs(ref);
+    var nbNotPlayedMatches = season.nbNotPlayedMatchs(ref);
+    double playedMatchesRatio = nbMatches > 0 ? nbPlayedMatches / nbMatches : 0;
 
     return season == null
         ? const Center(child: Text("Aucune saison sélectionnée"))
         : Scaffold(
             appBar: AppBar(
-              title: Text(season.name ?? "Saison ${season.id}"),
+              title: Text(season.getName(defaultValue: "Saison ${season.id}")),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -60,7 +59,11 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(
-                                left: Spacing.xl2, right: Spacing.xl2, top: Spacing.xl2, bottom: Spacing.m),
+                              left: Spacing.xl2,
+                              right: Spacing.xl2,
+                              top: Spacing.xl2,
+                              bottom: Spacing.m,
+                            ),
                             child: Row(
                               children: [
                                 Expanded(
@@ -70,12 +73,13 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                         textAlign: TextAlign.center,
                                         text: TextSpan(
                                           children: [
-                                            const TextSpan(text: "Prochain match contre"),
+                                            const TextSpan(text: "Prochain match contre "),
                                             TextSpan(
-                                                text: " ${nextMatchOpponent?.name}",
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                )),
+                                              text: nextMatchOpponent.getName(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ],
                                           style: const TextStyle(
                                             fontSize: 16,
@@ -84,7 +88,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                         ),
                                       ),
                                       Text(
-                                        "le ${nextMatch.date.toDateTime().formatWithTimeAndDay()}",
+                                        "le ${nextMatch.getDate().formatWithTimeAndDay()}",
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
@@ -157,7 +161,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   ),
                                   const SizedBox(width: Spacing.xs),
                                   Text(
-                                    "${lastPlayedMatches.map((e) => ref.watch(e.goalsProvider).length).reduce((prev, curr) => prev + curr)}",
+                                    "${lastPlayedMatches.map((e) => e.getTotalScoreTeam(ref)).reduceAdd()}",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -171,7 +175,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                   ),
                                   const SizedBox(width: Spacing.xs),
                                   Text(
-                                    "${lastPlayedMatches.map((e) => e.getScoreOpponent()).reduce((prev, curr) => prev + curr)}",
+                                    "${lastPlayedMatches.map((e) => e.getScoreOpponent()).reduceAdd()}",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -206,7 +210,11 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: Spacing.xl2, right: Spacing.xl2, top: Spacing.m, bottom: Spacing.xl2),
+                          left: Spacing.xl2,
+                          right: Spacing.xl2,
+                          top: Spacing.m,
+                          bottom: Spacing.xl2,
+                        ),
                         child: Column(
                           children: [
                             const Text(

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_opponent.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/opponent_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/opponent.dart';
 
 class OpponentsListPage extends ConsumerStatefulWidget {
@@ -12,7 +16,7 @@ class OpponentsListPage extends ConsumerStatefulWidget {
 }
 
 class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
-  bool _sortAscending = false;
+  bool _sortAscending = true;
   int _sortIndex = 0;
 
   void _addOpponent() {
@@ -38,16 +42,14 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var opponents = season != null ? ref.watch(season.opponentsProvider) : <Opponent>[]
-      ..sort((e1, e2) {
-        switch (_sortIndex) {
-          case 0:
-            {
-              return (_sortAscending ? e2.getName().compareTo(e1.getName()) : e1.getName().compareTo(e2.getName()));
-            }
-          default:
-            return e1.getName().compareTo(e2.getName());
-        }
+    var opponents = season.getOpponents(ref)
+      ..sort((a, b) {
+        dynamic first = a.getName();
+        dynamic second = b.getName();
+
+        return _sortAscending
+            ? (first as Comparable?).compare(second as Comparable?)
+            : (second as Comparable?).compare(first as Comparable?);
       });
 
     return Scaffold(
@@ -58,39 +60,40 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
           ? const Center(child: Text("Aucun adversaire"))
           : SingleChildScrollView(
               child: DataTable(
-                  sortAscending: _sortAscending,
-                  sortColumnIndex: _sortIndex,
-                  headingRowHeight: 35,
-                  headingTextStyle: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                sortAscending: _sortAscending,
+                sortColumnIndex: _sortIndex,
+                headingRowHeight: Spacing.xl3,
+                headingTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                columnSpacing: Spacing.xs,
+                columns: [
+                  DataColumn(
+                    label: Text("Adversaire (${opponents.length})"),
+                    onSort: (index, sorted) {
+                      setState(() {
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
+                      });
+                    },
                   ),
-                  columnSpacing: 8,
-                  columns: [
-                    DataColumn(
-                      label: Text("Adversaire (${opponents.length})"),
-                      onSort: (index, sorted) {
-                        setState(() {
-                          _sortAscending = _sortIndex == 0 ? !_sortAscending : false;
-                          _sortIndex = 0;
-                        });
-                      },
-                    ),
-                  ],
-                  rows: List.of(opponents).map((opponent) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(opponent.getName())),
-                      ],
-                      onLongPress: () {
-                        _editOpponent(opponent);
-                      },
-                    );
-                  }).toList()),
+                ],
+                rows: List.of(opponents).map((opponent) {
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(opponent.getName())),
+                    ],
+                    onLongPress: () {
+                      _editOpponent(opponent);
+                    },
+                  );
+                }).toList(),
+              ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addOpponent,
-        tooltip: 'Ajouter un adversaire',
+        tooltip: "Ajouter un adversaire",
         child: const Icon(Icons.add),
       ),
     );

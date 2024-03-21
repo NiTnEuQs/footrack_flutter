@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_match.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/match_type_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/opponent_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/pages/page_match_dashboard.dart';
 
@@ -16,7 +19,7 @@ class MatchsListPage extends ConsumerStatefulWidget {
 }
 
 class _MatchsListPageState extends ConsumerState<MatchsListPage> {
-  bool _sortAscending = true;
+  bool _sortAscending = false;
   int _sortIndex = 0;
 
   void _addMatch() {
@@ -53,31 +56,32 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var matchs = season != null ? ref.watch(season.matchsProvider) : <Match>[]
-      ..sort((e1, e2) {
+    var matchs = season.getMatchs(ref)
+      ..sort((a, b) {
+        dynamic first;
+        dynamic second;
+
         switch (_sortIndex) {
           case 1:
             {
-              int? scoreA = e1.getTotalScoreTeam(ref);
-              int? scoreB = e2.getTotalScoreTeam(ref);
-
-              return _sortAscending ? scoreB.compare(scoreA) : scoreA.compare(scoreB);
+              first = a.getTotalScoreTeam(ref);
+              second = b.getTotalScoreTeam(ref);
             }
           case 2:
             {
-              int? scoreA = e1.getScoreOpponent();
-              int? scoreB = e2.getScoreOpponent();
-
-              return _sortAscending ? scoreB.compare(scoreA) : scoreA.compare(scoreB);
+              first = a.getScoreOpponent();
+              second = b.getScoreOpponent();
             }
           default:
             {
-              DateTime? dateA = e1.date.toDateTime();
-              DateTime? dateB = e2.date.toDateTime();
-
-              return _sortAscending ? dateB.compare(dateA) : dateA.compare(dateB);
+              first = a.getDate();
+              second = b.getDate();
             }
         }
+
+        return _sortAscending
+            ? (first as Comparable?).compare(second as Comparable?)
+            : (second as Comparable?).compare(first as Comparable?);
       });
 
     return Scaffold(
@@ -91,24 +95,19 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                 showCheckboxColumn: false,
                 sortAscending: _sortAscending,
                 sortColumnIndex: _sortIndex,
-                headingRowHeight: 35,
+                headingRowHeight: Spacing.xl3,
                 headingTextStyle: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 8,
+                columnSpacing: Spacing.xs,
                 columns: [
-                  const DataColumn(
-                    label: Text(""),
-                    numeric: true,
-                  ),
                   DataColumn(
                     label: Text("Match (${matchs.length})"),
                     onSort: (index, sorted) {
-                      int columnIndex = 0;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : true;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : false;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -116,10 +115,9 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     label: const Text("BP"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 1;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : false;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -127,10 +125,9 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     label: const Text("BC"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 2;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : false;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -141,16 +138,15 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                       _openMatch(match);
                     },
                     cells: [
-                      DataCell(match.getType().icon()),
                       DataCell(
                         Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(ref.watch(match.opponentProvider)?.getName() ?? "Erreur"),
+                            Text(match.getOpponent(ref).getName()),
                             Text(
-                              match.date.toDateTime().formatWithTimeAndDay(),
+                              match.getDate().formatWithTimeAndDay(),
                               style: const TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey,
@@ -161,14 +157,20 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                       ),
                       DataCell(
                         Text(
-                          match.date.hasPassed() ? match.getTotalScoreTeam(ref).toString() : "",
-                          style: TextStyle(color: match.resultColor(ref), fontWeight: match.teamFontWeight(ref)),
+                          match.getDate().hasPassed() ? match.getTotalScoreTeam(ref).toString() : "",
+                          style: TextStyle(
+                            color: match.resultColor(ref),
+                            fontWeight: match.teamFontWeight(ref),
+                          ),
                         ),
                       ),
                       DataCell(
                         Text(
-                          match.date.hasPassed() ? match.getScoreOpponent().toString() : "",
-                          style: TextStyle(color: match.resultColor(ref), fontWeight: match.opponentFontWeight(ref)),
+                          match.getDate().hasPassed() ? match.getScoreOpponent().toString() : "",
+                          style: TextStyle(
+                            color: match.resultColor(ref),
+                            fontWeight: match.opponentFontWeight(ref),
+                          ),
                         ),
                       ),
                     ],
@@ -181,7 +183,7 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addMatch,
-        tooltip: 'Ajouter un match',
+        tooltip: "Ajouter un match",
         child: const Icon(Icons.add),
       ),
     );

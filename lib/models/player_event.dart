@@ -1,6 +1,7 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
 import 'package:footrack_front/models/player.dart';
 
 abstract class PlayerEvent<T> extends Document<T> {
@@ -15,17 +16,17 @@ abstract class PlayerEvent<T> extends Document<T> {
   }
 
   void init(WidgetRef? ref) {
-    if (getPlayer1() != null) {
-      firestoreInstance.doc(getPlayer1()!.path).snapshots().listen((snap) {
+    getPlayer1()?.path.let((path) {
+      firestoreInstance.doc(path).snapshots().listen((snap) {
         ref?.read(getPlayer1Provider().notifier).state = Player(snapshot: snap);
       });
-    }
+    });
 
-    if (getPlayer2() != null) {
-      firestoreInstance.doc(getPlayer2()!.path).snapshots().listen((snap) {
+    getPlayer2()?.path.let((path) {
+      firestoreInstance.doc(path).snapshots().listen((snap) {
         ref?.read(getPlayer2Provider().notifier).state = Player(snapshot: snap);
       });
-    }
+    });
   }
 
   DocumentReference? getPlayer1();

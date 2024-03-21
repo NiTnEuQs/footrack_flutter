@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:footrack_front/components/alert_player.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
 import 'package:footrack_front/enums/player_status_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
+import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
+import 'package:footrack_front/models/extensions/season_extension.dart';
 import 'package:footrack_front/models/player.dart';
 
 class PlayersListPage extends ConsumerStatefulWidget {
@@ -15,7 +19,7 @@ class PlayersListPage extends ConsumerStatefulWidget {
 }
 
 class _PlayersListPageState extends ConsumerState<PlayersListPage> {
-  bool _sortAscending = false;
+  bool _sortAscending = true;
   int _sortIndex = 0;
 
   void _addPlayer() {
@@ -41,34 +45,37 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var players = season != null ? ref.watch(season.playersProvider) : <Player>[]
-      ..sort((e1, e2) {
+    var players = season.getPlayers(ref)
+      ..sort((a, b) {
+        dynamic first;
+        dynamic second;
+
         switch (_sortIndex) {
-          case 0:
-            {
-              return (_sortAscending ? e2.getName().compareTo(e1.getName()) : e1.getName().compareTo(e2.getName()));
-            }
           case 1:
             {
-              var birthday1 = e1.birthdate?.toDateTime() ?? DateTime(1970);
-              var birthday2 = e2.birthdate?.toDateTime() ?? DateTime(1970);
-              return (_sortAscending ? birthday2.compareTo(birthday1) : birthday1.compareTo(birthday2));
+              first = a.getBirthDate();
+              second = b.getBirthDate();
             }
           case 2:
             {
-              return (_sortAscending
-                  ? e2.getStatus().format().compareTo(e1.getStatus().format())
-                  : e1.getStatus().format().compareTo(e2.getStatus().format()));
+              first = a.getStatus().index;
+              second = b.getStatus().index;
             }
           case 3:
             {
-              return (_sortAscending
-                  ? e2.getRole().format().compareTo(e1.getRole().format())
-                  : e1.getRole().format().compareTo(e2.getRole().format()));
+              first = a.getRole().index;
+              second = b.getRole().index;
             }
           default:
-            return e1.getName().compareTo(e2.getName());
+            {
+              first = a.getName();
+              second = b.getName();
+            }
         }
+
+        return _sortAscending
+            ? (first as Comparable?).compare(second as Comparable?)
+            : (second as Comparable?).compare(first as Comparable?);
       });
 
     return Scaffold(
@@ -82,20 +89,19 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                 showCheckboxColumn: false,
                 sortAscending: _sortAscending,
                 sortColumnIndex: _sortIndex,
-                headingRowHeight: 35,
+                headingRowHeight: Spacing.xl3,
                 headingTextStyle: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                columnSpacing: 8,
+                columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
                     label: Text("Joueur (${players.length})"),
                     onSort: (index, sorted) {
-                      int columnIndex = 0;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -103,10 +109,9 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     label: const Text("Naissance"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 1;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -114,10 +119,9 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     label: const Text("Status"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 2;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -125,10 +129,9 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     label: const Text("Rôle"),
                     numeric: true,
                     onSort: (index, sorted) {
-                      int columnIndex = 3;
                       setState(() {
-                        _sortAscending = _sortIndex == columnIndex ? !_sortAscending : false;
-                        _sortIndex = columnIndex;
+                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
+                        _sortIndex = index;
                       });
                     },
                   ),
@@ -137,7 +140,7 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                   return DataRow(
                     cells: [
                       DataCell(Text(player.getName())),
-                      DataCell(Text(player.birthdate.toDateTime().format())),
+                      DataCell(Text(player.getBirthDate().format())),
                       DataCell(player.getStatus().icon()),
                       DataCell(player.getRole().icon()),
                     ],
@@ -150,7 +153,7 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addPlayer,
-        tooltip: 'Ajouter un joueur',
+        tooltip: "Ajouter un joueur",
         child: const Icon(Icons.add),
       ),
     );

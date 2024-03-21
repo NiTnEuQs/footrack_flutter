@@ -1,10 +1,13 @@
 import 'package:flamingo/flamingo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:footrack_front/core/ui/spacings.dart';
 import 'package:footrack_front/database/ft_providers.dart';
 import 'package:footrack_front/enums/player_roles_enum.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/squad_player.dart';
+import 'package:footrack_front/models/extensions/match_extension.dart';
+import 'package:footrack_front/models/extensions/player_extension.dart';
+import 'package:footrack_front/models/extensions/squad_player_extension.dart';
 import 'package:footrack_front/models/substitute.dart';
 import 'package:footrack_front/utils/comparables.dart';
 import 'package:footrack_front/utils/tuples.dart';
@@ -34,7 +37,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
 
     _playerInRefPath = widget.substitute?.playerIn?.path;
     _playerOutRefPath = widget.substitute?.playerOut?.path;
-    _timeSubstitution = widget.substitute?.time;
+    _timeSubstitution = widget.substitute?.getTime();
 
     _substituteTimeController.text = _timeSubstitution?.toString() ?? "";
   }
@@ -42,20 +45,20 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
   @override
   Widget build(BuildContext context) {
     var match = ref.watch(matchChoseProvider);
-    var squad = match != null ? ref.watch(match.squadProvider) : <SquadPlayer>[];
+    var squad = match.getSquad(ref);
     var players = squad
         .map(
-          (e) => ref.watch(e.playerProvider),
+          (e) => e.getPlayer(ref),
         )
         .where(
-          (e) => e?.getRole() == PlayerRoleEnum.player,
+          (e) => e.getRole() == PlayerRoleEnum.player,
         );
 
-    List<Pair<String, String>> playersInList = players.map((e) => Pair(e?.reference.path, e?.name)).toList()
-      ..sort(comparePairSecond);
+    List<Pair<String, String>> playersInList = players.map((e) => Pair(e?.reference.path, e.getName())).toList()
+      ..sort(comparePairSecondAsc);
 
-    List<Pair<String, String>> playersOutList = players.map((e) => Pair(e?.reference.path, e?.name)).toList()
-      ..sort(comparePairSecond);
+    List<Pair<String, String>> playersOutList = players.map((e) => Pair(e?.reference.path, e.getName())).toList()
+      ..sort(comparePairSecondAsc);
 
     if (widget.substitute == null) {
       _playerInRefPath ??= playersInList.firstOrNull?.first;
@@ -75,7 +78,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                 Row(
                   children: [
                     const Icon(Icons.access_alarm),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: Spacing.xs),
                     Expanded(
                       child: TextFormField(
                         keyboardType: TextInputType.number,
@@ -93,7 +96,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                 Row(
                   children: [
                     const Icon(Icons.arrow_forward, color: Colors.green),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: Spacing.xs),
                     Expanded(
                       child: DropdownButton(
                         isExpanded: true,
@@ -118,7 +121,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                 Row(
                   children: [
                     const Icon(Icons.arrow_back, color: Colors.red),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: Spacing.xs),
                     Expanded(
                       child: DropdownButton(
                         isExpanded: true,
