@@ -335,7 +335,6 @@ class MatchDashboard extends StatelessWidget {
           title: "Effectif",
           onTap: onSquadClicked,
           color: Colors.blue,
-          enabled: !match.getDate().hasPassed(),
         ),
         FTGridTile(
           icon: Icons.sports_soccer,
