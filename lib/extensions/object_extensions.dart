@@ -1,5 +1,7 @@
 extension ObjectExtension<T> on T {
   R let<R>(R Function(T it) op) => op(this);
+
+  T? takeIf(bool condition) => (condition ? this : null);
 }
 
 extension ObjectFormatting on Comparable? {
