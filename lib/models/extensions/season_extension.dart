@@ -120,7 +120,7 @@ extension SeasonExtension on Season? {
 
   List<Match> nextMatches(WidgetRef ref, {int take = 1}) {
     var matchs = List.of(getMatchs(ref))
-      ..removeWhere((e) => e.getDate().hasPassed(add: const Duration(hours: -2)))
+      ..removeWhere((e) => e.getDate().hasPassed(add: const Duration(hours: 2)))
       ..sort((a, b) => a.getDate().compare(b.getDate()));
 
     return matchs.isNotEmpty ? matchs.take(take).toList() : [];

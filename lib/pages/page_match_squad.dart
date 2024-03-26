@@ -149,7 +149,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     ],
                     onLongPress: () {
                       _editSquadPlayer(squadPlayer);
-                    }.takeIf(!match.getDate().hasPassed(add: const Duration(hours: -2))),
+                    }.takeIf(!match.getDate().hasPassed(add: const Duration(hours: 2))),
                   );
                 }).toList(),
               ),
@@ -158,7 +158,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
         onPressed: _addSquadPlayer,
         tooltip: "Ajouter un joueur",
         child: const Icon(Icons.add),
-      ).takeIf(!match.getDate().hasPassed(add: const Duration(hours: -2))),
+      ).takeIf(!match.getDate().hasPassed(add: const Duration(hours: 2))),
     );
   }
 }

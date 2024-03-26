@@ -16,8 +16,8 @@ extension DateFormatting on DateTime? {
   }
 
   bool hasPassed({Duration? add}) {
-    var currentDate = this;
-    var comparedDate = DateTime.now().add(add ?? const Duration());
+    var currentDate = this?.add(add ?? const Duration());
+    var comparedDate = DateTime.now();
     var res = currentDate?.compareTo(comparedDate);
     return res?.isNegative == true;
   }
