@@ -5,6 +5,7 @@ import 'package:footrack_front/models/season.dart';
 
 final dbProvider = Provider((_) => DatabaseFirestore());
 final languageCodeProvider = StateProvider<String>((_) => "fr");
+final isAdminProvider = StateProvider<bool>((_) => false);
 
 final seasonsProvider = StateProvider<List<Season>>((_) => []);
 final seasonChoseProvider = StateProvider<Season?>((_) => null);

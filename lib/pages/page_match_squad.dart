@@ -45,6 +45,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
 
   @override
   Widget build(BuildContext context) {
+    var isAdmin = ref.watch(isAdminProvider);
     var match = ref.watch(matchChoseProvider);
     var squad = match.getSquad(ref)
       ..sort((a, b) {
@@ -149,7 +150,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     ],
                     onLongPress: () {
                       _editSquadPlayer(squadPlayer);
-                    }.takeIf(!match.getDate().hasPassed(add: const Duration(hours: 2))),
+                    }.takeIf(isAdmin && !match.getDate().hasPassed(add: const Duration(hours: 2))),
                   );
                 }).toList(),
               ),
@@ -158,7 +159,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
         onPressed: _addSquadPlayer,
         tooltip: "Ajouter un joueur",
         child: const Icon(Icons.add),
-      ).takeIf(!match.getDate().hasPassed(add: const Duration(hours: 2))),
+      ).takeIf(isAdmin && !match.getDate().hasPassed(add: const Duration(hours: 2))),
     );
   }
 }
