@@ -10,12 +10,12 @@ part 'season.flamingo.dart';
 
 class Season extends Document<Season> {
   Season({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+    Ref? ref,
+  }) {
     matchs = Collection(this, SeasonKey.matchs.value);
     opponents = Collection(this, SeasonKey.opponents.value);
     players = Collection(this, SeasonKey.players.value);
@@ -23,7 +23,7 @@ class Season extends Document<Season> {
     init(ref);
   }
 
-  void init(WidgetRef? ref) {
+  void init(Ref? ref) {
     firestoreInstance.collection(matchs.ref.path).snapshots().listen((snap) {
       ref?.read(matchsProvider.notifier).state = snap.map((e) => Match(snapshot: e, ref: ref));
     });

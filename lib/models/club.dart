@@ -13,7 +13,7 @@ class Club extends Document<Club> {
     super.snapshot,
     super.values,
     super.collectionRef,
-    WidgetRef? ref,
+    Ref? ref,
   }) {
     seasons = Collection(this, ClubKey.seasons.value);
     players = Collection(this, ClubKey.players.value);
@@ -21,7 +21,7 @@ class Club extends Document<Club> {
     init(ref);
   }
 
-  void init(WidgetRef? ref) {
+  void init(Ref? ref) {
     firestoreInstance.collection(seasons.ref.path).snapshots().listen((snap) {
       ref?.read(seasonsProvider.notifier).state = snap.map((e) => Match(snapshot: e, ref: ref));
     });

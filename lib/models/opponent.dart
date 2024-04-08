@@ -5,11 +5,11 @@ part 'opponent.flamingo.dart';
 
 class Opponent extends Document<Opponent> {
   Opponent({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef);
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+  });
 
   @Field()
   String? name;
