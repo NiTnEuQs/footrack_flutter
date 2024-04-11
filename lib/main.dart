@@ -26,9 +26,13 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: "Footrack",
       theme: ThemeData(
-        // Will be revert later
-        useMaterial3: false,
-        primarySwatch: Colors.green,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          brightness: Brightness.dark,
+        ),
       ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
