@@ -7,6 +7,7 @@ import 'package:footrack_front/enums/player_roles_enum.dart';
 import 'package:footrack_front/enums/player_status_enum.dart';
 import 'package:footrack_front/extensions/date_extensions.dart';
 import 'package:footrack_front/extensions/object_extensions.dart';
+import 'package:footrack_front/models/extensions/account_extension.dart';
 import 'package:footrack_front/models/extensions/match_extension.dart';
 import 'package:footrack_front/models/extensions/player_extension.dart';
 import 'package:footrack_front/models/extensions/squad_player_extension.dart';
@@ -45,7 +46,7 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
 
   @override
   Widget build(BuildContext context) {
-    var isAdmin = ref.watch(isAdminProvider);
+    var account = ref.watch(accountProvider);
     var match = ref.watch(matchChoseProvider);
     var squad = match.getSquad(ref)
       ..sort((a, b) {
@@ -150,7 +151,9 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                     ],
                     onLongPress: () {
                       _editSquadPlayer(squadPlayer);
-                    }.takeIf(isAdmin && !match.getDate().hasPassed(add: const Duration(hours: 2))),
+                    }.takeIf(
+                      account.isAdminInCurrentClub(ref) || !match.getDate().hasPassed(add: const Duration(hours: 2)),
+                    ),
                   );
                 }).toList(),
               ),
@@ -159,7 +162,9 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
         onPressed: _addSquadPlayer,
         tooltip: "Ajouter un joueur",
         child: const Icon(Icons.add),
-      ).takeIf(isAdmin && !match.getDate().hasPassed(add: const Duration(hours: 2))),
+      ).takeIf(
+        account.isAdminInCurrentClub(ref) || !match.getDate().hasPassed(add: const Duration(hours: 2)),
+      ),
     );
   }
 }
