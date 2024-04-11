@@ -1,16 +1,17 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/alert_season.dart';
-import 'package:footrack_front/components/generics/generic_error.dart';
-import 'package:footrack_front/components/generics/generic_loading.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/models/season.dart';
-import 'package:footrack_front/pages/page_season_dashboard.dart';
+import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/alert_season.dart";
+import "package:footrack_front/components/generics/generic_error.dart";
+import "package:footrack_front/components/generics/generic_loading.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/season.dart";
+import "package:footrack_front/pages/page_season_dashboard.dart";
 
 class SeasonsListPage extends ConsumerStatefulWidget {
   const SeasonsListPage({super.key});
@@ -55,6 +56,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     final version = ref.watch(packageInfoProvider)?.version;
     final seasonsStream = ref.watch(seasonsStreamProvider);
 
@@ -109,16 +111,41 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                 loading: () => const Scaffold(body: GenericLoading()),
               ),
             ),
-            Text(
-              "Version $version",
-              style: const TextStyle(color: Colors.black45),
-            ),
+            if (version != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                child: Text(
+                  "Version $version",
+                  style: const TextStyle(color: Colors.black45),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            if (user != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                child: Column(
+                  children: [
+                    Text(
+                      "Connecté en tant que ${user.email}",
+                      style: const TextStyle(color: Colors.black45),
+                      textAlign: TextAlign.center,
+                    ),
+                    ElevatedButton(
+                      child: const Text("Déconnexion"),
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        ref.read(userProvider.notifier).state = null;
+                      },
+                    )
+                  ],
+                ),
+              ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addSeason,
-        tooltip: 'Créer une saison',
+        tooltip: "Créer une saison",
         child: const Icon(Icons.add),
       ),
     );

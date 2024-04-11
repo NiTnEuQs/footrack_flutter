@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "900488587335-4nr2betas05dhib31s0s014vvi8fli0a.apps.googleusercontent.com",
+          "client_id": "900488587335-db45ikaalc3pjpb732tv79accpbcqg7h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.krynit.footrack",
+            "certificate_hash": "f7b7e6ed76c40296722622d32e507d1013ca982f"
+          }
+        },
+        {
+          "client_id": "900488587335-9p7891ph2a8msbsn9d51vdemosjf74nr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +37,13 @@
             {
               "client_id": "900488587335-4nr2betas05dhib31s0s014vvi8fli0a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "900488587335-ds7n21lnlee1m31kbqgali9i0nfsivat.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.krynit.footrack"
+              }
             }
           ]
         }

@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/generics/generic_error.dart';
-import 'package:footrack_front/components/generics/generic_loading.dart';
-import 'package:footrack_front/database/ft_config.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/pages/page_seasons_list.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/generics/generic_error.dart";
+import "package:footrack_front/components/generics/generic_loading.dart";
+import "package:footrack_front/database/ft_config.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/pages/page_login.dart";
+import "package:footrack_front/pages/page_seasons_list.dart";
+import "package:package_info_plus/package_info_plus.dart";
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 
 class LoadingPage extends ConsumerWidget {
@@ -16,7 +17,15 @@ class LoadingPage extends ConsumerWidget {
     final setup = ref.watch(_setupProvider);
 
     return setup.when(
-      data: (d) => const SeasonsListPage(),
+      data: (d) {
+        final isUserConnected = ref.watch(isUserConnectedProvider);
+
+        if (isUserConnected) {
+          return const SeasonsListPage();
+        } else {
+          return const LoginPage();
+        }
+      },
       error: (e, s) => Scaffold(body: GenericError(error: e)),
       loading: () => const Scaffold(body: GenericLoading()),
     );

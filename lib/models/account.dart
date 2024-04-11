@@ -1,10 +1,10 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/snapshot_extensions.dart';
-import 'package:footrack_front/models/account_club.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/snapshot_extensions.dart";
+import "package:footrack_front/models/account_club.dart";
 
-part 'account.flamingo.dart';
+part "account.flamingo.dart";
 
 class Account extends Document<Account> {
   Account({
@@ -14,19 +14,21 @@ class Account extends Document<Account> {
     super.collectionRef,
     WidgetRef? ref,
   }) {
+    clubs = Collection(this, AccountKey.clubs.value);
+
     init(ref);
   }
 
   void init(WidgetRef? ref) {
-    firestoreInstance.collection(accountClubs.ref.path).snapshots().listen((snap) {
+    firestoreInstance.collection(clubs.ref.path).snapshots().listen((snap) {
       ref?.read(accountClubsProvider.notifier).state = snap.map((e) => AccountClub(snapshot: e));
     });
   }
 
-  // Clubs
+  // Account clubs
 
   @SubCollection()
-  late Collection<AccountClub> accountClubs;
+  late Collection<AccountClub> clubs;
   final accountClubsProvider = StateProvider<List<AccountClub>>((_) => []);
 
   // Json
