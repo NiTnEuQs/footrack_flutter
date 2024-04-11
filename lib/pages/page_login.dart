@@ -21,7 +21,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         child: ElevatedButton(
           child: const Text("Connexion avec Google"),
           onPressed: () async {
-            var signInWithGoogle = await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+            var signInWithGoogle = await FirebaseAuth.instance.signInWithProvider(GoogleAuthProvider());
             ref.read(userProvider.notifier).state = signInWithGoogle.user;
           },
         ),
