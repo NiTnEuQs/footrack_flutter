@@ -62,7 +62,10 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vos saisons"),
+        title: Text(
+          "Vos saisons",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: Container(
         margin: const EdgeInsets.only(bottom: Spacing.m),
@@ -72,7 +75,12 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
               child: seasonsStream.when(
                 data: (seasons) {
                   return seasons.isEmpty
-                      ? const Center(child: Text("Aucune saison"))
+                      ? Center(
+                          child: Text(
+                            "Aucune saison",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        )
                       : SingleChildScrollView(
                           child: DataTable(
                             showCheckboxColumn: false,
@@ -83,18 +91,56 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                             ),
                             columnSpacing: 8,
                             columns: [
-                              DataColumn(label: Text("Saison (${seasons.length})")),
-                              const DataColumn(label: Text("Matchs"), numeric: true),
-                              const DataColumn(label: Text("BP"), numeric: true),
-                              const DataColumn(label: Text("BC"), numeric: true),
+                              DataColumn(
+                                label: Text(
+                                  "Saison (${seasons.length})",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "Matchs",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                numeric: true,
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "BP",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                numeric: true,
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  "BC",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                numeric: true,
+                              ),
                             ],
                             rows: List.of(seasons).map((season) {
                               return DataRow(
                                 cells: [
                                   DataCell(seasonColumn(season)),
-                                  DataCell(Text("${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}")),
-                                  DataCell(Text(season.nbGoalsFor(ref).toString())),
-                                  DataCell(Text(season.nbGoalsAgainst(ref).toString())),
+                                  DataCell(
+                                    Text(
+                                      "${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}",
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      season.nbGoalsFor(ref).toString(),
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      season.nbGoalsAgainst(ref).toString(),
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  ),
                                 ],
                                 onSelectChanged: (selected) {
                                   _openSeason(season);
@@ -116,29 +162,32 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                 padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
                 child: Text(
                   "Version $version",
-                  style: const TextStyle(color: Colors.black45),
+                  style: Theme.of(context).textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
               ),
             if (user != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
-                child: Column(
-                  children: [
-                    Text(
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                    child: Text(
                       "Connecté en tant que ${user.email}",
-                      style: const TextStyle(color: Colors.black45),
+                      style: Theme.of(context).textTheme.labelMedium,
                       textAlign: TextAlign.center,
                     ),
-                    ElevatedButton(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                    child: ElevatedButton(
                       child: const Text("Déconnexion"),
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
                         ref.read(userProvider.notifier).state = null;
                       },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
           ],
         ),
@@ -159,16 +208,12 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
       children: [
         Text(
           season.getName(),
-          style: const TextStyle(
-            overflow: TextOverflow.clip,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
+          maxLines: 1,
         ),
         Text(
           "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
-          ),
+          style: Theme.of(context).textTheme.labelMedium,
         ),
       ],
     );
