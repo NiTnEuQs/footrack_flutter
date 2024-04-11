@@ -91,10 +91,10 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
                 }).toList(),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _addOpponent,
-        tooltip: "Ajouter un adversaire",
-        child: const Icon(Icons.add),
+        label: const Text("Ajouter un adversaire"),
+        icon: const Icon(Icons.add),
       ),
     );
   }

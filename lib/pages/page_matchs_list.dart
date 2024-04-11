@@ -181,10 +181,10 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                 }).toList(),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _addMatch,
-        tooltip: "Ajouter un match",
-        child: const Icon(Icons.add),
+        label: const Text("Ajouter un match"),
+        icon: const Icon(Icons.add),
       ),
     );
   }

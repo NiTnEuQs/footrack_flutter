@@ -158,10 +158,10 @@ class _MatchSquadPageState extends ConsumerState<MatchSquadPage> {
                 }).toList(),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _addSquadPlayer,
-        tooltip: "Ajouter un joueur",
-        child: const Icon(Icons.add),
+        label: const Text("Ajouter un joueur"),
+        icon: const Icon(Icons.add),
       ).takeIf(
         account.isAdminInCurrentClub(ref) || !match.getDate().hasPassed(add: const Duration(hours: 2)),
       ),

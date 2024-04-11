@@ -189,13 +189,14 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                   ),
                 ],
               ),
+            const SizedBox(height: Spacing.xl5),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _addSeason,
-        tooltip: "Créer une saison",
-        child: const Icon(Icons.add),
+        label: const Text("Créer une saison"),
+        icon: const Icon(Icons.add),
       ),
     );
   }

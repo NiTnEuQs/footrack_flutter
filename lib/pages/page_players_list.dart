@@ -151,10 +151,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                 }).toList(),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _addPlayer,
-        tooltip: "Ajouter un joueur",
-        child: const Icon(Icons.add),
+        label: const Text("Ajouter un joueur"),
+        icon: const Icon(Icons.add),
       ),
     );
   }
