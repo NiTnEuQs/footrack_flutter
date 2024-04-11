@@ -1,4 +1,5 @@
 import "package:collection/collection.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/ft_grid_tile.dart";
@@ -27,6 +28,9 @@ class SeasonDashboardPage extends ConsumerStatefulWidget {
 class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final version = ref.watch(packageInfoProvider)?.version;
+
     var season = ref.watch(seasonChoseProvider);
     var nextMatch = season.nextMatches(ref).firstOrNull;
     var nextMatchOpponent = nextMatch.getOpponent(ref);
@@ -322,6 +326,38 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                       ),
                     ],
                   ),
+                  if (version != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                      child: Text(
+                        "Version $version",
+                        style: Theme.of(context).textTheme.labelMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  if (user != null)
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                          child: Text(
+                            "Connecté en tant que ${user.email}",
+                            style: Theme.of(context).textTheme.labelMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                          child: ElevatedButton(
+                            child: const Text("Déconnexion"),
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+                              ref.read(userProvider.notifier).state = null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
