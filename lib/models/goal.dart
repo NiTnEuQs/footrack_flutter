@@ -11,12 +11,12 @@ part 'goal.flamingo.dart';
 
 class Goal extends PlayerEvent<Goal> {
   Goal({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef, ref: ref);
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+    super.ref,
+  });
 
   @Field()
   int? time;

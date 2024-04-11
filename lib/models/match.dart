@@ -12,12 +12,12 @@ part 'match.flamingo.dart';
 
 class Match extends Document<Match> {
   Match({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+    Ref? ref,
+  }) {
     goals = Collection(this, MatchKey.goals.value);
     substitutes = Collection(this, MatchKey.substitutes.value);
     squad = Collection(this, MatchKey.squad.value);
@@ -25,7 +25,7 @@ class Match extends Document<Match> {
     init(ref);
   }
 
-  void init(WidgetRef? ref) {
+  void init(Ref? ref) {
     firestoreInstance.collection(goals.ref.path).snapshots().listen((snap) {
       ref?.read(goalsProvider.notifier).state = snap.map((e) => Goal(snapshot: e, ref: ref));
     });

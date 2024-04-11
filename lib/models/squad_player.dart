@@ -8,16 +8,16 @@ part 'squad_player.flamingo.dart';
 
 class SquadPlayer extends Document<SquadPlayer> {
   SquadPlayer({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-    WidgetRef? ref,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef) {
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+    Ref? ref,
+  }) {
     init(ref);
   }
 
-  void init(WidgetRef? ref) {
+  void init(Ref? ref) {
     player?.path.let((path) {
       firestoreInstance.doc(path).snapshots().listen((snap) {
         ref?.read(playerProvider.notifier).state = Player(snapshot: snap);
