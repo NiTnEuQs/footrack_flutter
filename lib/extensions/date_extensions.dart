@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:footrack_front/converters/date_time_converter.dart';
-import 'package:intl/intl.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:footrack_front/converters/date_time_converter.dart";
+import "package:intl/intl.dart";
 
 extension DateFormatting on DateTime? {
   String format() {

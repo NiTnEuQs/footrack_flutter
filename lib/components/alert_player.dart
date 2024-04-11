@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/enums/player_status_enum.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/player.dart';
-import 'package:footrack_front/utils/pickers.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/enums/player_roles_enum.dart";
+import "package:footrack_front/enums/player_status_enum.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/player.dart";
+import "package:footrack_front/utils/pickers.dart";
 
 class AlertPlayer extends ConsumerStatefulWidget {
   const AlertPlayer({
-    Key? key,
+    super.key,
     this.player,
-  }) : super(key: key);
+  });
 
   final Player? player;
 
@@ -150,10 +150,11 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
                         content: Text(widget.player!.getName()),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removePlayer(

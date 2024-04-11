@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/ft_stat_tile.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/pages/page_passers_list.dart';
-import 'package:footrack_front/pages/page_scorers_list.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/ft_stat_tile.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/pages/page_passers_list.dart";
+import "package:footrack_front/pages/page_scorers_list.dart";
 
 class StatsPage extends ConsumerStatefulWidget {
-  const StatsPage({Key? key}) : super(key: key);
+  const StatsPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _StatsPageState();

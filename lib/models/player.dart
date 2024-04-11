@@ -1,15 +1,15 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
 
-part 'player.flamingo.dart';
+part "player.flamingo.dart";
 
 class Player extends Document<Player> {
   Player({
-    String? id,
-    DocumentSnapshot<Map<String, dynamic>>? snapshot,
-    Map<String, dynamic>? values,
-    CollectionReference<Map<String, dynamic>>? collectionRef,
-  }) : super(id: id, snapshot: snapshot, values: values, collectionRef: collectionRef);
+    super.id,
+    super.snapshot,
+    super.values,
+    super.collectionRef,
+  });
 
   @Field()
   String? name;

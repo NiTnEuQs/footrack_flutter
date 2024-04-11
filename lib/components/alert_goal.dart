@@ -1,22 +1,22 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/squad_player_extension.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/utils/comparables.dart';
-import 'package:footrack_front/utils/tuples.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/enums/player_roles_enum.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/squad_player_extension.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/utils/comparables.dart";
+import "package:footrack_front/utils/tuples.dart";
 
 class AlertGoal extends ConsumerStatefulWidget {
   const AlertGoal({
-    Key? key,
+    super.key,
     this.goal,
-  }) : super(key: key);
+  });
 
   final Goal? goal;
 
@@ -145,10 +145,11 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                         title: const Text("Êtes-vous sûr de vouloir supprimer ce but ?"),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeGoal(

@@ -1,13 +1,13 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/models/extensions/goal_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/player.dart';
-import 'package:footrack_front/models/player_event.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/models/extensions/goal_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/player.dart";
+import "package:footrack_front/models/player_event.dart";
 
-part 'goal.flamingo.dart';
+part "goal.flamingo.dart";
 
 class Goal extends PlayerEvent<Goal> {
   Goal({

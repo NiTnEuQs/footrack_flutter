@@ -1,24 +1,24 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/match_type_enum.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/opponent_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/utils/comparables.dart';
-import 'package:footrack_front/utils/pickers.dart';
-import 'package:footrack_front/utils/tuples.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/enums/match_type_enum.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/opponent_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/utils/comparables.dart";
+import "package:footrack_front/utils/pickers.dart";
+import "package:footrack_front/utils/tuples.dart";
 
 class AlertMatch extends ConsumerStatefulWidget {
   const AlertMatch({
-    Key? key,
+    super.key,
     this.match,
-  }) : super(key: key);
+  });
 
   final Match? match;
 
@@ -157,10 +157,11 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                         content: Text(widget.match.getDate().format()),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeMatch(

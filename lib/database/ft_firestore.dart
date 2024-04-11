@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/opponent.dart';
-import 'package:footrack_front/models/player.dart';
-import 'package:footrack_front/models/season.dart';
-import 'package:footrack_front/models/squad_player.dart';
-import 'package:footrack_front/models/substitute.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/models/opponent.dart";
+import "package:footrack_front/models/player.dart";
+import "package:footrack_front/models/season.dart";
+import "package:footrack_front/models/squad_player.dart";
+import "package:footrack_front/models/substitute.dart";
 
 class DatabaseFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Create an instance of Firebase Firestore.
@@ -14,10 +14,10 @@ class DatabaseFirestore {
   Future<bool> addNewSeason(Season m) async {
     try {
       await _firestore.collection("seasons").add({
-        'name': m.name,
-        'teamName': m.teamName,
-        'from': m.from,
-        'to': m.to,
+        "name": m.name,
+        "teamName": m.teamName,
+        "from": m.from,
+        "to": m.to,
       });
       return true;
     } catch (e) {
@@ -31,10 +31,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").add({
-        'type': m.type,
-        'opponent': m.opponent,
-        'date': m.date,
-        'scoreOpponent': m.scoreOpponent,
+        "type": m.type,
+        "opponent": m.opponent,
+        "date": m.date,
+        "scoreOpponent": m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -48,7 +48,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("squad").add({
-        'player': sp.player,
+        "player": sp.player,
       });
       return true;
     } catch (e) {
@@ -62,9 +62,9 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("goals").add({
-        'scorer': m.scorer,
-        'passer': m.passer,
-        'time': m.time,
+        "scorer": m.scorer,
+        "passer": m.passer,
+        "time": m.time,
       });
       return true;
     } catch (e) {
@@ -84,9 +84,9 @@ class DatabaseFirestore {
           .doc(matchId)
           .collection("substitutes")
           .add({
-        'playerIn': m.playerIn,
-        'playerOut': m.playerOut,
-        'time': m.time,
+        "playerIn": m.playerIn,
+        "playerOut": m.playerOut,
+        "time": m.time,
       });
       return true;
     } catch (e) {
@@ -100,7 +100,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("opponents").add({
-        'name': m.name,
+        "name": m.name,
       });
       return true;
     } catch (e) {
@@ -114,10 +114,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("players").add({
-        'name': m.name,
-        'role': m.role,
-        'status': m.status,
-        'birthdate': m.birthdate,
+        "name": m.name,
+        "role": m.role,
+        "status": m.status,
+        "birthdate": m.birthdate,
       });
       return true;
     } catch (e) {
@@ -235,10 +235,10 @@ class DatabaseFirestore {
   Future<bool> editSeason(String seasonId, Season s) async {
     try {
       await _firestore.collection("seasons").doc(seasonId).update({
-        'name': s.name,
-        'teamName': s.teamName,
-        'from': s.from,
-        'to': s.to,
+        "name": s.name,
+        "teamName": s.teamName,
+        "from": s.from,
+        "to": s.to,
       });
       return true;
     } catch (e) {
@@ -252,10 +252,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).update({
-        'type': m.type,
-        'opponent': m.opponent,
-        'date': m.date,
-        'scoreOpponent': m.scoreOpponent,
+        "type": m.type,
+        "opponent": m.opponent,
+        "date": m.date,
+        "scoreOpponent": m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -277,7 +277,7 @@ class DatabaseFirestore {
           .collection("squad")
           .doc(squadPlayerId)
           .update({
-        'player': sp.player,
+        "player": sp.player,
       });
       return true;
     } catch (e) {
@@ -299,9 +299,9 @@ class DatabaseFirestore {
           .collection("goals")
           .doc(goalId)
           .update({
-        'scorer': m.scorer,
-        'passer': m.passer,
-        'time': m.time,
+        "scorer": m.scorer,
+        "passer": m.passer,
+        "time": m.time,
       });
       return true;
     } catch (e) {
@@ -323,9 +323,9 @@ class DatabaseFirestore {
           .collection("substitutes")
           .doc(substituteId)
           .update({
-        'playerIn': m.playerIn,
-        'playerOut': m.playerOut,
-        'time': m.time,
+        "playerIn": m.playerIn,
+        "playerOut": m.playerOut,
+        "time": m.time,
       });
       return true;
     } catch (e) {
@@ -339,7 +339,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).update({
-        'name': m.name,
+        "name": m.name,
       });
       return true;
     } catch (e) {
@@ -353,10 +353,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).update({
-        'name': m.name,
-        'role': m.role,
-        'status': m.status,
-        'birthdate': m.birthdate,
+        "name": m.name,
+        "role": m.role,
+        "status": m.status,
+        "birthdate": m.birthdate,
       });
       return true;
     } catch (e) {
@@ -375,7 +375,7 @@ class DatabaseFirestore {
           .doc(seasonId)
           .collection("matchs")
           .doc(matchId)
-          .update({'scoreOpponent': newOpponentGoal});
+          .update({"scoreOpponent": newOpponentGoal});
       return true;
     } catch (e) {
       return Future.error(e);

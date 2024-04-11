@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/pages/passers/domain/models/passer.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/pages/passers/domain/models/passer.dart";
 
 class PassersListPage extends ConsumerStatefulWidget {
-  const PassersListPage({Key? key}) : super(key: key);
+  const PassersListPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _PassersListPageState();

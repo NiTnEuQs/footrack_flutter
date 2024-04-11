@@ -1,24 +1,24 @@
-import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/ft_grid_tile.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_config.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/list_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/opponent_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/pages/page_match_dashboard.dart';
-import 'package:footrack_front/pages/page_matchs_list.dart';
-import 'package:footrack_front/pages/page_opponents_list.dart';
-import 'package:footrack_front/pages/page_players_list.dart';
-import 'package:footrack_front/pages/page_stats.dart';
+import "package:collection/collection.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/ft_grid_tile.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_config.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/list_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/opponent_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/pages/page_match_dashboard.dart";
+import "package:footrack_front/pages/page_matchs_list.dart";
+import "package:footrack_front/pages/page_opponents_list.dart";
+import "package:footrack_front/pages/page_players_list.dart";
+import "package:footrack_front/pages/page_stats.dart";
 
 class SeasonDashboardPage extends ConsumerStatefulWidget {
-  const SeasonDashboardPage({Key? key}) : super(key: key);
+  const SeasonDashboardPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SeasonDashboardPageState();
@@ -104,7 +104,11 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                         )
                       : Padding(
                           padding: const EdgeInsets.only(
-                              left: Spacing.xl2, right: Spacing.xl2, top: Spacing.xl2, bottom: Spacing.m),
+                            left: Spacing.xl2,
+                            right: Spacing.xl2,
+                            top: Spacing.xl2,
+                            bottom: Spacing.m,
+                          ),
                           child: Text(
                             nbMatches > 0
                                 ? "Il n'y a pas de match prochainement"
@@ -128,7 +132,11 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: Spacing.xl2, right: Spacing.xl2, top: Spacing.m, bottom: Spacing.m),
+                          left: Spacing.xl2,
+                          right: Spacing.xl2,
+                          top: Spacing.m,
+                          bottom: Spacing.m,
+                        ),
                         child: Center(
                           child: Column(
                             children: [
@@ -192,7 +200,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                     ),
                                   ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                         ),

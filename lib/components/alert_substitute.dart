@@ -1,22 +1,22 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/squad_player_extension.dart';
-import 'package:footrack_front/models/substitute.dart';
-import 'package:footrack_front/utils/comparables.dart';
-import 'package:footrack_front/utils/tuples.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/enums/player_roles_enum.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/squad_player_extension.dart";
+import "package:footrack_front/models/substitute.dart";
+import "package:footrack_front/utils/comparables.dart";
+import "package:footrack_front/utils/tuples.dart";
 
 class AlertSubstitute extends ConsumerStatefulWidget {
   const AlertSubstitute({
-    Key? key,
+    super.key,
     this.substitute,
-  }) : super(key: key);
+  });
 
   final Substitute? substitute;
 
@@ -160,10 +160,11 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                               title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
                               actions: [
                                 TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Annuler")),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Annuler"),
+                                ),
                                 ElevatedButton(
                                   onPressed: () {
                                     ref.read(dbProvider).removeSubstitute(

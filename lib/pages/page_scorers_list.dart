@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/pages/scorers/domain/models/scorer.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/pages/scorers/domain/models/scorer.dart";
 
 class ScorersListPage extends ConsumerStatefulWidget {
-  const ScorersListPage({Key? key}) : super(key: key);
+  const ScorersListPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ScorersListPageState();

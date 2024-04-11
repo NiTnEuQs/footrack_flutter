@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
+import "package:flutter/material.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
 
 class FTGridTile extends StatelessWidget {
   const FTGridTile({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.enabled = true,
@@ -15,7 +15,7 @@ class FTGridTile extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.redirection,
-  }) : super(key: key);
+  });
 
   final IconData icon;
   final String title;

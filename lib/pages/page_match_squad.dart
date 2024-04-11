@@ -1,20 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/alert_squad_player.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/enums/player_roles_enum.dart';
-import 'package:footrack_front/enums/player_status_enum.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/account_extension.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/squad_player_extension.dart';
-import 'package:footrack_front/models/squad_player.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/alert_squad_player.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/enums/player_roles_enum.dart";
+import "package:footrack_front/enums/player_status_enum.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/account_extension.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/squad_player_extension.dart";
+import "package:footrack_front/models/squad_player.dart";
 
 class MatchSquadPage extends ConsumerStatefulWidget {
-  const MatchSquadPage({Key? key}) : super(key: key);
+  const MatchSquadPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MatchSquadPageState();

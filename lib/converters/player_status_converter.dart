@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
-import 'package:footrack_front/enums/player_status_enum.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:collection/collection.dart";
+import "package:footrack_front/enums/player_status_enum.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 
 class PlayerStatusConverter implements JsonConverter<PlayerStatusEnum?, String> {
   const PlayerStatusConverter();

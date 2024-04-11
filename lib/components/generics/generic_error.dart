@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
+import "package:flutter/material.dart";
+import "package:footrack_front/core/ui/spacings.dart";
 
 class GenericError extends StatelessWidget {
   const GenericError({super.key, required this.error});

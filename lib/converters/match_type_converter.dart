@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
-import 'package:footrack_front/enums/match_type_enum.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:collection/collection.dart";
+import "package:footrack_front/enums/match_type_enum.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 
 class MatchTypeConverter implements JsonConverter<MatchTypeEnum, String> {
   const MatchTypeConverter();

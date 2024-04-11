@@ -1,7 +1,7 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
 
-part 'opponent.flamingo.dart';
+part "opponent.flamingo.dart";
 
 class Opponent extends Document<Opponent> {
   Opponent({

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
+import "package:flutter/material.dart";
+import "package:footrack_front/core/ui/spacings.dart";
 
 class FTStatTile extends StatelessWidget {
   const FTStatTile({
-    Key? key,
+    super.key,
     required this.value,
     required this.title,
     this.subtitle,
@@ -13,7 +13,7 @@ class FTStatTile extends StatelessWidget {
     this.subtitleSize,
     this.onTap,
     this.onLongPress,
-  }) : super(key: key);
+  });
 
   final String value;
   final double? valueSize;
@@ -72,7 +72,7 @@ class FTStatTile extends StatelessWidget {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

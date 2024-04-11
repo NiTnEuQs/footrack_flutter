@@ -1,6 +1,6 @@
-import 'package:collection/collection.dart';
-import 'package:footrack_front/enums/match_status_enum.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:collection/collection.dart";
+import "package:footrack_front/enums/match_status_enum.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 
 class MatchStatusConverter implements JsonConverter<MatchStatusEnum, String> {
   const MatchStatusConverter();

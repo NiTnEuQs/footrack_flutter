@@ -1,8 +1,8 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/player.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/player.dart";
 
 abstract class PlayerEvent<T> extends Document<T> {
   PlayerEvent({

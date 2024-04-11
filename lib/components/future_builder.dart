@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class FTFutureBuilder<T> extends StatelessWidget {
   const FTFutureBuilder({
-    Key? key,
+    super.key,
     required this.future,
     required this.onDataLoaded,
-  }) : super(key: key);
+  });
 
   final Future<T>? future;
 
@@ -18,7 +18,7 @@ class FTFutureBuilder<T> extends StatelessWidget {
       builder: (context, AsyncSnapshot<T> snapshot) {
         if (snapshot.hasError) {
           debugPrint(snapshot.error.toString());
-          return const Center(child: Text('Erreur'));
+          return const Center(child: Text("Erreur"));
         }
 
         if (!snapshot.hasData) {

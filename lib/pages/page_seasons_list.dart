@@ -136,7 +136,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                         await FirebaseAuth.instance.signOut();
                         ref.read(userProvider.notifier).state = null;
                       },
-                    )
+                    ),
                   ],
                 ),
               ),

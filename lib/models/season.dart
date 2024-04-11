@@ -1,12 +1,12 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/snapshot_extensions.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/opponent.dart';
-import 'package:footrack_front/models/player.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/snapshot_extensions.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/models/opponent.dart";
+import "package:footrack_front/models/player.dart";
 
-part 'season.flamingo.dart';
+part "season.flamingo.dart";
 
 class Season extends Document<Season> {
   Season({

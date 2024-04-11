@@ -1,14 +1,14 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/extensions/snapshot_extensions.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/opponent.dart';
-import 'package:footrack_front/models/squad_player.dart';
-import 'package:footrack_front/models/substitute.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/extensions/snapshot_extensions.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/opponent.dart";
+import "package:footrack_front/models/squad_player.dart";
+import "package:footrack_front/models/substitute.dart";
 
-part 'match.flamingo.dart';
+part "match.flamingo.dart";
 
 class Match extends Document<Match> {
   Match({

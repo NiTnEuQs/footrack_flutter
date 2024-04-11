@@ -1,7 +1,7 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
 
-part 'account_club.flamingo.dart';
+part "account_club.flamingo.dart";
 
 class AccountClub extends Document<AccountClub> {
   AccountClub({

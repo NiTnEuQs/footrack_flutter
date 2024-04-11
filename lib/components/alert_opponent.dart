@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/models/extensions/opponent_extension.dart';
-import 'package:footrack_front/models/opponent.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/models/extensions/opponent_extension.dart";
+import "package:footrack_front/models/opponent.dart";
 
 class AlertOpponent extends ConsumerStatefulWidget {
   const AlertOpponent({
-    Key? key,
+    super.key,
     this.opponent,
-  }) : super(key: key);
+  });
 
   final Opponent? opponent;
 
@@ -66,10 +66,11 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
                         content: Text(widget.opponent!.getName()),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeOpponent(

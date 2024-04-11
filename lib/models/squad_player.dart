@@ -1,10 +1,10 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flamingo_annotation/flamingo_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/player.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flamingo_annotation/flamingo_annotation.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/player.dart";
 
-part 'squad_player.flamingo.dart';
+part "squad_player.flamingo.dart";
 
 class SquadPlayer extends Document<SquadPlayer> {
   SquadPlayer({

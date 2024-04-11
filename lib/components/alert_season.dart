@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/models/season.dart';
-import 'package:footrack_front/utils/pickers.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/season.dart";
+import "package:footrack_front/utils/pickers.dart";
 
 class AlertSeason extends ConsumerStatefulWidget {
   const AlertSeason({
-    Key? key,
+    super.key,
     this.season,
-  }) : super(key: key);
+  });
 
   final Season? season;
 
@@ -107,10 +107,11 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
                         content: Text(widget.season.getName()),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeSeason(widget.season!.id);

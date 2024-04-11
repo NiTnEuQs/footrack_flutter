@@ -1,4 +1,4 @@
-import 'package:footrack_front/models/opponent.dart';
+import "package:footrack_front/models/opponent.dart";
 
 extension OpponentExtension on Opponent? {
   // Getters

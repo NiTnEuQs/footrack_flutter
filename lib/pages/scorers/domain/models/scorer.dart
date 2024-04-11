@@ -1,4 +1,4 @@
-import 'package:footrack_front/models/player.dart';
+import "package:footrack_front/models/player.dart";
 
 class Scorer {
   Scorer({this.player, this.goals});

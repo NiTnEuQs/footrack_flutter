@@ -1,7 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/player.dart';
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/player.dart";
 
 extension GoalExtension on Goal? {
   // Getters

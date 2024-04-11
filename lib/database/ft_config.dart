@@ -1,5 +1,5 @@
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import "package:firebase_remote_config/firebase_remote_config.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 final remoteConfigProvider = StateProvider<FirebaseRemoteConfig?>((_) => null);
 

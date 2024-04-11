@@ -1,26 +1,26 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/components/alert_goal.dart';
-import 'package:footrack_front/components/alert_substitute.dart';
-import 'package:footrack_front/components/ft_grid_tile.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/opponent_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/player_event.dart';
-import 'package:footrack_front/models/substitute.dart';
-import 'package:footrack_front/pages/page_match_squad.dart';
-import 'package:wakelock/wakelock.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/alert_goal.dart";
+import "package:footrack_front/components/alert_substitute.dart";
+import "package:footrack_front/components/ft_grid_tile.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/opponent_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/models/player_event.dart";
+import "package:footrack_front/models/substitute.dart";
+import "package:footrack_front/pages/page_match_squad.dart";
+import "package:wakelock/wakelock.dart";
 
 class MatchDashboardPage extends ConsumerStatefulWidget {
-  const MatchDashboardPage({Key? key}) : super(key: key);
+  const MatchDashboardPage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MatchDashboardPageState();
@@ -92,7 +92,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     );
   }
 
-  Future<bool> _onWillPop() async {
+  Future<bool> _onWillPop(bool pop) async {
     Wakelock.disable();
     return true;
   }
@@ -111,8 +111,8 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     var substitutes = match.getSubstitutes(ref);
     var opponent = match.getOpponent(ref);
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      onPopInvoked: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Match"),
@@ -227,11 +227,11 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
 
 class EventsListPage extends ConsumerWidget {
   const EventsListPage({
-    Key? key,
+    super.key,
     required this.events,
     this.onEventTap,
     this.onEventLongPress,
-  }) : super(key: key);
+  });
 
   final List<PlayerEvent> events;
   final Function(PlayerEvent? event)? onEventTap;
@@ -280,7 +280,7 @@ class EventsListPage extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (event.getTime() != null) Text("${event.getTime()}'")
+                      if (event.getTime() != null) Text("${event.getTime()}'"),
                     ],
                   ),
                 ),
@@ -292,7 +292,7 @@ class EventsListPage extends ConsumerWidget {
 
 class MatchDashboard extends StatelessWidget {
   const MatchDashboard({
-    Key? key,
+    super.key,
     required this.match,
     this.onGoalClicked,
     this.onSubstituteClicked,
@@ -301,7 +301,7 @@ class MatchDashboard extends StatelessWidget {
     this.onStopClicked,
     this.onOpponentGoalClicked,
     this.onOpponentGoalLongPress,
-  }) : super(key: key);
+  });
 
   final Match match;
   final Function()? onGoalClicked;

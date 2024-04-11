@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/converters/match_type_converter.dart';
-import 'package:footrack_front/enums/match_type_enum.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/opponent.dart';
-import 'package:footrack_front/models/squad_player.dart';
-import 'package:footrack_front/models/substitute.dart';
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/converters/match_type_converter.dart";
+import "package:footrack_front/enums/match_type_enum.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/models/opponent.dart";
+import "package:footrack_front/models/squad_player.dart";
+import "package:footrack_front/models/substitute.dart";
 
 extension MatchExtension on Match? {
   // Getters

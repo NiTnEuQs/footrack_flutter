@@ -1,21 +1,21 @@
-import 'package:flamingo/flamingo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/core/ui/spacings.dart';
-import 'package:footrack_front/database/ft_providers.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/extensions/player_extension.dart';
-import 'package:footrack_front/models/extensions/season_extension.dart';
-import 'package:footrack_front/models/squad_player.dart';
-import 'package:footrack_front/utils/comparables.dart';
-import 'package:footrack_front/utils/tuples.dart';
+import "package:flamingo/flamingo.dart";
+import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/extensions/player_extension.dart";
+import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/squad_player.dart";
+import "package:footrack_front/utils/comparables.dart";
+import "package:footrack_front/utils/tuples.dart";
 
 class AlertSquadPlayer extends ConsumerStatefulWidget {
   const AlertSquadPlayer({
-    Key? key,
+    super.key,
     this.squadPlayer,
-  }) : super(key: key);
+  });
 
   final SquadPlayer? squadPlayer;
 
@@ -96,10 +96,11 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
                         title: const Text("Êtes-vous sûr de vouloir enlever ce joueur de l'effectif ?"),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Annuler")),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Annuler"),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeSquadPlayer(

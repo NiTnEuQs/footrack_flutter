@@ -1,5 +1,5 @@
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/utils/tuples.dart';
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/utils/tuples.dart";
 
 // Compare first
 

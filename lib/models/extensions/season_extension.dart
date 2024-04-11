@@ -1,15 +1,15 @@
-import 'package:collection/collection.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:footrack_front/extensions/date_extensions.dart';
-import 'package:footrack_front/extensions/list_extensions.dart';
-import 'package:footrack_front/extensions/object_extensions.dart';
-import 'package:footrack_front/models/extensions/goal_extension.dart';
-import 'package:footrack_front/models/extensions/match_extension.dart';
-import 'package:footrack_front/models/goal.dart';
-import 'package:footrack_front/models/match.dart';
-import 'package:footrack_front/models/opponent.dart';
-import 'package:footrack_front/models/player.dart';
-import 'package:footrack_front/models/season.dart';
+import "package:collection/collection.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/list_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/goal_extension.dart";
+import "package:footrack_front/models/extensions/match_extension.dart";
+import "package:footrack_front/models/goal.dart";
+import "package:footrack_front/models/match.dart";
+import "package:footrack_front/models/opponent.dart";
+import "package:footrack_front/models/player.dart";
+import "package:footrack_front/models/season.dart";
 
 extension SeasonExtension on Season? {
   // Getters
