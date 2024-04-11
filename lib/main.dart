@@ -3,6 +3,7 @@ import "package:flamingo/flamingo.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/core/ui/themes/footrack_themes.dart";
 import "package:footrack_front/firebase_options.dart";
 import "package:footrack_front/pages/page_loading.dart";
 
@@ -25,15 +26,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Footrack",
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: themeLight,
+      darkTheme: themeDark,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
