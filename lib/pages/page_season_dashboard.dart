@@ -41,10 +41,18 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
     double playedMatchesRatio = nbMatches > 0 ? nbPlayedMatches / nbMatches : 0;
 
     return season == null
-        ? const Center(child: Text("Aucune saison sélectionnée"))
+        ? Center(
+            child: Text(
+              "Aucune saison sélectionnée",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
         : Scaffold(
             appBar: AppBar(
-              title: Text(season.getName(defaultValue: "Saison ${season.id}")),
+              title: Text(
+                season.getName(defaultValue: "Saison ${season.id}"),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -62,12 +70,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: Spacing.xl2,
-                              right: Spacing.xl2,
-                              top: Spacing.xl2,
-                              bottom: Spacing.m,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
                             child: Row(
                               children: [
                                 Expanded(
@@ -77,26 +80,22 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                         textAlign: TextAlign.center,
                                         text: TextSpan(
                                           children: [
-                                            const TextSpan(text: "Prochain match contre "),
+                                            TextSpan(
+                                              text: "Prochain match contre ",
+                                              style: Theme.of(context).textTheme.bodyMedium,
+                                            ),
                                             TextSpan(
                                               text: nextMatchOpponent.getName(),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                             ),
                                           ],
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                          ),
                                         ),
                                       ),
                                       Text(
                                         "le ${nextMatch.getDate().formatWithTimeAndDay()}",
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
+                                        style: Theme.of(context).textTheme.labelMedium,
                                       ),
                                     ],
                                   ),
@@ -118,156 +117,61 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                 ? "Il n'y a pas de match prochainement"
                                 : "Ajoutez des matchs dans le calendrier pour avoir accès à toutes les stats",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
                   if (lastPlayedMatches?.isNotEmpty ?? false)
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MatchsListPage(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: Spacing.xl2,
-                          right: Spacing.xl2,
-                          top: Spacing.m,
-                          bottom: Spacing.m,
-                        ),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              const Text(
-                                "Forme",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: Spacing.xs),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: lastPlayedMatches!
-                                    .mapIndexed(
-                                      (i, e) => Icon(
-                                        Icons.circle,
-                                        color: e.resultColor(ref),
-                                        size: (16 + (2 * i)).toDouble(),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.sports_soccer,
-                                    color: Colors.lightGreen,
-                                  ),
-                                  const SizedBox(width: Spacing.xs),
-                                  Text(
-                                    "${lastPlayedMatches.map((e) => e.getTotalScoreTeam(ref)).reduceAdd()}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.lightGreen,
-                                    ),
-                                  ),
-                                  const SizedBox(width: Spacing.m),
-                                  const Icon(
-                                    Icons.sports_soccer,
-                                    color: Colors.red,
-                                  ),
-                                  const SizedBox(width: Spacing.xs),
-                                  Text(
-                                    "${lastPlayedMatches.map((e) => e.getScoreOpponent()).reduceAdd()}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  const SizedBox(width: Spacing.m),
-                                  Text(
-                                    "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (nbMatches > 0)
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MatchsListPage(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: Spacing.xl2,
-                          right: Spacing.xl2,
-                          top: Spacing.m,
-                          bottom: Spacing.xl2,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
+                      child: Center(
                         child: Column(
                           children: [
-                            const Text(
-                              "Situation",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Text(
+                              "Forme",
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            const SizedBox(height: Spacing.xs),
-                            Stack(
-                              alignment: Alignment.center,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: lastPlayedMatches!
+                                  .mapIndexed(
+                                    (i, e) => Icon(
+                                      Icons.circle,
+                                      color: e.resultColor(ref),
+                                      size: (16 + (2 * i)).toDouble(),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.all(Radius.circular(25)),
-                                  child: LinearProgressIndicator(
-                                    value: playedMatchesRatio,
-                                    minHeight: 24,
-                                    color: Colors.lightGreen,
-                                    backgroundColor: Colors.lightGreen.withAlpha(100),
-                                  ),
+                                const Icon(
+                                  Icons.sports_soccer,
+                                  color: Colors.lightGreen,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: Spacing.xs),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "$nbPlayedMatches joués",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
+                                const SizedBox(width: Spacing.xs),
+                                Text(
+                                  "${lastPlayedMatches.map((e) => e.getTotalScoreTeam(ref)).reduceAdd()}",
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.lightGreen),
+                                ),
+                                const SizedBox(width: Spacing.m),
+                                const Icon(
+                                  Icons.sports_soccer,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(width: Spacing.xs),
+                                Text(
+                                  "${lastPlayedMatches.map((e) => e.getScoreOpponent()).reduceAdd()}",
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: Colors.red,
                                       ),
-                                      Text(
-                                        "$nbNotPlayedMatches restants",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
+                                ),
+                                const SizedBox(width: Spacing.m),
+                                Text(
+                                  "+${lastPlayedMatches.where((e) => e.isWon(ref)).length * 3 + lastPlayedMatches.where((e) => e.isEven(ref)).length} / ${lastPlayedMatches.length * 3}",
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: Colors.blue,
                                       ),
-                                    ],
-                                  ),
                                 ),
                               ],
                             ),
@@ -275,56 +179,96 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                         ),
                       ),
                     ),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(Spacing.xs2),
-                    crossAxisSpacing: Spacing.xs2,
-                    mainAxisSpacing: Spacing.xs2,
-                    crossAxisCount: 2,
-                    children: [
-                      // FootrackGridTile(
-                      //   icon: Icons.access_alarm,
-                      //   title: "Votre prochain match",
-                      // ),
-                      const FTGridTile(
-                        icon: Icons.calendar_month,
-                        iconSize: 50,
-                        title: "Calendrier",
-                        titleSize: 22,
-                        titleWeight: FontWeight.bold,
-                        color: Colors.blue,
-                        redirection: MatchsListPage(),
+                  if (nbMatches > 0)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Situation",
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.all(Radius.circular(25)),
+                                child: LinearProgressIndicator(
+                                  value: playedMatchesRatio,
+                                  minHeight: 24,
+                                  color: Colors.lightGreen,
+                                  backgroundColor: Colors.lightGreen.withAlpha(100),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: Spacing.xs),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "$nbPlayedMatches joués",
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                    Text(
+                                      "$nbNotPlayedMatches restants",
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      FTGridTile(
-                        icon: Icons.query_stats,
-                        iconSize: 50,
-                        title: "Stats",
-                        titleSize: 22,
-                        titleWeight: FontWeight.bold,
-                        color: Colors.lightGreen,
-                        redirection: const StatsPage(),
-                        enabled: ref.watch(remoteConfigProvider)?.getBool(Conf.statsTileEnabled) ?? false,
-                      ),
-                      const FTGridTile(
-                        icon: Icons.person,
-                        iconSize: 50,
-                        title: "Joueurs",
-                        titleSize: 22,
-                        titleWeight: FontWeight.bold,
-                        color: Colors.amber,
-                        redirection: PlayersListPage(),
-                      ),
-                      const FTGridTile(
-                        icon: Icons.groups,
-                        iconSize: 50,
-                        title: "Adversaires",
-                        titleSize: 22,
-                        titleWeight: FontWeight.bold,
-                        color: Colors.red,
-                        redirection: OpponentsListPage(),
-                      ),
-                    ],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Spacing.s, vertical: Spacing.xs),
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: Spacing.xs2,
+                      mainAxisSpacing: Spacing.xs2,
+                      crossAxisCount: 2,
+                      children: [
+                        const FTGridTile(
+                          icon: Icons.calendar_month,
+                          iconSize: 50,
+                          title: "Calendrier",
+                          titleSize: 22,
+                          titleWeight: FontWeight.bold,
+                          color: Colors.blue,
+                          redirection: MatchsListPage(),
+                        ),
+                        FTGridTile(
+                          icon: Icons.query_stats,
+                          iconSize: 50,
+                          title: "Stats",
+                          titleSize: 22,
+                          titleWeight: FontWeight.bold,
+                          color: Colors.lightGreen,
+                          redirection: const StatsPage(),
+                          enabled: ref.watch(remoteConfigProvider)?.getBool(Conf.statsTileEnabled) ?? false,
+                        ),
+                        const FTGridTile(
+                          icon: Icons.person,
+                          iconSize: 50,
+                          title: "Joueurs",
+                          titleSize: 22,
+                          titleWeight: FontWeight.bold,
+                          color: Colors.amber,
+                          redirection: PlayersListPage(),
+                        ),
+                        const FTGridTile(
+                          icon: Icons.groups,
+                          iconSize: 50,
+                          title: "Adversaires",
+                          titleSize: 22,
+                          titleWeight: FontWeight.bold,
+                          color: Colors.red,
+                          redirection: OpponentsListPage(),
+                        ),
+                      ],
+                    ),
                   ),
                   if (version != null)
                     Padding(
@@ -347,7 +291,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.s),
                           child: ElevatedButton(
                             child: const Text("Déconnexion"),
                             onPressed: () async {

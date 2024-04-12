@@ -56,9 +56,9 @@ extension MatchExtension on Match? {
     if (this?.scoreOpponent == null) {
       return Colors.black;
     } else if (isEven(ref)) {
-      return Colors.black.withAlpha(150);
+      return Colors.grey;
     } else if (isLoss(ref)) {
-      return Colors.red.withAlpha(200);
+      return Colors.red;
     } else {
       return Colors.lightGreen;
     }
