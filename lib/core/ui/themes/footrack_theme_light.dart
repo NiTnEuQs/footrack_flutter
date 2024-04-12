@@ -6,7 +6,23 @@ final themeLight = ThemeData(
     brightness: Brightness.light,
   ),
   textTheme: TextTheme(
+    titleSmall: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    titleMedium: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    titleLarge: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
     bodyMedium: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    bodyLarge: GoogleFonts.getFont(
       defaultFont,
       color: Colors.black,
     ),
