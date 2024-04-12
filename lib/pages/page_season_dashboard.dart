@@ -70,7 +70,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
+                            padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.s),
                             child: Row(
                               children: [
                                 Expanded(
@@ -122,7 +122,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                         ),
                   if (lastPlayedMatches?.isNotEmpty ?? false)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.s),
                       child: Center(
                         child: Column(
                           children: [
@@ -181,7 +181,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                     ),
                   if (nbMatches > 0)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs),
+                      padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.s),
                       child: Column(
                         children: [
                           Text(
@@ -222,7 +222,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: Spacing.s, vertical: Spacing.xs),
+                    padding: const EdgeInsets.symmetric(horizontal: Spacing.s, vertical: Spacing.s),
                     child: GridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
