@@ -160,12 +160,8 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
 
                               Navigator.pop(context);
                             },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
-                                  return Colors.red;
-                                },
-                              ),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.redAccent,
                             ),
                             child: const Text("Supprimer"),
                           ),
@@ -176,12 +172,8 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                 },
               );
             },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return Colors.red;
-                },
-              ),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.redAccent,
             ),
             child: const Text("Supprimer"),
           ),

@@ -171,12 +171,8 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
 
                               Navigator.pop(context);
                             },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
-                                  return Colors.red;
-                                },
-                              ),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.redAccent,
                             ),
                             child: const Text("Supprimer"),
                           ),
@@ -187,12 +183,8 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                 },
               );
             },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return Colors.red;
-                },
-              ),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.redAccent,
             ),
             child: const Text("Supprimer"),
           ),

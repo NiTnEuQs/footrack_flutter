@@ -111,12 +111,8 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
 
                               Navigator.pop(context);
                             },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
-                                  return Colors.red;
-                                },
-                              ),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.redAccent,
                             ),
                             child: const Text("Enlever"),
                           ),
@@ -127,12 +123,8 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
                 },
               );
             },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return Colors.red;
-                },
-              ),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.redAccent,
             ),
             child: const Text("Enlever"),
           ),
