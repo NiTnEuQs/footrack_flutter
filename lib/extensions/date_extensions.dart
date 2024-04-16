@@ -15,6 +15,10 @@ extension DateFormatting on DateTime? {
     return this != null ? DateFormat("EEEE dd/MM/yyyy HH:mm").format(this!) : "";
   }
 
+  String formatLanguage() {
+    return this != null ? DateFormat("EEEE dd MMMM yyyy à HH:mm").format(this!) : "";
+  }
+
   bool hasPassed({Duration? add}) {
     var currentDate = this?.add(add ?? const Duration());
     var comparedDate = DateTime.now();
