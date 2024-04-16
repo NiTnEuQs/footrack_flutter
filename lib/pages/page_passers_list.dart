@@ -47,7 +47,7 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
       dynamic second;
 
       switch (_sortIndex) {
-        case 1:
+        case 0:
           {
             first = a.player.getName();
             second = b.player.getName();
