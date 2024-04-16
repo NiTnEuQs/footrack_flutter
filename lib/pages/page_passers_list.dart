@@ -66,10 +66,18 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Passeurs"),
+        title: Text(
+          "Passeurs",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: _listPassers.isEmpty
-          ? const Center(child: Text("Aucun passeur"))
+          ? Center(
+              child: Text(
+                "Aucun passeur",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,
@@ -83,7 +91,10 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                 columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
-                    label: Text("Joueur (${_listPassers.length})"),
+                    label: Text(
+                      "Joueur (${_listPassers.length})",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     onSort: (index, sorted) {
                       setState(() {
                         _sortAscending = _sortIndex == index ? !_sortAscending : true;
@@ -92,7 +103,10 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("Passes"),
+                    label: Text(
+                      "Passes",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -105,8 +119,18 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                 rows: List.of(_listPassers).map((passer) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(passer.player.getName())),
-                      DataCell(Text("${passer.passes}")),
+                      DataCell(
+                        Text(
+                          passer.player.getName(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          "${passer.passes}",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
                     ],
                   );
                 }).toList(),

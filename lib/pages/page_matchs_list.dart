@@ -86,10 +86,17 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Votre calendrier"),
+        title: Text(
+          "Votre calendrier",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: season == null || matchs.isEmpty
-          ? const Center(child: Text("Match non disponible"))
+          ? Center(
+              child: Text(
+              "Match non disponible",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ))
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,
@@ -103,7 +110,10 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                 columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
-                    label: Text("Match (${matchs.length})"),
+                    label: Text(
+                      "Match (${matchs.length})",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     onSort: (index, sorted) {
                       setState(() {
                         _sortAscending = _sortIndex == index ? !_sortAscending : false;
@@ -112,7 +122,10 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("BP"),
+                    label: Text(
+                      "BP",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -122,7 +135,10 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("BC"),
+                    label: Text(
+                      "BC",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -144,13 +160,13 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(match.getOpponent(ref).getName()),
                             Text(
-                              match.getDate().formatWithTimeAndDay(),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey,
-                              ),
+                              match.getOpponent(ref).getName(),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
+                              match.getDate().formatLanguage(),
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
                         ),
@@ -158,19 +174,19 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
                       DataCell(
                         Text(
                           match.getDate().hasPassed() ? match.getTotalScoreTeam(ref).toString() : "",
-                          style: TextStyle(
-                            color: match.resultColor(ref),
-                            fontWeight: match.teamFontWeight(ref),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: match.resultColor(ref),
+                                fontWeight: match.teamFontWeight(ref),
+                              ),
                         ),
                       ),
                       DataCell(
                         Text(
                           match.getDate().hasPassed() ? match.getScoreOpponent().toString() : "",
-                          style: TextStyle(
-                            color: match.resultColor(ref),
-                            fontWeight: match.opponentFontWeight(ref),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: match.resultColor(ref),
+                                fontWeight: match.opponentFontWeight(ref),
+                              ),
                         ),
                       ),
                     ],

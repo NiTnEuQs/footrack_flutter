@@ -54,10 +54,18 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vos adversaires"),
+        title: Text(
+          "Vos adversaires",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: opponents.isEmpty
-          ? const Center(child: Text("Aucun adversaire"))
+          ? Center(
+              child: Text(
+                "Aucun adversaire",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : SingleChildScrollView(
               child: DataTable(
                 sortAscending: _sortAscending,
@@ -70,7 +78,10 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
                 columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
-                    label: Text("Adversaire (${opponents.length})"),
+                    label: Text(
+                      "Adversaire (${opponents.length})",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     onSort: (index, sorted) {
                       setState(() {
                         _sortAscending = _sortIndex == index ? !_sortAscending : true;
@@ -82,7 +93,12 @@ class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
                 rows: List.of(opponents).map((opponent) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(opponent.getName())),
+                      DataCell(
+                        Text(
+                          opponent.getName(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
                     ],
                     onLongPress: () {
                       _editOpponent(opponent);

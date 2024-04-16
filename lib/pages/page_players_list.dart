@@ -80,10 +80,17 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vos joueurs"),
+        title: Text(
+          "Vos joueurs",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: players.isEmpty
-          ? const Center(child: Text("Aucun joueur"))
+          ? Center(
+              child: Text(
+              "Aucun joueur",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ))
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,
@@ -97,7 +104,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                 columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
-                    label: Text("Joueur (${players.length})"),
+                    label: Text(
+                      "Joueur (${players.length})",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     onSort: (index, sorted) {
                       setState(() {
                         _sortAscending = _sortIndex == index ? !_sortAscending : true;
@@ -106,7 +116,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("Naissance"),
+                    label: Text(
+                      "Naissance",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -116,7 +129,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("Status"),
+                    label: Text(
+                      "Status",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -126,7 +142,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("Rôle"),
+                    label: Text(
+                      "Rôle",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -139,8 +158,18 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                 rows: List.of(players).map((player) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(player.getName())),
-                      DataCell(Text(player.getBirthDate().format())),
+                      DataCell(
+                        Text(
+                          player.getName(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          player.getBirthDate().format(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
                       DataCell(player.getStatus().icon()),
                       DataCell(player.getRole().icon()),
                     ],

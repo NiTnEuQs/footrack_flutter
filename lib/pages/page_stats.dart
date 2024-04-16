@@ -33,10 +33,18 @@ class _StatsPageState extends ConsumerState<StatsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(!hasStats ? "Stats" : "Stats au ${lastPlayedMatches.firstOrNull.getDate().format()}"),
+        title: Text(
+          !hasStats ? "Stats" : "Stats au ${lastPlayedMatches.firstOrNull.getDate().format()}",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: season == null
-          ? const Center(child: Text("Stat non disponible"))
+          ? Center(
+              child: Text(
+                "Stats non disponibles",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : GridView.count(
               crossAxisCount: 2,
               children: [

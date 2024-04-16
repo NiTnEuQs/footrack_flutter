@@ -115,10 +115,18 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
       onPopInvoked: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Match"),
+          title: Text(
+            opponent.getName(),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
         body: match == null
-            ? const Center(child: Text("Match non disponible"))
+            ? Center(
+                child: Text(
+                  "Match non disponible",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              )
             : Column(
                 children: [
                   Padding(
@@ -130,10 +138,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                           child: Center(
                             child: Text(
                               match.getDate().formatWithTimeAndDay(),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ),
@@ -143,13 +148,15 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                             child: match.getDate().hasPassed()
                                 ? Text(
                                     match.resultString(ref),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: match.resultColor(ref),
-                                    ),
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                          color: match.resultColor(ref),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   )
-                                : Text(match.getTime() != null ? "${match.getTime()}'" : "N'a pas encore débuté"),
+                                : Text(
+                                    match.getTime() != null ? "${match.getTime()}'" : "N'a pas encore débuté",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                  ),
                           ),
                         ),
                         Padding(
@@ -163,6 +170,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                 child: Center(
                                   child: Text(
                                     season.getTeamName(defaultValue: "Votre équipe"),
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -173,10 +181,9 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                   child: Text(
                                     "${match.getTotalScoreTeam(ref)} - ${match.getScoreOpponent()}",
                                     maxLines: 2,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -186,6 +193,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
                                 child: Center(
                                   child: Text(
                                     opponent.getName(defaultValue: "Adversaire"),
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -240,7 +248,12 @@ class EventsListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return events.isEmpty
-        ? const Center(child: Text("Aucun évènement"))
+        ? Center(
+            child: Text(
+              "Aucun évènement",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
         : ListView.separated(
             itemCount: events.length,
             separatorBuilder: (context, index) {
@@ -280,7 +293,11 @@ class EventsListPage extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (event.getTime() != null) Text("${event.getTime()}'"),
+                      if (event.getTime() != null)
+                        Text(
+                          "${event.getTime()}'",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                     ],
                   ),
                 ),

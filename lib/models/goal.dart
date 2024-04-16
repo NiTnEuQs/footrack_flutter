@@ -61,10 +61,15 @@ class Goal extends PlayerEvent<Goal> {
       return Text.rich(
         TextSpan(
           children: [
-            const TextSpan(text: "But de "),
+            TextSpan(
+              text: "But de ",
+              style: Theme.of(ref.context).textTheme.bodyMedium,
+            ),
             TextSpan(
               text: scorer.getName(defaultValue: "-"),
-              style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+              style: Theme.of(ref.context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),
@@ -83,13 +88,15 @@ class Goal extends PlayerEvent<Goal> {
         return Text.rich(
           TextSpan(
             children: [
-              const TextSpan(
+              TextSpan(
                 text: "Passe de ",
-                style: TextStyle(color: Colors.grey, fontSize: 10),
+                style: Theme.of(ref.context).textTheme.labelMedium,
               ),
               TextSpan(
                 text: passer.getName(),
-                style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+                style: Theme.of(ref.context).textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),

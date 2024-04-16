@@ -66,10 +66,18 @@ class _ScorersListPageState extends ConsumerState<ScorersListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Buteurs"),
+        title: Text(
+          "Buteurs",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: _listScorers.isEmpty
-          ? const Center(child: Text("Aucun buteur"))
+          ? Center(
+              child: Text(
+                "Aucun buteur",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,
@@ -83,7 +91,10 @@ class _ScorersListPageState extends ConsumerState<ScorersListPage> {
                 columnSpacing: Spacing.xs,
                 columns: [
                   DataColumn(
-                    label: Text("Joueur (${_listScorers.length})"),
+                    label: Text(
+                      "Joueur (${_listScorers.length})",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     onSort: (index, sorted) {
                       setState(() {
                         _sortAscending = _sortIndex == index ? !_sortAscending : true;
@@ -92,7 +103,10 @@ class _ScorersListPageState extends ConsumerState<ScorersListPage> {
                     },
                   ),
                   DataColumn(
-                    label: const Text("Buts"),
+                    label: Text(
+                      "Buts",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     numeric: true,
                     onSort: (index, sorted) {
                       setState(() {
@@ -105,8 +119,18 @@ class _ScorersListPageState extends ConsumerState<ScorersListPage> {
                 rows: List.of(_listScorers).map((scorer) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(scorer.player.getName())),
-                      DataCell(Text("${scorer.goals}")),
+                      DataCell(
+                        Text(
+                          scorer.player.getName(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          "${scorer.goals}",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
                     ],
                   );
                 }).toList(),

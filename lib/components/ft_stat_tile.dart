@@ -9,8 +9,6 @@ class FTStatTile extends StatelessWidget {
     this.subtitle,
     this.icon,
     this.valueSize,
-    this.titleSize,
-    this.subtitleSize,
     this.onTap,
     this.onLongPress,
   });
@@ -18,9 +16,7 @@ class FTStatTile extends StatelessWidget {
   final String value;
   final double? valueSize;
   final String title;
-  final double? titleSize;
   final String? subtitle;
-  final double? subtitleSize;
   final Icon? icon;
   final Function()? onTap;
   final Function()? onLongPress;
@@ -50,26 +46,19 @@ class FTStatTile extends StatelessWidget {
               Text(
                 value,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: valueSize ?? 38,
-                ),
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
               Column(
                 children: [
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: titleSize ?? 16,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   Text(
                     subtitle ?? "",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: subtitleSize ?? 12,
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ],
               ),

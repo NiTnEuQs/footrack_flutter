@@ -76,9 +76,8 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                 Expanded(
                                   child: Column(
                                     children: [
-                                      RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
+                                      Text.rich(
+                                        TextSpan(
                                           children: [
                                             TextSpan(
                                               text: "Prochain match contre ",
@@ -94,7 +93,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                                         ),
                                       ),
                                       Text(
-                                        "le ${nextMatch.getDate().formatWithTimeAndDay()}",
+                                        nextMatch.getDate().formatLanguage(),
                                         style: Theme.of(context).textTheme.labelMedium,
                                       ),
                                     ],

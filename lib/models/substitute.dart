@@ -57,13 +57,16 @@ class Substitute extends PlayerEvent<Substitute> {
       return Text.rich(
         TextSpan(
           children: [
-            const TextSpan(text: "Entrée de "),
+            TextSpan(
+              text: "Entrée de ",
+              style: Theme.of(ref.context).textTheme.bodyMedium,
+            ),
             TextSpan(
               text: playerIn.getName(defaultValue: "-"),
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(ref.context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),
@@ -81,13 +84,16 @@ class Substitute extends PlayerEvent<Substitute> {
       return Text.rich(
         TextSpan(
           children: [
-            const TextSpan(text: "Sortie de "),
+            TextSpan(
+              text: "Sortie de ",
+              style: Theme.of(ref.context).textTheme.bodyMedium,
+            ),
             TextSpan(
               text: playerOut.getName(),
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(ref.context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),
