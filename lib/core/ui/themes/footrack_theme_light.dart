@@ -18,6 +18,10 @@ final themeLight = ThemeData(
       defaultFont,
       color: Colors.black,
     ),
+    bodySmall: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
     bodyMedium: GoogleFonts.getFont(
       defaultFont,
       color: Colors.black,
@@ -26,7 +30,27 @@ final themeLight = ThemeData(
       defaultFont,
       color: Colors.black,
     ),
+    headlineSmall: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    headlineMedium: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    headlineLarge: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.black,
+    ),
+    labelSmall: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.grey,
+    ),
     labelMedium: GoogleFonts.getFont(
+      defaultFont,
+      color: Colors.grey,
+    ),
+    labelLarge: GoogleFonts.getFont(
       defaultFont,
       color: Colors.grey,
     ),
