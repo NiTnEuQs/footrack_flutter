@@ -94,9 +94,10 @@ class _MatchsListPageState extends ConsumerState<MatchsListPage> {
       body: season == null || matchs.isEmpty
           ? Center(
               child: Text(
-              "Match non disponible",
-              style: Theme.of(context).textTheme.bodyMedium,
-            ))
+                "Match non disponible",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,

@@ -88,9 +88,10 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
       body: players.isEmpty
           ? Center(
               child: Text(
-              "Aucun joueur",
-              style: Theme.of(context).textTheme.bodyMedium,
-            ))
+                "Aucun joueur",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            )
           : SingleChildScrollView(
               child: DataTable(
                 showCheckboxColumn: false,
