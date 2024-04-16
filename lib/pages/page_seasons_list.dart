@@ -4,13 +4,12 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/alert_season.dart";
 import "package:footrack_front/components/generics/generic_error.dart";
-import "package:footrack_front/components/generics/generic_loading.dart";
 import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
-import "package:footrack_front/extensions/date_extensions.dart";
-import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/dummies/dummy_seasons.dart";
 import "package:footrack_front/models/season.dart";
 import "package:footrack_front/pages/page_season_dashboard.dart";
+import "package:footrack_front/pages/seasons_list/components/seasons_list.dart";
 
 class SeasonsListPage extends ConsumerStatefulWidget {
   const SeasonsListPage({super.key});
@@ -78,80 +77,19 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         )
-                      : SingleChildScrollView(
-                          child: DataTable(
-                            showCheckboxColumn: false,
-                            headingRowHeight: 35,
-                            headingTextStyle: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            columnSpacing: 8,
-                            columns: [
-                              DataColumn(
-                                label: Text(
-                                  "Saison (${seasons.length})",
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ),
-                              DataColumn(
-                                label: Text(
-                                  "Matchs",
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                numeric: true,
-                              ),
-                              DataColumn(
-                                label: Text(
-                                  "BP",
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                numeric: true,
-                              ),
-                              DataColumn(
-                                label: Text(
-                                  "BC",
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                numeric: true,
-                              ),
-                            ],
-                            rows: List.of(seasons).map((season) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(seasonColumn(season)),
-                                  DataCell(
-                                    Text(
-                                      "${season.nbPlayedMatchs(ref)}/${season.nbMatches(ref)}",
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      season.nbGoalsFor(ref).toString(),
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      season.nbGoalsAgainst(ref).toString(),
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ),
-                                ],
-                                onSelectChanged: (selected) {
-                                  _openSeason(season);
-                                },
-                                onLongPress: () {
-                                  _editSeason(season);
-                                },
-                              );
-                            }).toList(),
-                          ),
+                      : SeasonsList(
+                          seasons: seasons,
+                          onSeasonClick: _openSeason,
+                          onSeasonLongClick: _editSeason,
                         );
                 },
                 error: (e, s) => Scaffold(body: GenericError(error: e)),
-                loading: () => const Scaffold(body: GenericLoading()),
+                loading: () => Scaffold(
+                  body: SeasonsList(
+                    isLoading: true,
+                    seasons: DummySeason.list,
+                  ),
+                ),
               ),
             ),
           ],
@@ -162,25 +100,6 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
         label: const Text("Créer une saison"),
         icon: const Icon(Icons.add),
       ),
-    );
-  }
-
-  Column seasonColumn(Season season) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          season.getName(),
-          style: Theme.of(context).textTheme.bodyMedium,
-          maxLines: 1,
-        ),
-        Text(
-          "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-      ],
     );
   }
 }
