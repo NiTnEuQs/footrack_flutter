@@ -1,15 +1,10 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/alert_player.dart";
-import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
-import "package:footrack_front/enums/player_roles_enum.dart";
-import "package:footrack_front/enums/player_status_enum.dart";
-import "package:footrack_front/extensions/date_extensions.dart";
-import "package:footrack_front/extensions/object_extensions.dart";
-import "package:footrack_front/models/extensions/player_extension.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/player.dart";
+import "package:footrack_front/pages/players_list/components/team_page_view.dart";
 
 class PlayersListPage extends ConsumerStatefulWidget {
   const PlayersListPage({super.key});
@@ -19,8 +14,12 @@ class PlayersListPage extends ConsumerStatefulWidget {
 }
 
 class _PlayersListPageState extends ConsumerState<PlayersListPage> {
-  bool _sortAscending = true;
-  int _sortIndex = 0;
+  var _pageIndex = 0;
+  final _pageController = PageController(
+    initialPage: 0,
+    viewportFraction: 1.0,
+    keepPage: true,
+  );
 
   void _addPlayer() {
     showDialog(
@@ -45,38 +44,7 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var players = season.getPlayers(ref)
-      ..sort((a, b) {
-        dynamic first;
-        dynamic second;
-
-        switch (_sortIndex) {
-          case 1:
-            {
-              first = a.getBirthDate();
-              second = b.getBirthDate();
-            }
-          case 2:
-            {
-              first = a.getStatus().index;
-              second = b.getStatus().index;
-            }
-          case 3:
-            {
-              first = a.getRole().index;
-              second = b.getRole().index;
-            }
-          default:
-            {
-              first = a.getName();
-              second = b.getName();
-            }
-        }
-
-        return _sortAscending
-            ? (first as Comparable?).compare(second as Comparable?)
-            : (second as Comparable?).compare(first as Comparable?);
-      });
+    var players = season.getPlayers(ref);
 
     return Scaffold(
       appBar: AppBar(
@@ -92,95 +60,30 @@ class _PlayersListPageState extends ConsumerState<PlayersListPage> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             )
-          : SingleChildScrollView(
-              child: DataTable(
-                showCheckboxColumn: false,
-                sortAscending: _sortAscending,
-                sortColumnIndex: _sortIndex,
-                headingRowHeight: Spacing.xl3,
-                headingTextStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                columnSpacing: Spacing.xs,
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      "Joueur (${players.length})",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    onSort: (index, sorted) {
-                      setState(() {
-                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
-                        _sortIndex = index;
-                      });
-                    },
-                  ),
-                  DataColumn(
-                    label: Text(
-                      "Naissance",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    numeric: true,
-                    onSort: (index, sorted) {
-                      setState(() {
-                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
-                        _sortIndex = index;
-                      });
-                    },
-                  ),
-                  DataColumn(
-                    label: Text(
-                      "Status",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    numeric: true,
-                    onSort: (index, sorted) {
-                      setState(() {
-                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
-                        _sortIndex = index;
-                      });
-                    },
-                  ),
-                  DataColumn(
-                    label: Text(
-                      "Rôle",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    numeric: true,
-                    onSort: (index, sorted) {
-                      setState(() {
-                        _sortAscending = _sortIndex == index ? !_sortAscending : true;
-                        _sortIndex = index;
-                      });
-                    },
-                  ),
-                ],
-                rows: List.of(players).map((player) {
-                  return DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          player.getName(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          player.getBirthDate().format(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                      DataCell(player.getStatus().icon()),
-                      DataCell(player.getRole().icon()),
-                    ],
-                    onLongPress: () {
-                      _editPlayer(player);
-                    },
-                  );
-                }).toList(),
-              ),
+          : TeamPageView(
+              team: players,
+              pageController: _pageController,
+              onPlayerLongClick: _editPlayer,
             ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _pageIndex,
+        onTap: (index) {
+          setState(() {
+            _pageIndex = index;
+            _pageController.animateToPage(index, duration: Durations.long1, curve: Curves.ease);
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sports_soccer),
+            label: "Joueurs",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shield),
+            label: "Délégués",
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addPlayer,
         label: const Text("Ajouter un joueur"),

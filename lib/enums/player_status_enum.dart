@@ -37,4 +37,13 @@ extension PlayerStatusEnumExtension on PlayerStatusEnum? {
         return const Icon(Icons.question_mark, color: Colors.red);
     }
   }
+
+  Color color() {
+    switch (this) {
+      case PlayerStatusEnum.valid:
+        return Colors.lightGreen;
+      default:
+        return Colors.red;
+    }
+  }
 }
