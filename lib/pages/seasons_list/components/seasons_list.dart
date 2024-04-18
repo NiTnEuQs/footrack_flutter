@@ -29,7 +29,7 @@ class SeasonsList extends ConsumerWidget {
         itemBuilder: (context, index) {
           final season = seasons[index];
 
-          return ListItem.titleAndSubtitle(
+          return ListItem(
             title: season.getName(),
             subtitle: "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
             onClick: () {

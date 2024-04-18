@@ -28,7 +28,7 @@ class OpponentsList extends ConsumerWidget {
         itemBuilder: (context, index) {
           final opponent = opponents[index];
 
-          return ListItem.title(
+          return ListItem(
             title: opponent.getName(),
             onClick: () {
               onOpponentClick?.call(opponent);

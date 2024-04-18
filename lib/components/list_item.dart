@@ -2,24 +2,20 @@ import "package:flutter/material.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
 
 class ListItem extends StatelessWidget {
-  const ListItem.title({
+  const ListItem({
     super.key,
     required this.title,
     this.subtitle,
-    this.onClick,
-    this.onLongClick,
-  });
-
-  const ListItem.titleAndSubtitle({
-    super.key,
-    required this.title,
-    required this.subtitle,
+    this.leading,
+    this.trailing,
     this.onClick,
     this.onLongClick,
   });
 
   final String title;
   final String? subtitle;
+  final Widget? leading;
+  final Widget? trailing;
   final Function()? onClick;
   final Function()? onLongClick;
 
@@ -40,6 +36,8 @@ class ListItem extends StatelessWidget {
             style: Theme.of(context).textTheme.labelMedium,
           ),
         ),
+        leading: leading,
+        trailing: trailing,
       ),
     );
   }
