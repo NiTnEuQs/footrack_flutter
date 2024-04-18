@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/list_item.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
+import "package:footrack_front/extensions/object_extensions.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/season.dart";
 import "package:skeletonizer/skeletonizer.dart";
@@ -24,6 +25,10 @@ class SeasonsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    seasons.sort(
+        (e1, e2) => e1.getFrom().compare(e2.getFrom()),
+    );
+
     return Skeletonizer(
       enabled: isLoading,
       child: ListView.builder(
