@@ -11,12 +11,14 @@ class SeasonsList extends ConsumerWidget {
     super.key,
     required this.seasons,
     this.isLoading = false,
+    this.shrinkWrap = false,
     this.onSeasonClick,
     this.onSeasonLongClick,
   });
 
   final List<Season> seasons;
   final bool isLoading;
+  final bool shrinkWrap;
   final Function(Season)? onSeasonClick;
   final Function(Season)? onSeasonLongClick;
 
@@ -25,6 +27,7 @@ class SeasonsList extends ConsumerWidget {
     return Skeletonizer(
       enabled: isLoading,
       child: ListView.builder(
+        shrinkWrap: shrinkWrap,
         itemCount: seasons.length,
         itemBuilder: (context, index) {
           final season = seasons[index];

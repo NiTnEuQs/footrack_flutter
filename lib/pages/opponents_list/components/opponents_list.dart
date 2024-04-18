@@ -10,12 +10,14 @@ class OpponentsList extends ConsumerWidget {
     super.key,
     required this.opponents,
     this.isLoading = false,
+    this.shrinkWrap = false,
     this.onOpponentClick,
     this.onOpponentLongClick,
   });
 
   final List<Opponent> opponents;
   final bool isLoading;
+  final bool shrinkWrap;
   final Function(Opponent)? onOpponentClick;
   final Function(Opponent)? onOpponentLongClick;
 
@@ -24,6 +26,7 @@ class OpponentsList extends ConsumerWidget {
     return Skeletonizer(
       enabled: isLoading,
       child: ListView.builder(
+        shrinkWrap: shrinkWrap,
         itemCount: opponents.length,
         itemBuilder: (context, index) {
           final opponent = opponents[index];
