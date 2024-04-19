@@ -26,7 +26,7 @@ class SeasonsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     seasons.sort(
-        (e1, e2) => e1.getFrom().compare(e2.getFrom()),
+      (e1, e2) => e2.getFrom().compare(e1.getFrom()),
     );
 
     return Skeletonizer(
