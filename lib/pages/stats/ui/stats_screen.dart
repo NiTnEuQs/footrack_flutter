@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/ft_stat_tile.dart";
+import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
@@ -45,6 +46,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
                   !hasStats ? "Stats" : "Stats arrêtées au ${lastPlayedMatches.firstOrNull.getDate().format()}",
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
+                const SizedBox(height: Spacing.xs2),
                 GridView.count(
                   shrinkWrap: true,
                   crossAxisCount: 2,

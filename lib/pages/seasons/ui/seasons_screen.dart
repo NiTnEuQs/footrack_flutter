@@ -65,25 +65,19 @@ class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
       ),
       body: Container(
         margin: const EdgeInsets.only(bottom: Spacing.m),
-        child: Column(
-          children: [
-            Expanded(
-              child: seasonsStream.when(
-                data: (seasons) => SeasonsList(
-                  seasons: seasons,
-                  onSeasonClick: _openSeason,
-                  onSeasonLongClick: _editSeason,
-                ),
-                error: (e, s) => Scaffold(body: GenericError(error: e)),
-                loading: () => Scaffold(
-                  body: SeasonsList(
-                    isLoading: true,
-                    seasons: DummySeason.list,
-                  ),
-                ),
-              ),
+        child: seasonsStream.when(
+          data: (seasons) => SeasonsList(
+            seasons: seasons,
+            onSeasonClick: _openSeason,
+            onSeasonLongClick: _editSeason,
+          ),
+          error: (e, s) => Scaffold(body: GenericError(error: e)),
+          loading: () => Scaffold(
+            body: SeasonsList(
+              isLoading: true,
+              seasons: DummySeason.list,
             ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
