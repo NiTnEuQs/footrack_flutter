@@ -3,7 +3,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/enums/player_roles_enum.dart";
 import "package:footrack_front/models/extensions/player_extension.dart";
 import "package:footrack_front/models/player.dart";
-import "package:footrack_front/pages/players_list/components/players_list.dart";
+import "package:footrack_front/pages/team/components/team_list.dart";
 
 class TeamPageView extends ConsumerWidget {
   const TeamPageView({

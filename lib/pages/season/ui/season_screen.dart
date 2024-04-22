@@ -255,7 +255,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           titleSize: 22,
                           titleWeight: FontWeight.bold,
                           color: Colors.amber,
-                          redirection: PlayersListPage(),
+                          redirection: TeamScreen(),
                         ),
                         const FTGridTile(
                           icon: Icons.groups,

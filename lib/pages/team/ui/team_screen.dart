@@ -4,16 +4,16 @@ import "package:footrack_front/components/alert_player.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/player.dart";
-import "package:footrack_front/pages/players_list/components/team_page_view.dart";
+import "package:footrack_front/pages/team/components/team_page_view.dart";
 
-class PlayersListPage extends ConsumerStatefulWidget {
-  const PlayersListPage({super.key});
+class TeamScreen extends ConsumerStatefulWidget {
+  const TeamScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PlayersListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TeamScreenState();
 }
 
-class _PlayersListPageState extends ConsumerState<PlayersListPage> {
+class _TeamScreenState extends ConsumerState<TeamScreen> {
   var _pageIndex = 0;
   final _pageController = PageController(
     initialPage: 0,
