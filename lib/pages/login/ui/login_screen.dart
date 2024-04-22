@@ -3,14 +3,14 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/database/ft_providers.dart";
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

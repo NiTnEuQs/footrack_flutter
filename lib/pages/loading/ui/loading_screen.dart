@@ -4,8 +4,8 @@ import "package:footrack_front/components/generics/generic_error.dart";
 import "package:footrack_front/components/generics/generic_loading.dart";
 import "package:footrack_front/database/ft_config.dart";
 import "package:footrack_front/database/ft_providers.dart";
-import "package:footrack_front/pages/page_login.dart";
-import "package:footrack_front/pages/page_seasons_list.dart";
+import "package:footrack_front/pages/login/ui/login_screen.dart";
+import "package:footrack_front/pages/seasons/ui/seasons_screen.dart";
 import "package:package_info_plus/package_info_plus.dart";
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 
@@ -23,7 +23,7 @@ class LoadingPage extends ConsumerWidget {
         if (isUserConnected) {
           return const SeasonsScreen();
         } else {
-          return const LoginPage();
+          return const LoginScreen();
         }
       },
       error: (e, s) => Scaffold(body: GenericError(error: e)),
