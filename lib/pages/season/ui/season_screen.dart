@@ -264,7 +264,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           titleSize: 22,
                           titleWeight: FontWeight.bold,
                           color: Colors.red,
-                          redirection: OpponentsListPage(),
+                          redirection: OpponentsScreen(),
                         ),
                       ],
                     ),

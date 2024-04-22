@@ -4,16 +4,16 @@ import "package:footrack_front/components/alert_opponent.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/opponent.dart";
-import "package:footrack_front/pages/opponents_list/components/opponents_list.dart";
+import "package:footrack_front/pages/opponents/components/opponents_list.dart";
 
-class OpponentsListPage extends ConsumerStatefulWidget {
-  const OpponentsListPage({super.key});
+class OpponentsScreen extends ConsumerStatefulWidget {
+  const OpponentsScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _OpponentsListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _OpponentsScreenState();
 }
 
-class _OpponentsListPageState extends ConsumerState<OpponentsListPage> {
+class _OpponentsScreenState extends ConsumerState<OpponentsScreen> {
   void _addOpponent() {
     showDialog(
       context: context,
