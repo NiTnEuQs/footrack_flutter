@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:footrack_front/extensions/object_extensions.dart";
 
 class ListItem extends StatelessWidget {
   const ListItem({
@@ -8,34 +7,29 @@ class ListItem extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.trailing,
+    this.backgroundColor,
     this.onClick,
     this.onLongClick,
   });
 
-  final String title;
-  final String? subtitle;
+  final Widget title;
+  final Widget? subtitle;
   final Widget? leading;
   final Widget? trailing;
+  final Color? backgroundColor;
   final Function()? onClick;
   final Function()? onLongClick;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: backgroundColor,
       clipBehavior: Clip.hardEdge,
       child: ListTile(
         onTap: onClick,
         onLongPress: onLongClick,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        subtitle: subtitle?.let(
-          (it) => Text(
-            it,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-        ),
+        title: title,
+        subtitle: subtitle,
         leading: leading,
         trailing: trailing,
       ),

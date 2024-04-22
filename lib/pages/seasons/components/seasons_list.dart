@@ -38,8 +38,14 @@ class SeasonsList extends ConsumerWidget {
           final season = seasons[index];
 
           return ListItem(
-            title: season.getName(),
-            subtitle: "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
+            title: Text(
+              season.getName(),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            subtitle: Text(
+              "${season.getFrom().format()}${season.getTo() != null ? " - " : ""}${season.getTo().format()}",
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
             onClick: () {
               onSeasonClick?.call(season);
             },
