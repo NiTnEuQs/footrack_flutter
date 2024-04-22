@@ -16,17 +16,17 @@ import "package:footrack_front/models/goal.dart";
 import "package:footrack_front/models/match.dart";
 import "package:footrack_front/models/player_event.dart";
 import "package:footrack_front/models/substitute.dart";
-import "package:footrack_front/pages/page_match_squad.dart";
+import "package:footrack_front/pages/squad/ui/squad_screen.dart";
 import "package:wakelock/wakelock.dart";
 
-class MatchDashboardPage extends ConsumerStatefulWidget {
-  const MatchDashboardPage({super.key});
+class MatchScreen extends ConsumerStatefulWidget {
+  const MatchScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MatchDashboardPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MatchScreenState();
 }
 
-class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
+class _MatchScreenState extends ConsumerState<MatchScreen> {
   void _addGoal() {
     showDialog(
       context: context,
