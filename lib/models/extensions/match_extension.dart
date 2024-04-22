@@ -64,6 +64,20 @@ extension MatchExtension on Match? {
     }
   }
 
+  IconData? getResultIcon(WidgetRef ref) {
+    if (this?.scoreOpponent == null) {
+      return Icons.question_mark;
+    } else if (!getDate().hasPassed()) {
+      return null;
+    } else if (isEven(ref)) {
+      return Icons.remove;
+    } else if (isLoss(ref)) {
+      return Icons.close;
+    } else {
+      return Icons.check;
+    }
+  }
+
   FontWeight teamFontWeight(WidgetRef ref) {
     if (this?.scoreOpponent == null) {
       return FontWeight.normal;
