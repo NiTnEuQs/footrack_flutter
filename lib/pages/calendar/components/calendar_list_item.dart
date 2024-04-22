@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:footrack_front/components/match_result_display.dart";
+import "package:footrack_front/components/text_icon.dart";
 import "package:footrack_front/core/ui/spacings.dart";
+import "package:footrack_front/enums/match_type_enum.dart";
 
 class CalendarListItem extends StatelessWidget {
   const CalendarListItem({
@@ -9,6 +11,7 @@ class CalendarListItem extends StatelessWidget {
     required this.scoreTeamRight,
     required this.nameTeamLeft,
     required this.nameTeamRight,
+    this.type,
     this.date,
     this.backgroundColor,
     this.onClick,
@@ -19,6 +22,7 @@ class CalendarListItem extends StatelessWidget {
   final int scoreTeamRight;
   final String nameTeamLeft;
   final String nameTeamRight;
+  final MatchTypeEnum? type;
   final DateTime? date;
   final Color? backgroundColor;
   final Function()? onClick;
@@ -34,12 +38,22 @@ class CalendarListItem extends StatelessWidget {
         onLongPress: onLongClick,
         child: Padding(
           padding: const EdgeInsets.all(Spacing.m),
-          child: MatchResultDisplay(
-            nameTeamLeft: nameTeamLeft,
-            nameTeamRight: nameTeamRight,
-            scoreTeamLeft: scoreTeamLeft,
-            scoreTeamRight: scoreTeamRight,
-            date: date,
+          child: Column(
+            children: [
+              TextIcon(
+                icon: type.icon(),
+                text: Text(type.format(), style: Theme.of(context).textTheme.bodySmall),
+                expanded: true,
+                alignment: MainAxisAlignment.start,
+              ),
+              MatchResultDisplay(
+                nameTeamLeft: nameTeamLeft,
+                nameTeamRight: nameTeamRight,
+                scoreTeamLeft: scoreTeamLeft,
+                scoreTeamRight: scoreTeamRight,
+                date: date,
+              ),
+            ],
           ),
         ),
       ),

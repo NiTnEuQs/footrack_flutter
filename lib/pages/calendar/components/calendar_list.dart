@@ -89,6 +89,7 @@ class _CalendarListFilled extends ConsumerWidget {
             scoreTeamRight: match.getScoreOpponent(),
             nameTeamLeft: season.getTeamName(),
             nameTeamRight: match.getOpponent(ref).getName(),
+            type: match.getType(),
             date: match.getDate(),
             backgroundColor: match.getResultColor(ref)?.withAlpha(100),
             onClick: () {
