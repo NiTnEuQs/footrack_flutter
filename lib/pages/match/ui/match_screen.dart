@@ -45,7 +45,7 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const MatchSquadPage(),
+        builder: (_) => const SquadScreen(),
       ),
     );
   }
