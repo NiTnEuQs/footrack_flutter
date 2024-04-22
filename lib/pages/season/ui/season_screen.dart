@@ -236,7 +236,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           titleSize: 22,
                           titleWeight: FontWeight.bold,
                           color: Colors.blue,
-                          redirection: MatchsListPage(),
+                          redirection: CalendarScreen(),
                         ),
                         FTGridTile(
                           icon: Icons.query_stats,
