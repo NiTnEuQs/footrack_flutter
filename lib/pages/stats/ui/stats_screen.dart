@@ -9,14 +9,14 @@ import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/pages/ranking_passers/ui/ranking_passers_screen.dart";
 import "package:footrack_front/pages/ranking_scorers/ui/ranking_scorers_screen.dart";
 
-class StatsPage extends ConsumerStatefulWidget {
-  const StatsPage({super.key});
+class StatsScreen extends ConsumerStatefulWidget {
+  const StatsScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _StatsPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _StatsScreenState();
 }
 
-class _StatsPageState extends ConsumerState<StatsPage> {
+class _StatsScreenState extends ConsumerState<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);

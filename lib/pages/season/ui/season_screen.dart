@@ -245,7 +245,7 @@ class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
                           titleSize: 22,
                           titleWeight: FontWeight.bold,
                           color: Colors.lightGreen,
-                          redirection: const StatsPage(),
+                          redirection: const StatsScreen(),
                           enabled: ref.watch(remoteConfigProvider)?.getBool(Conf.statsTileEnabled) ?? false,
                         ),
                         const FTGridTile(
