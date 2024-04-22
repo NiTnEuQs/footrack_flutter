@@ -132,7 +132,7 @@ class _CalendarDatatableState extends ConsumerState<CalendarDatatable> {
                 Text(
                   match.getDate().hasPassed() ? match.getTotalScoreTeam(ref).toString() : "",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: match.resultColor(ref),
+                        color: match.getResultColor(ref),
                         fontWeight: match.teamFontWeight(ref),
                       ),
                 ),
@@ -141,7 +141,7 @@ class _CalendarDatatableState extends ConsumerState<CalendarDatatable> {
                 Text(
                   match.getDate().hasPassed() ? match.getScoreOpponent().toString() : "",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: match.resultColor(ref),
+                        color: match.getResultColor(ref),
                         fontWeight: match.opponentFontWeight(ref),
                       ),
                 ),

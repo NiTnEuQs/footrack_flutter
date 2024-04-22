@@ -40,7 +40,7 @@ extension MatchExtension on Match? {
 
   bool isEven(WidgetRef ref) => getTotalScoreTeam(ref) == getScoreOpponent();
 
-  String resultString(WidgetRef ref) {
+  String getResultString(WidgetRef ref) {
     if (this?.scoreOpponent == null) {
       return "Erreur";
     } else if (isEven(ref)) {
@@ -52,9 +52,11 @@ extension MatchExtension on Match? {
     }
   }
 
-  Color resultColor(WidgetRef ref) {
+  Color? getResultColor(WidgetRef ref) {
     if (this?.scoreOpponent == null) {
       return Colors.black;
+    } else if (!getDate().hasPassed()) {
+      return null;
     } else if (isEven(ref)) {
       return Colors.grey;
     } else if (isLoss(ref)) {

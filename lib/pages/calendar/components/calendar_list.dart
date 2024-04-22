@@ -47,7 +47,7 @@ class CalendarList extends ConsumerWidget {
             nameTeamLeft: season.getTeamName(),
             nameTeamRight: match.getOpponent(ref).getName(),
             date: match.getDate(),
-            backgroundColor: match.resultColor(ref)?.withAlpha(100),
+            backgroundColor: match.getResultColor(ref)?.withAlpha(100),
             onClick: () {
               onMatchClick?.call(match);
             },

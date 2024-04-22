@@ -135,7 +135,7 @@ class _SeasonScreenState extends ConsumerState<SeasonScreen> {
                                   .mapIndexed(
                                     (i, e) => Icon(
                                       Icons.circle,
-                                      color: e.resultColor(ref),
+                                      color: e.getResultColor(ref),
                                       size: (16 + (2 * i)).toDouble(),
                                     ),
                                   )

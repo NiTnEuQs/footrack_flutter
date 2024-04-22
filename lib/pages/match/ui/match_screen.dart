@@ -147,9 +147,9 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                           child: Center(
                             child: match.getDate().hasPassed()
                                 ? Text(
-                                    match.resultString(ref),
+                                    match.getResultString(ref),
                                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                          color: match.resultColor(ref),
+                                          color: match.getResultColor(ref),
                                           fontWeight: FontWeight.bold,
                                         ),
                                   )
