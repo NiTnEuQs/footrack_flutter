@@ -6,8 +6,8 @@ import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
 import "package:footrack_front/models/extensions/player_extension.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
-import "package:footrack_front/pages/page_passers_list.dart";
-import "package:footrack_front/pages/page_scorers_list.dart";
+import "package:footrack_front/pages/ranking_passers/ui/ranking_passers_screen.dart";
+import "package:footrack_front/pages/ranking_scorers/ui/ranking_scorers_screen.dart";
 
 class StatsPage extends ConsumerStatefulWidget {
   const StatsPage({super.key});
@@ -103,7 +103,7 @@ class _StatsPageState extends ConsumerState<StatsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ScorersListPage(),
+                          builder: (context) => const RankingScorersScreen(),
                         ),
                       );
                     },
@@ -123,7 +123,7 @@ class _StatsPageState extends ConsumerState<StatsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const PassersListPage(),
+                          builder: (context) => const RankingPassersScreen(),
                         ),
                       );
                     },

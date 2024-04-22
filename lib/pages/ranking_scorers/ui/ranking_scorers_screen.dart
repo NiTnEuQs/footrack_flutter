@@ -5,19 +5,19 @@ import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
 import "package:footrack_front/models/extensions/player_extension.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
-import "package:footrack_front/pages/passers/domain/models/passer.dart";
+import "package:footrack_front/pages/ranking_scorers/domain/models/scorer.dart";
 
-class PassersListPage extends ConsumerStatefulWidget {
-  const PassersListPage({super.key});
+class RankingScorersScreen extends ConsumerStatefulWidget {
+  const RankingScorersScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PassersListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _RankingScorersScreenState();
 }
 
-class _PassersListPageState extends ConsumerState<PassersListPage> {
+class _RankingScorersScreenState extends ConsumerState<RankingScorersScreen> {
   bool _sortAscending = false;
   int _sortIndex = 1;
-  final List<Passer> _listPassers = [];
+  final List<Scorer> _listScorers = [];
 
   @override
   void initState() {
@@ -25,14 +25,14 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var season = ref.watch(seasonChoseProvider);
-      var seasonPassers = season.passers(ref);
+      var seasonScorers = season.scorers(ref);
 
-      seasonPassers?.forEach((seasonPasser) {
+      seasonScorers?.forEach((seasonScorer) {
         setState(() {
-          _listPassers.add(
-            Passer(
-              player: seasonPasser.key,
-              passes: seasonPasser.value,
+          _listScorers.add(
+            Scorer(
+              player: seasonScorer.key,
+              goals: seasonScorer.value,
             ),
           );
         });
@@ -42,7 +42,7 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
 
   @override
   Widget build(BuildContext context) {
-    _listPassers.sort((a, b) {
+    _listScorers.sort((a, b) {
       dynamic first;
       dynamic second;
 
@@ -54,8 +54,8 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
           }
         default:
           {
-            first = a.passes;
-            second = b.passes;
+            first = a.goals;
+            second = b.goals;
           }
       }
 
@@ -67,14 +67,14 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Passeurs",
+          "Buteurs",
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: _listPassers.isEmpty
+      body: _listScorers.isEmpty
           ? Center(
               child: Text(
-                "Aucun passeur",
+                "Aucun buteur",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             )
@@ -92,7 +92,7 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                 columns: [
                   DataColumn(
                     label: Text(
-                      "Joueur (${_listPassers.length})",
+                      "Joueur (${_listScorers.length})",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     onSort: (index, sorted) {
@@ -104,7 +104,7 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                   ),
                   DataColumn(
                     label: Text(
-                      "Passes",
+                      "Buts",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     numeric: true,
@@ -116,18 +116,18 @@ class _PassersListPageState extends ConsumerState<PassersListPage> {
                     },
                   ),
                 ],
-                rows: List.of(_listPassers).map((passer) {
+                rows: List.of(_listScorers).map((scorer) {
                   return DataRow(
                     cells: [
                       DataCell(
                         Text(
-                          passer.player.getName(),
+                          scorer.player.getName(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                       DataCell(
                         Text(
-                          "${passer.passes}",
+                          "${scorer.goals}",
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
