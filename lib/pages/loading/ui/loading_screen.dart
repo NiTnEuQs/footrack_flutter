@@ -9,8 +9,8 @@ import "package:footrack_front/pages/seasons/ui/seasons_screen.dart";
 import "package:package_info_plus/package_info_plus.dart";
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 
-class LoadingPage extends ConsumerWidget {
-  const LoadingPage({super.key});
+class LoadingScreen extends ConsumerWidget {
+  const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
