@@ -21,7 +21,7 @@ class LoadingPage extends ConsumerWidget {
         final isUserConnected = ref.watch(isUserConnectedProvider);
 
         if (isUserConnected) {
-          return const SeasonsListPage();
+          return const SeasonsScreen();
         } else {
           return const LoginPage();
         }

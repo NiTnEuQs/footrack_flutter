@@ -8,17 +8,17 @@ import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/dummies/dummy_seasons.dart";
 import "package:footrack_front/models/season.dart";
-import "package:footrack_front/pages/page_season_dashboard.dart";
-import "package:footrack_front/pages/seasons_list/components/seasons_list.dart";
+import "package:footrack_front/pages/season/ui/season_screen.dart";
+import "package:footrack_front/pages/seasons/components/seasons_list.dart";
 
-class SeasonsListPage extends ConsumerStatefulWidget {
-  const SeasonsListPage({super.key});
+class SeasonsScreen extends ConsumerStatefulWidget {
+  const SeasonsScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonsListPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonsScreenState();
 }
 
-class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
+class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
   late StreamSubscription disposeSeasons;
 
   void _addSeason() {
