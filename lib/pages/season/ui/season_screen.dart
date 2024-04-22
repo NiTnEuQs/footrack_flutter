@@ -12,20 +12,20 @@ import "package:footrack_front/extensions/object_extensions.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
 import "package:footrack_front/models/extensions/opponent_extension.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
-import "package:footrack_front/pages/page_match_dashboard.dart";
-import "package:footrack_front/pages/page_matchs_list.dart";
-import "package:footrack_front/pages/page_opponents_list.dart";
-import "package:footrack_front/pages/page_players_list.dart";
-import "package:footrack_front/pages/page_stats.dart";
+import "package:footrack_front/pages/calendar/ui/calendar_screen.dart";
+import "package:footrack_front/pages/match/ui/match_screen.dart";
+import "package:footrack_front/pages/opponents/ui/opponents_screen.dart";
+import "package:footrack_front/pages/stats/ui/stats_screen.dart";
+import "package:footrack_front/pages/team/ui/team_screen.dart";
 
-class SeasonDashboardPage extends ConsumerStatefulWidget {
-  const SeasonDashboardPage({super.key});
+class SeasonScreen extends ConsumerStatefulWidget {
+  const SeasonScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonDashboardPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonScreenState();
 }
 
-class _SeasonDashboardPageState extends ConsumerState<SeasonDashboardPage> {
+class _SeasonScreenState extends ConsumerState<SeasonScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);

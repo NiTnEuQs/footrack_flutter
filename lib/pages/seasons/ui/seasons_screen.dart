@@ -47,7 +47,7 @@ class _SeasonsListPageState extends ConsumerState<SeasonsListPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SeasonDashboardPage(),
+        builder: (context) => const SeasonScreen(),
       ),
     );
   }
