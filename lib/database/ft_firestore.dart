@@ -14,10 +14,10 @@ class DatabaseFirestore {
   Future<bool> addNewSeason(Season m) async {
     try {
       await _firestore.collection("seasons").add({
-        "name": m.name,
-        "teamName": m.teamName,
-        "from": m.from,
-        "to": m.to,
+        SeasonKey.name.value: m.name,
+        SeasonKey.teamName.value: m.teamName,
+        SeasonKey.from.value: m.from,
+        SeasonKey.to.value: m.to,
       });
       return true;
     } catch (e) {
@@ -31,10 +31,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").add({
-        "type": m.type,
-        "opponent": m.opponent,
-        "date": m.date,
-        "scoreOpponent": m.scoreOpponent,
+        MatchKey.type.value: m.type,
+        MatchKey.opponent.value: m.opponent,
+        MatchKey.date.value: m.date,
+        MatchKey.scoreOpponent.value: m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -48,7 +48,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("squad").add({
-        "player": sp.player,
+        SquadPlayerKey.player.value: sp.player,
       });
       return true;
     } catch (e) {
@@ -62,9 +62,9 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("goals").add({
-        "scorer": m.scorer,
-        "passer": m.passer,
-        "time": m.time,
+        GoalKey.scorer.value: m.scorer,
+        GoalKey.passer.value: m.passer,
+        GoalKey.time.value: m.time,
       });
       return true;
     } catch (e) {
@@ -84,9 +84,9 @@ class DatabaseFirestore {
           .doc(matchId)
           .collection("substitutes")
           .add({
-        "playerIn": m.playerIn,
-        "playerOut": m.playerOut,
-        "time": m.time,
+        SubstituteKey.playerIn.value: m.playerIn,
+        SubstituteKey.playerOut.value: m.playerOut,
+        SubstituteKey.time.value: m.time,
       });
       return true;
     } catch (e) {
@@ -100,7 +100,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("opponents").add({
-        "name": m.name,
+        OpponentKey.name.value: m.name,
       });
       return true;
     } catch (e) {
@@ -114,10 +114,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("players").add({
-        "name": m.name,
-        "role": m.role,
-        "status": m.status,
-        "birthdate": m.birthdate,
+        PlayerKey.name.value: m.name,
+        PlayerKey.role.value: m.role,
+        PlayerKey.status.value: m.status,
+        PlayerKey.birthdate.value: m.birthdate,
       });
       return true;
     } catch (e) {
@@ -235,10 +235,10 @@ class DatabaseFirestore {
   Future<bool> editSeason(String seasonId, Season s) async {
     try {
       await _firestore.collection("seasons").doc(seasonId).update({
-        "name": s.name,
-        "teamName": s.teamName,
-        "from": s.from,
-        "to": s.to,
+        SeasonKey.name.value: s.name,
+        SeasonKey.teamName.value: s.teamName,
+        SeasonKey.from.value: s.from,
+        SeasonKey.to.value: s.to,
       });
       return true;
     } catch (e) {
@@ -252,10 +252,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).update({
-        "type": m.type,
-        "opponent": m.opponent,
-        "date": m.date,
-        "scoreOpponent": m.scoreOpponent,
+        MatchKey.type.value: m.type,
+        MatchKey.opponent.value: m.opponent,
+        MatchKey.date.value: m.date,
+        MatchKey.scoreOpponent.value: m.scoreOpponent,
       });
       return true;
     } catch (e) {
@@ -277,7 +277,7 @@ class DatabaseFirestore {
           .collection("squad")
           .doc(squadPlayerId)
           .update({
-        "player": sp.player,
+        SquadPlayerKey.player.value: sp.player,
       });
       return true;
     } catch (e) {
@@ -299,9 +299,9 @@ class DatabaseFirestore {
           .collection("goals")
           .doc(goalId)
           .update({
-        "scorer": m.scorer,
-        "passer": m.passer,
-        "time": m.time,
+        GoalKey.scorer.value: m.scorer,
+        GoalKey.passer.value: m.passer,
+        GoalKey.time.value: m.time,
       });
       return true;
     } catch (e) {
@@ -323,9 +323,9 @@ class DatabaseFirestore {
           .collection("substitutes")
           .doc(substituteId)
           .update({
-        "playerIn": m.playerIn,
-        "playerOut": m.playerOut,
-        "time": m.time,
+        SubstituteKey.playerIn.value: m.playerIn,
+        SubstituteKey.playerOut.value: m.playerOut,
+        SubstituteKey.time.value: m.time,
       });
       return true;
     } catch (e) {
@@ -339,7 +339,7 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).update({
-        "name": m.name,
+        OpponentKey.name.value: m.name,
       });
       return true;
     } catch (e) {
@@ -353,10 +353,10 @@ class DatabaseFirestore {
 
     try {
       await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).update({
-        "name": m.name,
-        "role": m.role,
-        "status": m.status,
-        "birthdate": m.birthdate,
+        PlayerKey.name.value: m.name,
+        PlayerKey.role.value: m.role,
+        PlayerKey.status.value: m.status,
+        PlayerKey.birthdate.value: m.birthdate,
       });
       return true;
     } catch (e) {
