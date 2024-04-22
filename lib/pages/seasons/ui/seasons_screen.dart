@@ -8,7 +8,7 @@ import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/dummies/dummy_seasons.dart";
 import "package:footrack_front/models/season.dart";
-import "package:footrack_front/pages/season/ui/season_screen.dart";
+import "package:footrack_front/pages/home/ui/home_screen.dart";
 import "package:footrack_front/pages/seasons/components/seasons_list.dart";
 
 class SeasonsScreen extends ConsumerStatefulWidget {
@@ -47,7 +47,7 @@ class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SeasonScreen(),
+        builder: (context) => const HomeScreen(),
       ),
     );
   }

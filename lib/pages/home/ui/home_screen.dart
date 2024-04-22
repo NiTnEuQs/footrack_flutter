@@ -17,14 +17,14 @@ import "package:footrack_front/pages/opponents/ui/opponents_screen.dart";
 import "package:footrack_front/pages/stats/ui/stats_screen.dart";
 import "package:footrack_front/pages/team/ui/team_screen.dart";
 
-class SeasonScreen extends ConsumerStatefulWidget {
-  const SeasonScreen({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SeasonScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
 }
 
-class _SeasonScreenState extends ConsumerState<SeasonScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
