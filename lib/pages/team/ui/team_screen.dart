@@ -44,27 +44,20 @@ class _TeamScreenState extends ConsumerState<TeamScreen> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var players = season.getPlayers(ref);
+    var team = season.getPlayers(ref);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Vos joueurs",
+          "Votre équipe",
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: players.isEmpty
-          ? Center(
-              child: Text(
-                "Aucun joueur",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            )
-          : TeamPageView(
-              team: players,
-              pageController: _pageController,
-              onPlayerLongClick: _editPlayer,
-            ),
+      body: TeamPageView(
+        team: team,
+        pageController: _pageController,
+        onPlayerLongClick: _editPlayer,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageIndex,
         onTap: (index) {

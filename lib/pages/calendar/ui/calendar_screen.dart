@@ -65,19 +65,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: season == null || calendar.isEmpty
-          ? Center(
-              child: Text(
-                "Match non disponible",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            )
-          : CalendarPageView(
-              calendar: calendar,
-              pageController: _pageController,
-              onMatchClick: _openMatch,
-              onMatchLongClick: _editMatch,
-            ),
+      body: CalendarPageView(
+        calendar: calendar,
+        pageController: _pageController,
+        onMatchClick: _openMatch,
+        onMatchLongClick: _editMatch,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageIndex,
         onTap: (index) {

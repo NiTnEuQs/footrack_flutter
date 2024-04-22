@@ -57,18 +57,11 @@ class _SquadScreenState extends ConsumerState<SquadScreen> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: squad.isEmpty
-          ? Center(
-              child: Text(
-                "Aucun joueur",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            )
-          : SquadPageView(
-              squad: squad,
-              pageController: _pageController,
-              onPlayerLongClick: _editSquadPlayer,
-            ),
+      body: SquadPageView(
+        squad: squad,
+        pageController: _pageController,
+        onPlayerLongClick: _editSquadPlayer,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageIndex,
         onTap: (index) {

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/generics/generic_message.dart";
 import "package:footrack_front/enums/player_status_enum.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
@@ -9,9 +10,51 @@ import "package:footrack_front/models/squad_player.dart";
 import "package:footrack_front/pages/team/components/player_list_item.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-class SquadList extends ConsumerWidget {
+class SquadList extends StatelessWidget {
   const SquadList({
     super.key,
+    required this.squad,
+    this.isLoading = false,
+    this.shrinkWrap = false,
+    this.onPlayerClick,
+    this.onPlayerLongClick,
+  });
+
+  final List<SquadPlayer> squad;
+  final bool isLoading;
+  final bool shrinkWrap;
+  final Function(SquadPlayer)? onPlayerClick;
+  final Function(SquadPlayer)? onPlayerLongClick;
+
+  @override
+  Widget build(BuildContext context) {
+    if (squad.isEmpty) {
+      return const _SquadListEmpty();
+    } else {
+      return _SquadListFilled(
+        squad: squad,
+        isLoading: isLoading,
+        shrinkWrap: shrinkWrap,
+        onPlayerClick: onPlayerClick,
+        onPlayerLongClick: onPlayerLongClick,
+      );
+    }
+  }
+}
+
+class _SquadListEmpty extends StatelessWidget {
+  const _SquadListEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return const GenericMessage(
+      message: "L'effectif est vide",
+    );
+  }
+}
+
+class _SquadListFilled extends ConsumerWidget {
+  const _SquadListFilled({
     required this.squad,
     this.isLoading = false,
     this.shrinkWrap = false,

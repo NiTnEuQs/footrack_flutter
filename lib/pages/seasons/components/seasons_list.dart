@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/generics/generic_message.dart";
 import "package:footrack_front/components/list_item.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
@@ -7,9 +8,51 @@ import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/season.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-class SeasonsList extends ConsumerWidget {
+class SeasonsList extends StatelessWidget {
   const SeasonsList({
     super.key,
+    required this.seasons,
+    this.isLoading = false,
+    this.shrinkWrap = false,
+    this.onSeasonClick,
+    this.onSeasonLongClick,
+  });
+
+  final List<Season> seasons;
+  final bool isLoading;
+  final bool shrinkWrap;
+  final Function(Season)? onSeasonClick;
+  final Function(Season)? onSeasonLongClick;
+
+  @override
+  Widget build(BuildContext context) {
+    if (seasons.isEmpty) {
+      return const _SeasonsListEmpty();
+    } else {
+      return _SeasonsListFilled(
+        seasons: seasons,
+        isLoading: isLoading,
+        shrinkWrap: shrinkWrap,
+        onSeasonClick: onSeasonClick,
+        onSeasonLongClick: onSeasonLongClick,
+      );
+    }
+  }
+}
+
+class _SeasonsListEmpty extends StatelessWidget {
+  const _SeasonsListEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return const GenericMessage(
+      message: "La liste des saisons est vide",
+    );
+  }
+}
+
+class _SeasonsListFilled extends ConsumerWidget {
+  const _SeasonsListFilled({
     required this.seasons,
     this.isLoading = false,
     this.shrinkWrap = false,

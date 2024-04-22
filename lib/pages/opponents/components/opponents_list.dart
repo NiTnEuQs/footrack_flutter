@@ -1,14 +1,57 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/generics/generic_message.dart";
 import "package:footrack_front/components/list_item.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
 import "package:footrack_front/models/extensions/opponent_extension.dart";
 import "package:footrack_front/models/opponent.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-class OpponentsList extends ConsumerWidget {
+class OpponentsList extends StatelessWidget {
   const OpponentsList({
     super.key,
+    required this.opponents,
+    this.isLoading = false,
+    this.shrinkWrap = false,
+    this.onOpponentClick,
+    this.onOpponentLongClick,
+  });
+
+  final List<Opponent> opponents;
+  final bool isLoading;
+  final bool shrinkWrap;
+  final Function(Opponent)? onOpponentClick;
+  final Function(Opponent)? onOpponentLongClick;
+
+  @override
+  Widget build(BuildContext context) {
+    if (opponents.isEmpty) {
+      return const _OpponentsListEmpty();
+    } else {
+      return _OpponentsListFilled(
+        opponents: opponents,
+        isLoading: isLoading,
+        shrinkWrap: shrinkWrap,
+        onOpponentClick: onOpponentClick,
+        onOpponentLongClick: onOpponentLongClick,
+      );
+    }
+  }
+}
+
+class _OpponentsListEmpty extends StatelessWidget {
+  const _OpponentsListEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return const GenericMessage(
+      message: "La liste des adversaires est vide",
+    );
+  }
+}
+
+class _OpponentsListFilled extends ConsumerWidget {
+  const _OpponentsListFilled({
     required this.opponents,
     this.isLoading = false,
     this.shrinkWrap = false,

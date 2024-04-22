@@ -69,20 +69,11 @@ class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
           children: [
             Expanded(
               child: seasonsStream.when(
-                data: (seasons) {
-                  return seasons.isEmpty
-                      ? Center(
-                          child: Text(
-                            "Aucune saison",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        )
-                      : SeasonsList(
-                          seasons: seasons,
-                          onSeasonClick: _openSeason,
-                          onSeasonLongClick: _editSeason,
-                        );
-                },
+                data: (seasons) => SeasonsList(
+                  seasons: seasons,
+                  onSeasonClick: _openSeason,
+                  onSeasonLongClick: _editSeason,
+                ),
                 error: (e, s) => Scaffold(body: GenericError(error: e)),
                 loading: () => Scaffold(
                   body: SeasonsList(

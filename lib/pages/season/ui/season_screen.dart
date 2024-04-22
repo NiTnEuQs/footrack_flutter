@@ -251,7 +251,7 @@ class _SeasonScreenState extends ConsumerState<SeasonScreen> {
                         const FTGridTile(
                           icon: Icons.person,
                           iconSize: 50,
-                          title: "Joueurs",
+                          title: "Équipe",
                           titleSize: 22,
                           titleWeight: FontWeight.bold,
                           color: Colors.amber,

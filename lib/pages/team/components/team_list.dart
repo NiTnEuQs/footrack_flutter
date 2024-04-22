@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:footrack_front/components/generics/generic_message.dart";
 import "package:footrack_front/enums/player_status_enum.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
@@ -8,9 +9,51 @@ import "package:footrack_front/models/player.dart";
 import "package:footrack_front/pages/team/components/player_list_item.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-class PlayersList extends ConsumerWidget {
-  const PlayersList({
+class TeamList extends StatelessWidget {
+  const TeamList({
     super.key,
+    required this.players,
+    this.isLoading = false,
+    this.shrinkWrap = false,
+    this.onPlayerClick,
+    this.onPlayerLongClick,
+  });
+
+  final List<Player> players;
+  final bool isLoading;
+  final bool shrinkWrap;
+  final Function(Player)? onPlayerClick;
+  final Function(Player)? onPlayerLongClick;
+
+  @override
+  Widget build(BuildContext context) {
+    if (players.isEmpty) {
+      return const _TeamListEmpty();
+    } else {
+      return _TeamListFilled(
+        players: players,
+        isLoading: isLoading,
+        shrinkWrap: shrinkWrap,
+        onPlayerClick: onPlayerClick,
+        onPlayerLongClick: onPlayerLongClick,
+      );
+    }
+  }
+}
+
+class _TeamListEmpty extends StatelessWidget {
+  const _TeamListEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return const GenericMessage(
+      message: "L'équipe est vide",
+    );
+  }
+}
+
+class _TeamListFilled extends ConsumerWidget {
+  const _TeamListFilled({
     required this.players,
     this.isLoading = false,
     this.shrinkWrap = false,

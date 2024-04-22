@@ -46,17 +46,10 @@ class _OpponentsScreenState extends ConsumerState<OpponentsScreen> {
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: opponents.isEmpty
-          ? Center(
-              child: Text(
-                "Aucun adversaire",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            )
-          : OpponentsList(
-              opponents: opponents,
-              onOpponentLongClick: _editOpponent,
-            ),
+      body: OpponentsList(
+        opponents: opponents,
+        onOpponentLongClick: _editOpponent,
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addOpponent,
         label: const Text("Ajouter un adversaire"),
