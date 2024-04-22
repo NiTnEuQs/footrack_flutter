@@ -40,12 +40,6 @@ class _OpponentsScreenState extends ConsumerState<OpponentsScreen> {
     var opponents = season.getOpponents(ref);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Vos adversaires",
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-      ),
       body: OpponentsList(
         opponents: opponents,
         onOpponentLongClick: _editOpponent,

@@ -30,13 +30,13 @@ class TeamPageView extends ConsumerWidget {
       controller: pageController,
       children: [
         TeamList(
-          players: players,
+          team: players,
           shrinkWrap: true,
           onPlayerClick: onPlayerClick,
           onPlayerLongClick: onPlayerLongClick,
         ),
         TeamList(
-          players: delegates,
+          team: delegates,
           shrinkWrap: true,
           onPlayerClick: onPlayerClick,
           onPlayerLongClick: onPlayerLongClick,

@@ -12,14 +12,14 @@ import "package:skeletonizer/skeletonizer.dart";
 class TeamList extends StatelessWidget {
   const TeamList({
     super.key,
-    required this.players,
+    required this.team,
     this.isLoading = false,
     this.shrinkWrap = false,
     this.onPlayerClick,
     this.onPlayerLongClick,
   });
 
-  final List<Player> players;
+  final List<Player> team;
   final bool isLoading;
   final bool shrinkWrap;
   final Function(Player)? onPlayerClick;
@@ -27,11 +27,11 @@ class TeamList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (players.isEmpty) {
+    if (team.isEmpty) {
       return const _TeamListEmpty();
     } else {
       return _TeamListFilled(
-        players: players,
+        players: team,
         isLoading: isLoading,
         shrinkWrap: shrinkWrap,
         onPlayerClick: onPlayerClick,

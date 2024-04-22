@@ -4,7 +4,7 @@ import "package:footrack_front/components/alert_match.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/match.dart";
-import "package:footrack_front/pages/calendar/components/calendar_page_view.dart";
+import "package:footrack_front/pages/calendar/components/calendar_list.dart";
 import "package:footrack_front/pages/match/ui/match_screen.dart";
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -15,13 +15,6 @@ class CalendarScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
-  var _pageIndex = 0;
-  final _pageController = PageController(
-    initialPage: 0,
-    viewportFraction: 1.0,
-    keepPage: true,
-  );
-
   void _addMatch() {
     showDialog(
       context: context,
@@ -59,36 +52,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     var calendar = season.getMatchs(ref);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Votre calendrier",
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-      ),
-      body: CalendarPageView(
+      body: CalendarList(
         calendar: calendar,
-        pageController: _pageController,
         onMatchClick: _openMatch,
         onMatchLongClick: _editMatch,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _pageIndex,
-        onTap: (index) {
-          setState(() {
-            _pageIndex = index;
-            _pageController.animateToPage(index, duration: Durations.long1, curve: Curves.ease);
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_soccer),
-            label: "Championnat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.emoji_events),
-            label: "Coupe",
-          ),
-        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addMatch,

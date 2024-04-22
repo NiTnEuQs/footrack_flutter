@@ -31,105 +31,108 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     var bestPasser = seasonBestPasser?.key;
     var bestPasserPasses = seasonBestPasser?.value;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          !hasStats ? "Stats" : "Stats au ${lastPlayedMatches.firstOrNull.getDate().format()}",
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-      ),
-      body: season == null
-          ? Center(
-              child: Text(
-                "Stats non disponibles",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            )
-          : GridView.count(
-              crossAxisCount: 2,
+    return season == null
+        ? Center(
+            child: Text(
+              "Stats non disponibles",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
+        : SingleChildScrollView(
+            child: Column(
               children: [
-                FTStatTile(
-                  icon: const Icon(
-                    Icons.emoji_events,
-                    color: Colors.amber,
-                    size: 40,
-                  ),
-                  value: "${season.winsPercent(ref).toStringAsFixed(0)}%",
-                  title: "de victoires",
-                  subtitle: "${season.nbWins(ref)} victoires sur ${season.nbPlayedMatchs(ref)} matchs",
+                Text(
+                  !hasStats ? "Stats" : "Stats arrêtées au ${lastPlayedMatches.firstOrNull.getDate().format()}",
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                FTStatTile(
-                  icon: const Icon(
-                    Icons.plus_one_outlined,
-                    color: Colors.blue,
-                    size: 40,
-                  ),
-                  value: "${season.pointsPercent(ref).toStringAsFixed(0)}%",
-                  title: "de points pris",
-                  subtitle: "${season.nbPoints(ref)} points sur ${season.nbMaxPoints(ref)} possibles",
-                ),
-                FTStatTile(
-                  icon: const Icon(
-                    Icons.sports_soccer,
-                    color: Colors.lightGreen,
-                    size: 40,
-                  ),
-                  value: season.goalsForRatio(ref).toStringAsFixed(2),
-                  title: "buts mis/match",
-                  subtitle: "${season.nbGoalsFor(ref)} buts en ${season.nbPlayedMatchs(ref)} matchs",
-                ),
-                FTStatTile(
-                  icon: const Icon(
-                    Icons.sports_soccer,
-                    color: Colors.red,
-                    size: 40,
-                  ),
-                  value: season.goalsAgainstRatio(ref).toStringAsFixed(2),
-                  title: "buts pris/match",
-                  subtitle: "${season.nbGoalsAgainst(ref)} buts en ${season.nbPlayedMatchs(ref)} matchs",
-                ),
-                if (bestScorer != null && bestScorerGoals != null)
-                  FTStatTile(
-                    icon: const Icon(
-                      Icons.sports_soccer,
-                      color: Colors.amber,
-                      size: 40,
+                GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  children: [
+                    FTStatTile(
+                      icon: const Icon(
+                        Icons.emoji_events,
+                        color: Colors.amber,
+                        size: 40,
+                      ),
+                      value: "${season.winsPercent(ref).toStringAsFixed(0)}%",
+                      title: "de victoires",
+                      subtitle: "${season.nbWins(ref)} victoires sur ${season.nbPlayedMatchs(ref)} matchs",
                     ),
-                    value: bestScorer.getName(defaultValue: "-"),
-                    valueSize: 30,
-                    title: "meilleur buteur",
-                    subtitle: "avec $bestScorerGoals buts",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RankingScorersScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                if (bestPasser != null && bestPasserPasses != null)
-                  FTStatTile(
-                    icon: const Icon(
-                      Icons.auto_awesome,
-                      color: Colors.purpleAccent,
-                      size: 40,
+                    FTStatTile(
+                      icon: const Icon(
+                        Icons.plus_one_outlined,
+                        color: Colors.blue,
+                        size: 40,
+                      ),
+                      value: "${season.pointsPercent(ref).toStringAsFixed(0)}%",
+                      title: "de points pris",
+                      subtitle: "${season.nbPoints(ref)} points sur ${season.nbMaxPoints(ref)} possibles",
                     ),
-                    value: bestPasser.getName(),
-                    valueSize: 30,
-                    title: "meilleur passeur",
-                    subtitle: "avec $bestPasserPasses passes",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RankingPassersScreen(),
+                    FTStatTile(
+                      icon: const Icon(
+                        Icons.sports_soccer,
+                        color: Colors.lightGreen,
+                        size: 40,
+                      ),
+                      value: season.goalsForRatio(ref).toStringAsFixed(2),
+                      title: "buts mis/match",
+                      subtitle: "${season.nbGoalsFor(ref)} buts en ${season.nbPlayedMatchs(ref)} matchs",
+                    ),
+                    FTStatTile(
+                      icon: const Icon(
+                        Icons.sports_soccer,
+                        color: Colors.red,
+                        size: 40,
+                      ),
+                      value: season.goalsAgainstRatio(ref).toStringAsFixed(2),
+                      title: "buts pris/match",
+                      subtitle: "${season.nbGoalsAgainst(ref)} buts en ${season.nbPlayedMatchs(ref)} matchs",
+                    ),
+                    if (bestScorer != null && bestScorerGoals != null)
+                      FTStatTile(
+                        icon: const Icon(
+                          Icons.sports_soccer,
+                          color: Colors.amber,
+                          size: 40,
                         ),
-                      );
-                    },
-                  ),
+                        value: bestScorer.getName(defaultValue: "-"),
+                        valueSize: 30,
+                        title: "meilleur buteur",
+                        subtitle: "avec $bestScorerGoals buts",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RankingScorersScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    if (bestPasser != null && bestPasserPasses != null)
+                      FTStatTile(
+                        icon: const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.purpleAccent,
+                          size: 40,
+                        ),
+                        value: bestPasser.getName(),
+                        valueSize: 30,
+                        title: "meilleur passeur",
+                        subtitle: "avec $bestPasserPasses passes",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RankingPassersScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                  ],
+                ),
               ],
             ),
-    );
+          );
   }
 }
