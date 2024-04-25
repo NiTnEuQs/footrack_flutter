@@ -17,14 +17,27 @@ extension PlayerRoleEnumExtension on PlayerRoleEnum? {
     }
   }
 
-  Icon icon() {
+  Icon icon() => Icon(iconData(), color: iconColor());
+
+  Color iconColor() {
     switch (this) {
       case PlayerRoleEnum.delegate:
-        return const Icon(Icons.shield, color: Colors.amber);
+        return Colors.amber;
       case PlayerRoleEnum.player:
-        return const Icon(Icons.sports_soccer, color: Colors.lightGreen);
+        return Colors.blue;
       default:
-        return const Icon(Icons.question_mark, color: Colors.red);
+        return Colors.red;
+    }
+  }
+
+  IconData iconData() {
+    switch (this) {
+      case PlayerRoleEnum.delegate:
+        return Icons.shield;
+      case PlayerRoleEnum.player:
+        return Icons.sports_soccer;
+      default:
+        return Icons.question_mark;
     }
   }
 }

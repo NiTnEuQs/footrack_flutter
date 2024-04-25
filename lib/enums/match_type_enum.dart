@@ -16,13 +16,25 @@ extension MatchTypeEnumExtension on MatchTypeEnum? {
     }
   }
 
-  Icon icon() {
+  Icon icon() => Icon(iconData(), color: iconColor());
+
+  Color iconColor() {
     switch (this) {
       case MatchTypeEnum.cup:
-        return const Icon(Icons.emoji_events, color: Colors.amber);
+        return Colors.amber;
       case MatchTypeEnum.championship:
       default:
-        return const Icon(Icons.military_tech, color: Colors.blue);
+        return Colors.blue;
+    }
+  }
+
+  IconData iconData() {
+    switch (this) {
+      case MatchTypeEnum.cup:
+        return Icons.emoji_events;
+      case MatchTypeEnum.championship:
+      default:
+        return Icons.military_tech;
     }
   }
 }
