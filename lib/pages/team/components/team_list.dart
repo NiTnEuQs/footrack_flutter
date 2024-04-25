@@ -70,7 +70,11 @@ class _TeamListFilled extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     players.sort(
-      (e1, e2) => e1.getName().compare(e2.getName()),
+      (e1, e2) {
+        int first = e1.getRole().index.compare(e2.getRole().index);
+        if (first != 0) return first;
+        return e1.getName().compare(e2.getName());
+      },
     );
 
     return Skeletonizer(
