@@ -106,7 +106,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
-    var match = ref.watch(matchChoseProvider);
+    var matchChose = ref.watch(matchChoseProvider);
+    Match? match = season?.let(
+      (it) => ref.watch(it.matchsProvider).where((e) => e.id == matchChose?.id).firstOrNull,
+    );
     var goals = match.getGoals(ref);
     var substitutes = match.getSubstitutes(ref);
     var opponent = match.getOpponent(ref);
