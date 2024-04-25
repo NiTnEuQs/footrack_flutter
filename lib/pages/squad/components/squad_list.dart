@@ -87,7 +87,8 @@ class _SquadListFilled extends ConsumerWidget {
             backgroundColor: player.getStatus().color().withAlpha(100),
             name: player.getName(),
             birthdate: player.getBirthDate().format(),
-            status: player.getStatus().format(),
+            status: player.getStatus(),
+            role: player.getRole(),
             profilePicture: CircleAvatar(
               backgroundColor: player.getStatus().color(),
               child: const Icon(

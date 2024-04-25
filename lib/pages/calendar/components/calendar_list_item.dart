@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:footrack_front/components/match_result_display.dart";
-import "package:footrack_front/components/text_icon.dart";
 import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/enums/match_type_enum.dart";
 
@@ -36,25 +35,29 @@ class CalendarListItem extends StatelessWidget {
       child: InkWell(
         onTap: onClick,
         onLongPress: onLongClick,
-        child: Padding(
-          padding: const EdgeInsets.all(Spacing.m),
-          child: Column(
-            children: [
-              TextIcon(
-                icon: type.icon(),
-                text: Text(type.format(), style: Theme.of(context).textTheme.bodySmall),
-                expanded: true,
-                alignment: MainAxisAlignment.start,
-              ),
-              MatchResultDisplay(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(Spacing.m),
+              child: MatchResultDisplay(
                 nameTeamLeft: nameTeamLeft,
                 nameTeamRight: nameTeamRight,
                 scoreTeamLeft: scoreTeamLeft,
                 scoreTeamRight: scoreTeamRight,
                 date: date,
               ),
-            ],
-          ),
+            ),
+            if (type != null)
+              Positioned(
+                right: -Spacing.xs,
+                bottom: -Spacing.xs,
+                child: Icon(
+                  type.iconData(),
+                  color: type.iconColor().withAlpha(150),
+                  size: Spacing.xl3,
+                ),
+              )
+          ],
         ),
       ),
     );
