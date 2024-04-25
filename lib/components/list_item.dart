@@ -7,6 +7,7 @@ class ListItem extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.trailing,
+    this.backgroundIcon,
     this.backgroundColor,
     this.onClick,
     this.onLongClick,
@@ -16,22 +17,30 @@ class ListItem extends StatelessWidget {
   final Widget? subtitle;
   final Widget? leading;
   final Widget? trailing;
+  final Widget? backgroundIcon;
   final Color? backgroundColor;
   final Function()? onClick;
   final Function()? onLongClick;
 
   @override
   Widget build(BuildContext context) {
+    final backgroundIcon = this.backgroundIcon;
+
     return Card(
       color: backgroundColor,
       clipBehavior: Clip.hardEdge,
-      child: ListTile(
-        onTap: onClick,
-        onLongPress: onLongClick,
-        title: title,
-        subtitle: subtitle,
-        leading: leading,
-        trailing: trailing,
+      child: Stack(
+        children: [
+          ListTile(
+            onTap: onClick,
+            onLongPress: onLongClick,
+            title: title,
+            subtitle: subtitle,
+            leading: leading,
+            trailing: trailing,
+          ),
+          if (backgroundIcon != null) backgroundIcon,
+        ],
       ),
     );
   }
