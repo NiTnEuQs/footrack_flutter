@@ -16,7 +16,7 @@ dependencies:
   # --- State management
 
   flutter_riverpod: ^2.3.7
-  freezed_annotation: ^2.4.1
+  freezed_annotation: ^3.1.0
 
   # --- Firebase
 
@@ -32,18 +32,18 @@ dependencies:
 
   # --- Misc
 
-  intl: ^0.18.0
-  wakelock: ^0.6.2
+  intl: ^0.20.2
+  wakelock_plus: ^1.2.8
   json_annotation: ^4.8.1
-  shared_preferences: ^2.2.0
-  package_info_plus: ^3.1.0
+  shared_preferences: ^2.5.3
+  package_info_plus: ^8.3.1
 #  flutter_appcenter_bundle: ^3.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
+  flutter_lints: ^6.0.0
 
   # --- API
 

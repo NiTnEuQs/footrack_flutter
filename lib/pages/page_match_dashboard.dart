@@ -16,7 +16,7 @@ import 'package:footrack_front/models/match.dart';
 import 'package:footrack_front/models/opponent.dart';
 import 'package:footrack_front/models/player_event.dart';
 import 'package:footrack_front/models/substitute.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 final elapsedTimeProvider = StateProvider<int?>((_) => null);
 
@@ -192,14 +192,14 @@ class _MatchDashboardPageState extends ConsumerState<MatchDashboardPage> {
   }
 
   Future<bool> _onWillPop() async {
-    Wakelock.disable();
+    WakelockPlus.disable();
     return true;
   }
 
   @override
   void initState() {
     super.initState();
-    Wakelock.enable();
+    WakelockPlus.enable();
   }
 
   @override
