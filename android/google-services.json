@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "900488587335",
     "project_id": "footrack-f4b6e",
-    "storage_bucket": "footrack-f4b6e.appspot.com"
+    "storage_bucket": "footrack-f4b6e.firebasestorage.app"
   },
   "client": [
     {
