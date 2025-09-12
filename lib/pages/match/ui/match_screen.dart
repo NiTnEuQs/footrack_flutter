@@ -17,7 +17,7 @@ import "package:footrack_front/models/match.dart";
 import "package:footrack_front/models/player_event.dart";
 import "package:footrack_front/models/substitute.dart";
 import "package:footrack_front/pages/squad/ui/squad_screen.dart";
-import "package:wakelock/wakelock.dart";
+import "package:wakelock_plus/wakelock_plus.dart";
 
 class MatchScreen extends ConsumerStatefulWidget {
   const MatchScreen({super.key});
@@ -93,14 +93,14 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
   }
 
   Future<bool> _onWillPop(bool pop) async {
-    Wakelock.disable();
+    WakelockPlus.disable();
     return true;
   }
 
   @override
   void initState() {
     super.initState();
-    Wakelock.enable();
+    WakelockPlus.enable();
   }
 
   @override
@@ -108,7 +108,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
     var season = ref.watch(seasonChoseProvider);
     var matchChose = ref.watch(matchChoseProvider);
     Match? match = season?.let(
-      (it) => ref.watch(it.matchsProvider).where((e) => e.id == matchChose?.id).firstOrNull,
+      (it) => ref
+          .watch(it.matchsProvider)
+          .where((e) => e.id == matchChose?.id)
+          .firstOrNull,
     );
     var goals = match.getGoals(ref);
     var substitutes = match.getSubstitutes(ref);
@@ -137,7 +140,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Spacing.xs2,
+                            horizontal: Spacing.xs,
+                          ),
                           child: Center(
                             child: Text(
                               match.getDate().formatWithTimeAndDay(),
@@ -146,24 +152,34 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Spacing.xs2,
+                            horizontal: Spacing.xs,
+                          ),
                           child: Center(
                             child: match.getDate().hasPassed()
                                 ? Text(
                                     match.getResultString(ref),
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
                                           color: match.getResultColor(ref),
                                           fontWeight: FontWeight.bold,
                                         ),
                                   )
                                 : Text(
-                                    match.getTime() != null ? "${match.getTime()}'" : "N'a pas encore débuté",
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                    match.getTime() != null
+                                        ? "${match.getTime()}'"
+                                        : "N'a pas encore débuté",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
                                   ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Spacing.xs2, horizontal: Spacing.xs),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: Spacing.xs2, horizontal: Spacing.xs),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -172,8 +188,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                 fit: FlexFit.tight,
                                 child: Center(
                                   child: Text(
-                                    season.getTeamName(defaultValue: "Votre équipe"),
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    season.getTeamName(
+                                        defaultValue: "Votre équipe"),
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -184,7 +202,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                   child: Text(
                                     "${match.getTotalScoreTeam(ref)} - ${match.getScoreOpponent()}",
                                     maxLines: 2,
-                                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
@@ -195,8 +216,10 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                 fit: FlexFit.tight,
                                 child: Center(
                                   child: Text(
-                                    opponent.getName(defaultValue: "Adversaire"),
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    opponent.getName(
+                                        defaultValue: "Adversaire"),
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -210,8 +233,11 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                   Expanded(
                     child: EventsListPage(
                       events: <PlayerEvent>[...goals, ...substitutes]
-                        ..sort((a, b) => b.createdAt.compare(a.createdAt, nullIsFirst: true))
-                        ..sort((a, b) => b.getTime().compare(a.getTime(), nullIsFirst: true)),
+                        ..sort((a, b) =>
+                            b.createdAt.compare(a.createdAt, nullIsFirst: true))
+                        ..sort((a, b) => b
+                            .getTime()
+                            .compare(a.getTime(), nullIsFirst: true)),
                       onEventLongPress: _editEvent,
                     ),
                   ),
@@ -280,13 +306,15 @@ class EventsListPage extends ConsumerWidget {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Spacing.xs, vertical: Spacing.s),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: Spacing.xs, vertical: Spacing.s),
                   child: Row(
                     children: [
                       event.getIcon() ?? Container(),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Spacing.xs),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: Spacing.xs),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

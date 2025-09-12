@@ -25,11 +25,12 @@ if (flutterVersionName == null) {
 }
 
 android {
-    compileSdkVersion localProperties.getProperty("flutter.compileSdkVersion").toInteger()
+    namespace "com.krynit.footrack"
+    compileSdk flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     kotlinOptions {
@@ -42,8 +43,8 @@ android {
 
     defaultConfig {
         applicationId "com.krynit.footrack"
-        minSdkVersion localProperties.getProperty("flutter.minSdkVersion").toInteger()
-        targetSdkVersion localProperties.getProperty("flutter.targetSdkVersion").toInteger()
+        minSdk flutter.minSdkVersion
+        targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
