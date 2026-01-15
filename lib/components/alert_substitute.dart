@@ -25,7 +25,8 @@ class AlertSubstitute extends ConsumerStatefulWidget {
 }
 
 class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
-  final TextEditingController _substituteTimeController = TextEditingController();
+  final TextEditingController _substituteTimeController =
+      TextEditingController();
 
   String? _playerInRefPath;
   String? _playerOutRefPath;
@@ -54,10 +55,14 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
           (e) => e.getRole() == PlayerRoleEnum.player,
         );
 
-    List<Pair<String, String>> playersInList = players.map((e) => Pair(e?.reference.path, e.getName())).toList()
+    List<Pair<String, String>> playersInList = players
+        .map((e) => Pair(e?.reference.path, e.getName()))
+        .toList()
       ..sort(comparePairSecondAsc);
 
-    List<Pair<String, String>> playersOutList = players.map((e) => Pair(e?.reference.path, e.getName())).toList()
+    List<Pair<String, String>> playersOutList = players
+        .map((e) => Pair(e?.reference.path, e.getName()))
+        .toList()
       ..sort(comparePairSecondAsc);
 
     if (widget.substitute == null) {
@@ -68,10 +73,16 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
     return players.isEmpty
         ? const AlertDialog(
             title: Text("Attention"),
-            content: Text("Veuillez remplir votre effectif avant de faire un changement"),
+            content: Text(
+              "Veuillez remplir votre effectif avant de faire un changement",
+            ),
           )
         : AlertDialog(
-            title: Text(widget.substitute != null ? "Modifier le remplacement" : "Ajouter un remplacement"),
+            title: Text(
+              widget.substitute != null
+                  ? "Modifier le remplacement"
+                  : "Ajouter un remplacement",
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -101,7 +112,8 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                       child: DropdownButton(
                         isExpanded: true,
                         value: _playerInRefPath,
-                        items: playersInList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                        items: playersInList.map<DropdownMenuItem<String>>(
+                            (Pair<String, String> value) {
                           return DropdownMenuItem<String>(
                             value: value.first,
                             child: Text(value.second ?? ""),
@@ -126,7 +138,8 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                       child: DropdownButton(
                         isExpanded: true,
                         value: _playerOutRefPath,
-                        items: playersOutList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                        items: playersOutList.map<DropdownMenuItem<String>>(
+                            (Pair<String, String> value) {
                           return DropdownMenuItem<String>(
                             value: value.first,
                             child: Text(value.second ?? ""),
@@ -155,9 +168,15 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                       context: context,
                       builder: (context) {
                         return Consumer(
-                          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                          builder: (
+                            BuildContext context,
+                            WidgetRef ref,
+                            Widget? child,
+                          ) {
                             return AlertDialog(
-                              title: const Text("Êtes-vous sûr de vouloir supprimer ce remplacement ?"),
+                              title: const Text(
+                                "Êtes-vous sûr de vouloir supprimer ce remplacement ?",
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -168,6 +187,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                                 ElevatedButton(
                                   onPressed: () {
                                     ref.read(dbProvider).removeSubstitute(
+                                          ref.watch(clubChoseProvider)?.id,
                                           ref.watch(seasonChoseProvider)?.id,
                                           ref.watch(matchChoseProvider)?.id,
                                           widget.substitute!.id,
@@ -195,12 +215,15 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
               ElevatedButton(
                 onPressed: () {
                   var substitute = Substitute()
-                    ..playerIn = _playerInRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
-                    ..playerOut = _playerOutRefPath?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..playerIn = _playerInRefPath
+                        ?.let((it) => FirebaseFirestore.instance.doc(it))
+                    ..playerOut = _playerOutRefPath
+                        ?.let((it) => FirebaseFirestore.instance.doc(it))
                     ..time = _timeSubstitution;
 
                   if (widget.substitute != null) {
                     ref.read(dbProvider).editSubstitute(
+                          ref.watch(clubChoseProvider)?.id,
                           ref.watch(seasonChoseProvider)?.id,
                           ref.watch(matchChoseProvider)?.id,
                           widget.substitute!.id,
@@ -208,6 +231,7 @@ class _AlertSubstituteState extends ConsumerState<AlertSubstitute> {
                         );
                   } else {
                     ref.read(dbProvider).addNewSubstitute(
+                          ref.watch(clubChoseProvider)?.id,
                           ref.watch(seasonChoseProvider)?.id,
                           ref.watch(matchChoseProvider)?.id,
                           substitute,

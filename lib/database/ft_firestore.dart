@@ -1,4 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:footrack_front/models/account.dart";
+import "package:footrack_front/models/club.dart";
 import "package:footrack_front/models/goal.dart";
 import "package:footrack_front/models/match.dart";
 import "package:footrack_front/models/opponent.dart";
@@ -8,12 +10,19 @@ import "package:footrack_front/models/squad_player.dart";
 import "package:footrack_front/models/substitute.dart";
 
 class DatabaseFirestore {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Create an instance of Firebase Firestore.
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Create an instance of Firebase Firestore.
 
   // Add a Season
-  Future<bool> addNewSeason(Season m) async {
+  Future<bool> addNewSeason(String? clubId, Season m) async {
+    if (clubId == null) return false;
+
     try {
-      await _firestore.collection("seasons").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .add({
         SeasonKey.name.value: m.name,
         SeasonKey.teamName.value: m.teamName,
         SeasonKey.from.value: m.from,
@@ -26,11 +35,17 @@ class DatabaseFirestore {
   }
 
   // Add a Match
-  Future<bool> addNewMatch(String? seasonId, Match m) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewMatch(String? clubId, String? seasonId, Match m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("matchs").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .add({
         MatchKey.type.value: m.type,
         MatchKey.opponent.value: m.opponent,
         MatchKey.date.value: m.date,
@@ -43,11 +58,20 @@ class DatabaseFirestore {
   }
 
   // Add a Squad Player
-  Future<bool> addNewSquadPlayer(String? seasonId, String? matchId, SquadPlayer sp) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewSquadPlayer(
+      String? clubId, String? seasonId, String? matchId, SquadPlayer sp) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("squad").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("squad")
+          .add({
         SquadPlayerKey.player.value: sp.player,
       });
       return true;
@@ -57,11 +81,20 @@ class DatabaseFirestore {
   }
 
   // Add a Goal
-  Future<bool> addNewGoal(String? seasonId, String? matchId, Goal m) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewGoal(
+      String? clubId, String? seasonId, String? matchId, Goal m) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).collection("goals").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .collection("goals")
+          .add({
         GoalKey.scorer.value: m.scorer,
         GoalKey.passer.value: m.passer,
         GoalKey.time.value: m.time,
@@ -73,11 +106,14 @@ class DatabaseFirestore {
   }
 
   // Add a Substitute
-  Future<bool> addNewSubstitute(String? seasonId, String? matchId, Substitute m) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewSubstitute(
+      String? clubId, String? seasonId, String? matchId, Substitute m) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -95,11 +131,18 @@ class DatabaseFirestore {
   }
 
   // Add an Opponent
-  Future<bool> addNewOpponent(String? seasonId, Opponent m) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewOpponent(
+      String? clubId, String? seasonId, Opponent m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("opponents").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("opponents")
+          .add({
         OpponentKey.name.value: m.name,
       });
       return true;
@@ -109,11 +152,17 @@ class DatabaseFirestore {
   }
 
   // Add a Player
-  Future<bool> addNewPlayer(String? seasonId, Player m) async {
-    if (seasonId == null) return false;
+  Future<bool> addNewPlayer(String? clubId, String? seasonId, Player m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("players").add({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("players")
+          .add({
         PlayerKey.name.value: m.name,
         PlayerKey.role.value: m.role,
         PlayerKey.status.value: m.status,
@@ -126,9 +175,16 @@ class DatabaseFirestore {
   }
 
   // Remove a Season
-  Future<bool> removeSeason(String seasonId) async {
+  Future<bool> removeSeason(String? clubId, String seasonId) async {
+    if (clubId == null) return false;
+
     try {
-      await _firestore.collection("seasons").doc(seasonId).delete();
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -136,11 +192,19 @@ class DatabaseFirestore {
   }
 
   // Remove a Match
-  Future<bool> removeMatch(String? seasonId, String matchId) async {
-    if (seasonId == null) return false;
+  Future<bool> removeMatch(
+      String? clubId, String? seasonId, String matchId) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).delete();
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -148,12 +212,14 @@ class DatabaseFirestore {
   }
 
   // Remove a Squad Player
-  Future<bool> removeSquadPlayer(String? seasonId, String? matchId, String squadPlayerId) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> removeSquadPlayer(String? clubId, String? seasonId,
+      String? matchId, String squadPlayerId) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -168,12 +234,14 @@ class DatabaseFirestore {
   }
 
   // Remove a Goal
-  Future<bool> removeGoal(String? seasonId, String? matchId, String goalId) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> removeGoal(
+      String? clubId, String? seasonId, String? matchId, String goalId) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -188,12 +256,14 @@ class DatabaseFirestore {
   }
 
   // Remove a Substitute
-  Future<bool> removeSubstitute(String? seasonId, String? matchId, String substituteId) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> removeSubstitute(String? clubId, String? seasonId,
+      String? matchId, String substituteId) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -208,11 +278,19 @@ class DatabaseFirestore {
   }
 
   // Remove an Opponent
-  Future<bool> removeOpponent(String? seasonId, String opponentId) async {
-    if (seasonId == null) return false;
+  Future<bool> removeOpponent(
+      String? clubId, String? seasonId, String opponentId) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).delete();
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("opponents")
+          .doc(opponentId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -220,11 +298,19 @@ class DatabaseFirestore {
   }
 
   // Remove a Player
-  Future<bool> removePlayer(String? seasonId, String playerId) async {
-    if (seasonId == null) return false;
+  Future<bool> removePlayer(
+      String? clubId, String? seasonId, String playerId) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).delete();
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("players")
+          .doc(playerId)
+          .delete();
       return true;
     } catch (e) {
       return Future.error(e);
@@ -232,9 +318,16 @@ class DatabaseFirestore {
   }
 
   // Edit a Season
-  Future<bool> editSeason(String seasonId, Season s) async {
+  Future<bool> editSeason(String? clubId, String seasonId, Season s) async {
+    if (clubId == null) return false;
+
     try {
-      await _firestore.collection("seasons").doc(seasonId).update({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .update({
         SeasonKey.name.value: s.name,
         SeasonKey.teamName.value: s.teamName,
         SeasonKey.from.value: s.from,
@@ -247,11 +340,19 @@ class DatabaseFirestore {
   }
 
   // Edit a Match
-  Future<bool> editMatch(String? seasonId, String matchId, Match m) async {
-    if (seasonId == null) return false;
+  Future<bool> editMatch(
+      String? clubId, String? seasonId, String matchId, Match m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("matchs").doc(matchId).update({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("matchs")
+          .doc(matchId)
+          .update({
         MatchKey.type.value: m.type,
         MatchKey.opponent.value: m.opponent,
         MatchKey.date.value: m.date,
@@ -264,12 +365,14 @@ class DatabaseFirestore {
   }
 
   // Edit a Squad Player
-  Future<bool> editSquadPlayer(String? seasonId, String? matchId, String squadPlayerId, SquadPlayer sp) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> editSquadPlayer(String? clubId, String? seasonId,
+      String? matchId, String squadPlayerId, SquadPlayer sp) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -286,12 +389,14 @@ class DatabaseFirestore {
   }
 
   // Edit a Goal
-  Future<bool> editGoal(String? seasonId, String? matchId, String goalId, Goal m) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> editGoal(String? clubId, String? seasonId, String? matchId,
+      String goalId, Goal m) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -310,12 +415,14 @@ class DatabaseFirestore {
   }
 
   // Edit a Substitute
-  Future<bool> editSubstitute(String? seasonId, String? matchId, String substituteId, Substitute m) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> editSubstitute(String? clubId, String? seasonId, String? matchId,
+      String substituteId, Substitute m) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
@@ -334,11 +441,19 @@ class DatabaseFirestore {
   }
 
   // Edit an Opponent
-  Future<bool> editOpponent(String? seasonId, String opponentId, Opponent m) async {
-    if (seasonId == null) return false;
+  Future<bool> editOpponent(
+      String? clubId, String? seasonId, String opponentId, Opponent m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("opponents").doc(opponentId).update({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("opponents")
+          .doc(opponentId)
+          .update({
         OpponentKey.name.value: m.name,
       });
       return true;
@@ -348,11 +463,19 @@ class DatabaseFirestore {
   }
 
   // Edit a Player
-  Future<bool> editPlayer(String? seasonId, String playerId, Player m) async {
-    if (seasonId == null) return false;
+  Future<bool> editPlayer(
+      String? clubId, String? seasonId, String playerId, Player m) async {
+    if (clubId == null || seasonId == null) return false;
 
     try {
-      await _firestore.collection("seasons").doc(seasonId).collection("players").doc(playerId).update({
+      await _firestore
+          .collection("clubs")
+          .doc(clubId)
+          .collection("seasons")
+          .doc(seasonId)
+          .collection("players")
+          .doc(playerId)
+          .update({
         PlayerKey.name.value: m.name,
         PlayerKey.role.value: m.role,
         PlayerKey.status.value: m.status,
@@ -365,17 +488,65 @@ class DatabaseFirestore {
   }
 
   // Update an Opponent Goal
-  Future<bool> updateOpponentGoal(String? seasonId, String? matchId, int? newOpponentGoal) async {
-    if (seasonId == null) return false;
-    if (matchId == null) return false;
+  Future<bool> updateOpponentGoal(String? clubId, String? seasonId,
+      String? matchId, int? newOpponentGoal) async {
+    if (clubId == null || seasonId == null || matchId == null) return false;
 
     try {
       await _firestore
+          .collection("clubs")
+          .doc(clubId)
           .collection("seasons")
           .doc(seasonId)
           .collection("matchs")
           .doc(matchId)
           .update({"scoreOpponent": newOpponentGoal});
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Add a Club
+  Future<bool> addNewClub(Club c, String? userId) async {
+    if (userId == null) return false;
+
+    try {
+      final batch = _firestore.batch();
+
+      // Create the club
+      final clubRef = _firestore.collection("clubs").doc();
+      batch.set(clubRef, {
+        ClubKey.teamName.value: c.teamName,
+      });
+
+      // Create the account_club relationship with admin role
+      final accountClubRef = clubRef.collection("accounts").doc(userId);
+      batch.set(accountClubRef, {
+        AccountKey.role.value: "admin",
+      });
+
+      await batch.commit();
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Remove a Club
+  Future<bool> removeClub(String clubId) async {
+    try {
+      await _firestore.collection("clubs").doc(clubId).delete();
+      return true;
+    } catch (e) {
+      return Future.error(e);
+    }
+  }
+
+  // Edit a Club
+  Future<bool> editClub(String clubId, Club c) async {
+    try {
+      await _firestore.collection("clubs").doc(clubId).update(c.toData());
       return true;
     } catch (e) {
       return Future.error(e);

@@ -45,7 +45,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onTap: (index) {
           setState(() {
             _pageIndex = index;
-            _pageController.animateToPage(index, duration: Durations.long1, curve: Curves.ease);
+            _pageController.animateToPage(
+              index,
+              duration: Durations.long1,
+              curve: Curves.ease,
+            );
           });
         },
         items: const [
@@ -59,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: "Équipe",
+            label: "Effectif",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),

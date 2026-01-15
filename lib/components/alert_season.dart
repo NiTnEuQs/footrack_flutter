@@ -114,7 +114,10 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              ref.read(dbProvider).removeSeason(widget.season!.id);
+                              ref.read(dbProvider).removeSeason(
+                                    ref.watch(clubChoseProvider)?.id,
+                                    widget.season!.id,
+                                  );
 
                               Navigator.pop(context);
                             },
@@ -145,11 +148,13 @@ class _AlertSeasonState extends ConsumerState<AlertSeason> {
 
             if (widget.season != null) {
               ref.read(dbProvider).editSeason(
+                    ref.watch(clubChoseProvider)?.id,
                     widget.season!.id,
                     season,
                   );
             } else {
               ref.read(dbProvider).addNewSeason(
+                    ref.watch(clubChoseProvider)?.id,
                     season,
                   );
             }

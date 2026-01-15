@@ -30,7 +30,11 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.opponent != null ? "Modifier l'adversaire" : "Ajouter un adversaire"),
+      title: Text(
+        widget.opponent != null
+            ? "Modifier l'adversaire"
+            : "Ajouter un adversaire",
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -60,9 +64,12 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
                 context: context,
                 builder: (context) {
                   return Consumer(
-                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
                       return AlertDialog(
-                        title: const Text("Êtes-vous sûr de vouloir supprimer l'adversaire ?"),
+                        title: const Text(
+                          "Êtes-vous sûr de vouloir supprimer l'adversaire ?",
+                        ),
                         content: Text(widget.opponent!.getName()),
                         actions: [
                           TextButton(
@@ -74,6 +81,7 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeOpponent(
+                                    ref.watch(clubChoseProvider)?.id,
                                     ref.watch(seasonChoseProvider)?.id,
                                     widget.opponent!.id,
                                   );
@@ -99,16 +107,19 @@ class _AlertOpponentState extends ConsumerState<AlertOpponent> {
           ),
         ElevatedButton(
           onPressed: () {
-            var opponent = Opponent()..name = _opponentNameController.value.text;
+            var opponent = Opponent()
+              ..name = _opponentNameController.value.text;
 
             if (widget.opponent != null) {
               ref.read(dbProvider).editOpponent(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     widget.opponent!.id,
                     opponent,
                   );
             } else {
               ref.read(dbProvider).addNewOpponent(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     opponent,
                   );

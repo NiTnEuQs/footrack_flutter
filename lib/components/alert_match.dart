@@ -165,6 +165,7 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeMatch(
+                                    ref.watch(clubChoseProvider)?.id,
                                     ref.watch(seasonChoseProvider)?.id,
                                     widget.match!.id,
                                   );
@@ -198,12 +199,14 @@ class _AlertMatchState extends ConsumerState<AlertMatch> {
 
             if (widget.match != null) {
               ref.read(dbProvider).editMatch(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     widget.match!.id,
                     match,
                   );
             } else {
               ref.read(dbProvider).addNewMatch(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     match,
                   );

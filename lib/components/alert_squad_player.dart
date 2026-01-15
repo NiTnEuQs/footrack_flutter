@@ -104,6 +104,7 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeSquadPlayer(
+                                    ref.watch(clubChoseProvider)?.id,
                                     ref.watch(seasonChoseProvider)?.id,
                                     ref.watch(matchChoseProvider)?.id,
                                     widget.squadPlayer!.id,
@@ -137,6 +138,7 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
 
             if (widget.squadPlayer != null) {
               ref.read(dbProvider).editSquadPlayer(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     ref.watch(matchChoseProvider)?.id,
                     widget.squadPlayer!.id,
@@ -146,6 +148,7 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
               Navigator.pop(context);
             } else if (!playerIds.contains(squadPlayer.player?.id)) {
               ref.read(dbProvider).addNewSquadPlayer(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     ref.watch(matchChoseProvider)?.id,
                     squadPlayer,
