@@ -56,7 +56,7 @@ class CalendarListItem extends StatelessWidget {
                   color: type.iconColor().withAlpha(150),
                   size: Spacing.xl3,
                 ),
-              )
+              ),
           ],
         ),
       ),

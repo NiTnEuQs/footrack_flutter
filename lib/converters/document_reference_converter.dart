@@ -1,7 +1,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:json_annotation/json_annotation.dart";
 
-class DocumentReferenceConverter implements JsonConverter<DocumentReference?, Object?> {
+class DocumentReferenceConverter
+    implements JsonConverter<DocumentReference?, Object?> {
   const DocumentReferenceConverter();
 
   @override
@@ -13,6 +14,6 @@ class DocumentReferenceConverter implements JsonConverter<DocumentReference?, Ob
   Object? toJson(DocumentReference? documentReference) => documentReference;
 }
 
-T? tryCast<T>(value) {
+T? tryCast<T>(Object? value) {
   return value == null ? null : value as T;
 }

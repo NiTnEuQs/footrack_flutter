@@ -92,7 +92,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
     );
   }
 
-  Future<bool> _onWillPop(bool pop) async {
+  Future<bool> _onWillPop(bool pop, dynamic _) async {
     WakelockPlus.disable();
     return true;
   }
@@ -118,7 +118,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
     var opponent = match.getOpponent(ref);
 
     return PopScope(
-      onPopInvoked: _onWillPop,
+      onPopInvokedWithResult: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -179,7 +179,9 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: Spacing.xs2, horizontal: Spacing.xs),
+                            vertical: Spacing.xs2,
+                            horizontal: Spacing.xs,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -189,7 +191,8 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                 child: Center(
                                   child: Text(
                                     season.getTeamName(
-                                        defaultValue: "Votre équipe"),
+                                      defaultValue: "Votre équipe",
+                                    ),
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
@@ -217,7 +220,8 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                 child: Center(
                                   child: Text(
                                     opponent.getName(
-                                        defaultValue: "Adversaire"),
+                                      defaultValue: "Adversaire",
+                                    ),
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                     textAlign: TextAlign.center,
@@ -233,11 +237,15 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                   Expanded(
                     child: EventsListPage(
                       events: <PlayerEvent>[...goals, ...substitutes]
-                        ..sort((a, b) =>
-                            b.createdAt.compare(a.createdAt, nullIsFirst: true))
-                        ..sort((a, b) => b
-                            .getTime()
-                            .compare(a.getTime(), nullIsFirst: true)),
+                        ..sort(
+                          (a, b) => b.createdAt
+                              .compare(a.createdAt, nullIsFirst: true),
+                        )
+                        ..sort(
+                          (a, b) => b
+                              .getTime()
+                              .compare(a.getTime(), nullIsFirst: true),
+                        ),
                       onEventLongPress: _editEvent,
                     ),
                   ),
@@ -307,14 +315,17 @@ class EventsListPage extends ConsumerWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: Spacing.xs, vertical: Spacing.s),
+                    horizontal: Spacing.xs,
+                    vertical: Spacing.s,
+                  ),
                   child: Row(
                     children: [
                       event.getIcon() ?? Container(),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: Spacing.xs),
+                            horizontal: Spacing.xs,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
