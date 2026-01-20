@@ -158,6 +158,7 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removePlayer(
+                                    ref.watch(clubChoseProvider)?.id,
                                     ref.watch(seasonChoseProvider)?.id,
                                     widget.player!.id,
                                   );
@@ -191,12 +192,14 @@ class _AlertPlayerState extends ConsumerState<AlertPlayer> {
 
             if (widget.player != null) {
               ref.read(dbProvider).editPlayer(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     widget.player!.id,
                     player,
                   );
             } else {
               ref.read(dbProvider).addNewPlayer(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     player,
                   );

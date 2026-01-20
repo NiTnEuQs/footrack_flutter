@@ -46,7 +46,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                     child: const Text("Déconnexion"),
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
-                      ref.read(userProvider.notifier).state = null;
+                      // userProvider will automatically update via userStreamProvider
                     },
                   ),
                 ),

@@ -153,6 +153,7 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                           ElevatedButton(
                             onPressed: () {
                               ref.read(dbProvider).removeGoal(
+                                    ref.watch(clubChoseProvider)?.id,
                                     ref.watch(seasonChoseProvider)?.id,
                                     ref.watch(matchChoseProvider)?.id,
                                     widget.goal!.id,
@@ -186,6 +187,7 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
 
             if (widget.goal != null) {
               ref.read(dbProvider).editGoal(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     ref.watch(matchChoseProvider)?.id,
                     widget.goal!.id,
@@ -193,6 +195,7 @@ class _AlertGoalState extends ConsumerState<AlertGoal> {
                   );
             } else {
               ref.read(dbProvider).addNewGoal(
+                    ref.watch(clubChoseProvider)?.id,
                     ref.watch(seasonChoseProvider)?.id,
                     ref.watch(matchChoseProvider)?.id,
                     goal,

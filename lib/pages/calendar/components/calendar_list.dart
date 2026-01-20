@@ -3,9 +3,9 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/components/generics/generic_message.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/club_extension.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
 import "package:footrack_front/models/extensions/opponent_extension.dart";
-import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/match.dart";
 import "package:footrack_front/pages/calendar/components/calendar_list_item.dart";
 import "package:skeletonizer/skeletonizer.dart";
@@ -70,7 +70,7 @@ class _CalendarListFilled extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final season = ref.watch(seasonChoseProvider);
+    final club = ref.watch(clubChoseProvider);
 
     calendar.sort(
       (e1, e2) => e2.getDate().compare(e1.getDate()),
@@ -87,7 +87,9 @@ class _CalendarListFilled extends ConsumerWidget {
           return CalendarListItem(
             scoreTeamLeft: match.getTotalScoreTeam(ref),
             scoreTeamRight: match.getScoreOpponent(),
-            nameTeamLeft: season.getTeamName(),
+            nameTeamLeft: club.getTeamName(
+              defaultValue: "Votre équipe",
+            ),
             nameTeamRight: match.getOpponent(ref).getName(),
             type: match.getType(),
             date: match.getDate(),

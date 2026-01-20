@@ -22,33 +22,103 @@ final clubChoseProvider = StateProvider<Club?>((_) => null);
 final seasonChoseProvider = StateProvider<Season?>((_) => null);
 final matchChoseProvider = StateProvider<Match?>((_) => null);
 
-final isUserConnectedProvider = StateProvider<bool>((ref) => ref.watch(userProvider) != null);
+final userProvider =
+    Provider<User?>((ref) => ref.watch(userStreamProvider).value);
 
-final userProvider = StateProvider<User?>((ref) => null);
+final isUserConnectedProvider =
+    Provider<bool>((ref) => ref.watch(userProvider) != null);
+
 final accountProvider = StateProvider<Account?>((ref) => null);
 
 final userStreamProvider = StreamProvider<User?>(
   (ref) => FirebaseAuth.instance.authStateChanges(),
 );
-final accountStreamProvider = StreamProvider<Account?>(
-  (ref) {
-    var user = ref.watch(userProvider);
+// final accountStreamProvider = StreamProvider<Account?>(
+//   (ref) {
+//     var user = ref.watch(userProvider);
+//
+//     if (user != null) {
+//       return FirebaseFirestore.instance
+//           .collection("accounts")
+//           .doc(user.uid)
+//           .snapshots()
+//           .map(
+//             (snap) => Account(snapshot: snap),
+//           );
+//     } else {
+//       return const Stream.empty();
+//     }
+//   },
+// );
 
-    if (user != null) {
-      return FirebaseFirestore.instance.collection("accounts").doc(user.uid).snapshots().map(
-            (snap) => Account(snapshot: snap),
-          );
-    } else {
-      return const Stream.empty();
+final clubsStreamProvider = StreamProvider<List<Club>>(
+  (ref) {
+    final user = ref.watch(userProvider);
+
+    if (user == null) {
+      return Stream.value(<Club>[]);
     }
+
+    // User is authenticated, proceed with query
+    FirebaseFirestore.setLoggingEnabled(true);
+    final clubsCollection = FirebaseFirestore.instance.collection("clubs");
+    return clubsCollection.snapshots().map(
+          (querySnap) =>
+              querySnap.map((snap) => Club(snapshot: snap, ref: ref)).toList(),
+        );
   },
+  // (ref) {
+  //   var account = ref.watch(accountProvider);
+  //   if (account == null) {
+  //     return Stream.value([]);
+  //   }
+  //   var accountClubs = ref.watch(account.accountClubsProvider);
+  //   if (accountClubs.isEmpty) {
+  //     return Stream.value([]);
+  //   }
+  //
+  //   var clubIds = accountClubs.map((ac) => ac.getClubId()).toList();
+  //   if (clubIds.isEmpty) {
+  //     return Stream.value([]);
+  //   }
+  //
+  //   // Firestore whereIn has a limit of 10, so we need to handle batching
+  //   // For now, we'll take the first 10. In production, you'd want to batch queries
+  //   var limitedClubIds = clubIds.take(10).toList();
+  //
+  //   if (limitedClubIds.length == 1) {
+  //     return FirebaseFirestore.instance
+  //         .collection("clubs")
+  //         .doc(limitedClubIds.first)
+  //         .snapshots()
+  //         .map((snap) =>
+  //             snap.exists ? [Club(snapshot: snap, ref: ref)] : <Club>[]);
+  //   }
+  //
+  //   return FirebaseFirestore.instance
+  //       .collection("clubs")
+  //       .where(FieldPath.documentId, whereIn: limitedClubIds)
+  //       .snapshots()
+  //       .map((querySnap) => querySnap.docs
+  //           .map((snap) => Club(snapshot: snap, ref: ref))
+  //           .toList());
+  // },
 );
 
 final seasonsStreamProvider = StreamProvider<List<Season>>(
-  (ref) => FirebaseFirestore.instance
-      .collection("seasons")
-      .snapshots()
-      .map((querySnap) => querySnap.map((snap) => Season(snapshot: snap, ref: ref))),
+  (ref) {
+    var club = ref.watch(clubChoseProvider);
+    if (club?.id == null) {
+      return Stream.value([]);
+    }
+    return FirebaseFirestore.instance
+        .collection("clubs")
+        .doc(club!.id)
+        .collection("seasons")
+        .snapshots()
+        .map((querySnap) =>
+            querySnap.map((snap) => Season(snapshot: snap, ref: ref)).toList());
+  },
 );
 
 final localeFutureProvider = FutureProvider<void>(

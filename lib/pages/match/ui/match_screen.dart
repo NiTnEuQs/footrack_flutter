@@ -9,9 +9,9 @@ import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/extensions/date_extensions.dart";
 import "package:footrack_front/extensions/object_extensions.dart";
+import "package:footrack_front/models/extensions/club_extension.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
 import "package:footrack_front/models/extensions/opponent_extension.dart";
-import "package:footrack_front/models/extensions/season_extension.dart";
 import "package:footrack_front/models/goal.dart";
 import "package:footrack_front/models/match.dart";
 import "package:footrack_front/models/player_event.dart";
@@ -52,6 +52,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
 
   void _updateOpponentGoal(int? opponentGoal) {
     ref.watch(dbProvider).updateOpponentGoal(
+          ref.read(clubChoseProvider)?.id,
           ref.read(seasonChoseProvider)?.id,
           ref.read(matchChoseProvider)?.id,
           opponentGoal,
@@ -105,6 +106,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var club = ref.watch(clubChoseProvider);
     var season = ref.watch(seasonChoseProvider);
     var matchChose = ref.watch(matchChoseProvider);
     Match? match = season?.let(
@@ -190,7 +192,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
                                 fit: FlexFit.tight,
                                 child: Center(
                                   child: Text(
-                                    season.getTeamName(
+                                    club.getTeamName(
                                       defaultValue: "Votre équipe",
                                     ),
                                     style:
@@ -391,7 +393,7 @@ class MatchDashboard extends StatelessWidget {
         ),
         FTGridTile(
           icon: Icons.groups,
-          title: "Effectif",
+          title: "Tactique",
           onTap: onSquadClicked,
           color: Colors.blue,
         ),

@@ -4,8 +4,8 @@ import "package:footrack_front/components/generics/generic_error.dart";
 import "package:footrack_front/components/generics/generic_loading.dart";
 import "package:footrack_front/database/ft_config.dart";
 import "package:footrack_front/database/ft_providers.dart";
+import "package:footrack_front/pages/clubs/ui/clubs_screen.dart";
 import "package:footrack_front/pages/login/ui/login_screen.dart";
-import "package:footrack_front/pages/seasons/ui/seasons_screen.dart";
 import "package:package_info_plus/package_info_plus.dart";
 // import 'package:flutter_appcenter_bundle/flutter_appcenter_bundle.dart';
 
@@ -21,7 +21,7 @@ class LoadingScreen extends ConsumerWidget {
         final isUserConnected = ref.watch(isUserConnectedProvider);
 
         if (isUserConnected) {
-          return const SeasonsScreen();
+          return const ClubsScreen();
         } else {
           return const LoginScreen();
         }
@@ -42,11 +42,10 @@ final _setupProvider = FutureProvider((ref) async {
   final config = await ref.watch(remoteConfigFutureProvider.future);
   ref.read(remoteConfigProvider.notifier).state = config;
 
-  final user = ref.watch(userStreamProvider).value;
-  ref.read(userProvider.notifier).state = user;
+  // userProvider automatically syncs with userStreamProvider, no manual sync needed
 
-  final account = ref.watch(accountStreamProvider).value;
-  ref.read(accountProvider.notifier).state = account;
+  // final account = ref.watch(accountStreamProvider).value;
+  // ref.read(accountProvider.notifier).state = account;
 
   // Will be implemented later
   // await AppCenter.startAsync(
