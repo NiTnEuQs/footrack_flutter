@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/pages/account/ui/account_screen.dart";
 import "package:footrack_front/pages/home/components/home_page_view.dart";
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -19,6 +20,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     keepPage: true,
   );
 
+  void _openAccount() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AccountScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
@@ -29,6 +39,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           season.getName(defaultValue: "Saison ${season?.id}"),
           style: Theme.of(context).textTheme.titleLarge,
         ),
+        actions: [
+          IconButton(
+            onPressed: _openAccount,
+            icon: const Icon(Icons.face),
+          ),
+        ],
       ),
       body: HomePageView(
         pageController: _pageController,

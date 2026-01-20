@@ -8,6 +8,7 @@ import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/dummies/dummy_seasons.dart";
 import "package:footrack_front/models/season.dart";
+import "package:footrack_front/pages/account/ui/account_screen.dart";
 import "package:footrack_front/pages/home/ui/home_screen.dart";
 import "package:footrack_front/pages/seasons/components/seasons_list.dart";
 
@@ -52,6 +53,15 @@ class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
     );
   }
 
+  void _openAccount() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AccountScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final seasonsStream = ref.watch(seasonsStreamProvider);
@@ -62,6 +72,12 @@ class _SeasonsScreenState extends ConsumerState<SeasonsScreen> {
           "Vos saisons",
           style: Theme.of(context).textTheme.titleLarge,
         ),
+        actions: [
+          IconButton(
+            onPressed: _openAccount,
+            icon: const Icon(Icons.face),
+          ),
+        ],
       ),
       body: Container(
         margin: const EdgeInsets.only(bottom: Spacing.m),

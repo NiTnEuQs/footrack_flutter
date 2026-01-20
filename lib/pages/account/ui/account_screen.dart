@@ -18,41 +18,55 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     final version = ref.watch(packageInfoProvider)?.version;
 
     return Scaffold(
-      body: Column(
-        children: [
-          if (version != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
-              child: Text(
-                "Version $version",
-                style: Theme.of(context).textTheme.labelMedium,
-                textAlign: TextAlign.center,
+      appBar: AppBar(
+        title: Text(
+          "Compte",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
+      body: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (version != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Spacing.m, vertical: Spacing.xs2),
+                child: Text(
+                  "Version $version",
+                  style: Theme.of(context).textTheme.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-          if (user != null)
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.xs2),
-                  child: Text(
-                    "Connecté en tant que ${user.email}",
-                    style: Theme.of(context).textTheme.labelMedium,
-                    textAlign: TextAlign.center,
+            if (user != null)
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Spacing.m, vertical: Spacing.xs2),
+                    child: Text(
+                      "Connecté en tant que ${user.displayName}\n${user.email}",
+                      style: Theme.of(context).textTheme.labelMedium,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Spacing.m, vertical: Spacing.s),
-                  child: ElevatedButton(
-                    child: const Text("Déconnexion"),
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                      // userProvider will automatically update via userStreamProvider
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Spacing.m, vertical: Spacing.s),
+                    child: ElevatedButton(
+                      child: const Text("Déconnexion"),
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        // userProvider will automatically update via userStreamProvider
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-        ],
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

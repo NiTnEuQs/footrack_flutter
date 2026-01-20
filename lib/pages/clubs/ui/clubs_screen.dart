@@ -6,6 +6,7 @@ import "package:footrack_front/core/ui/spacings.dart";
 import "package:footrack_front/database/ft_providers.dart";
 import "package:footrack_front/dummies/dummy_clubs.dart";
 import "package:footrack_front/models/club.dart";
+import "package:footrack_front/pages/account/ui/account_screen.dart";
 import "package:footrack_front/pages/clubs/components/clubs_list.dart";
 import "package:footrack_front/pages/seasons/ui/seasons_screen.dart";
 
@@ -48,6 +49,15 @@ class _ClubsScreenState extends ConsumerState<ClubsScreen> {
     );
   }
 
+  void _openAccount() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AccountScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final clubsStream = ref.watch(clubsStreamProvider);
@@ -58,6 +68,12 @@ class _ClubsScreenState extends ConsumerState<ClubsScreen> {
           "Vos clubs",
           style: Theme.of(context).textTheme.titleLarge,
         ),
+        actions: [
+          IconButton(
+            onPressed: _openAccount,
+            icon: const Icon(Icons.face),
+          ),
+        ],
       ),
       body: Container(
         margin: const EdgeInsets.only(bottom: Spacing.m),
