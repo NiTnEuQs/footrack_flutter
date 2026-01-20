@@ -1,3 +1,4 @@
+import "package:collection/collection.dart";
 import "package:flamingo/flamingo.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -7,6 +8,7 @@ import "package:footrack_front/extensions/object_extensions.dart";
 import "package:footrack_front/models/extensions/match_extension.dart";
 import "package:footrack_front/models/extensions/player_extension.dart";
 import "package:footrack_front/models/extensions/season_extension.dart";
+import "package:footrack_front/models/extensions/squad_player_extension.dart";
 import "package:footrack_front/models/squad_player.dart";
 import "package:footrack_front/utils/comparables.dart";
 import "package:footrack_front/utils/tuples.dart";
@@ -36,17 +38,27 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
   @override
   Widget build(BuildContext context) {
     var season = ref.watch(seasonChoseProvider);
+    var match = ref.watch(matchChoseProvider);
     var players = season.getPlayers(ref);
+    var squad = match
+        .getSquad(ref)
+        .map((s) => s.getPlayer(ref)?.reference.path)
+        .nonNulls;
 
-    List<Pair<String, String>> scorersList = players.map((e) => Pair(e.reference.path, e.getName())).toList()
+    List<Pair<String, String>> squadList = players
+        .where((player) => !squad.contains(player.reference.path))
+        .map((e) => Pair(e.reference.path, e.getName()))
+        .toList()
       ..sort(comparePairSecondAsc);
 
     if (widget.squadPlayer == null) {
-      _playerRefPath ??= scorersList.firstOrNull?.first;
+      _playerRefPath ??= squadList.firstOrNull?.first;
     }
 
     return AlertDialog(
-      title: Text(widget.squadPlayer != null ? "Modifier le joueur" : "Ajouter un joueur"),
+      title: Text(widget.squadPlayer != null
+          ? "Modifier le joueur"
+          : "Ajouter un joueur"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -64,7 +76,8 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
                     : DropdownButton(
                         isExpanded: true,
                         value: _playerRefPath,
-                        items: scorersList.map<DropdownMenuItem<String>>((Pair<String, String> value) {
+                        items: squadList.map<DropdownMenuItem<String>>(
+                            (Pair<String, String> value) {
                           return DropdownMenuItem<String>(
                             value: value.first,
                             child: Text(value.second ?? ""),
@@ -91,9 +104,11 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
                 context: context,
                 builder: (context) {
                   return Consumer(
-                    builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
                       return AlertDialog(
-                        title: const Text("Êtes-vous sûr de vouloir enlever ce joueur de l'effectif ?"),
+                        title: const Text(
+                            "Êtes-vous sûr de vouloir enlever ce joueur de l'effectif ?"),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -134,7 +149,9 @@ class _AlertSquadPlayerState extends ConsumerState<AlertSquadPlayer> {
             var match = ref.watch(matchChoseProvider);
             var squad = match.getSquad(ref);
             var playerIds = squad.map((e) => e.player?.id);
-            var squadPlayer = SquadPlayer()..player = _playerRefPath?.let((it) => FirebaseFirestore.instance.doc(it));
+            var squadPlayer = SquadPlayer()
+              ..player = _playerRefPath
+                  ?.let((it) => FirebaseFirestore.instance.doc(it));
 
             if (widget.squadPlayer != null) {
               ref.read(dbProvider).editSquadPlayer(
