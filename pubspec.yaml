@@ -13,7 +13,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  # --- UI
+
   cupertino_icons: ^1.0.5
+  flutter_layout_grid: ^2.0.0
 
   # --- State management
 
